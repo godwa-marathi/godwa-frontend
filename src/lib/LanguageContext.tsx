@@ -1,12 +1,12 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-
-type Language = "devanagari" | "roman";
+import { translations, TranslationDictionary, Language } from "./translations";
 
 interface LanguageContextType {
     language: Language;
     setLanguage: (lang: Language) => void;
+    t: TranslationDictionary;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -31,7 +31,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     // Always provide the context, even if not mounted yet (it will just be default state)
     // The useEffect will update it after mount if localStorage has something else
     return (
-        <LanguageContext.Provider value={{ language, setLanguage }}>
+        <LanguageContext.Provider value={{ language, setLanguage, t: translations[language] }}>
             {children}
         </LanguageContext.Provider>
     );

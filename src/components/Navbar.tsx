@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export const Navbar = () => {
     const { token, logout } = useAuth();
-    const { language, setLanguage } = useLanguage();
+    const { language, setLanguage, t } = useLanguage();
     const [isOpen, setIsOpen] = React.useState(false);
     const [mounted, setMounted] = React.useState(false);
 
@@ -40,17 +40,17 @@ export const Navbar = () => {
                     {/* Desktop Nav */}
                     <div className="hidden md:flex items-center gap-8">
                         <Link href="/explore" className="text-sm font-english font-medium text-foreground/80 hover:text-maroon transition-colors uppercase tracking-widest">
-                            Explore
+                            {t.nav_explore}
                         </Link>
                         <Link href="/poets" className="text-sm font-english font-medium text-foreground/80 hover:text-maroon transition-colors uppercase tracking-widest">
-                            Poets
+                            {t.nav_poets}
                         </Link>
                         <Link href="/submit" className="text-sm font-english font-medium text-foreground/80 hover:text-maroon transition-colors uppercase tracking-widest">
-                            Submit
+                            {t.nav_submit}
                         </Link>
                         {token && (
                             <Link href="/admin" className="text-sm font-english font-bold text-gold hover:text-maroon transition-colors uppercase tracking-widest">
-                                Admin
+                                {t.nav_admin}
                             </Link>
                         )}
                     </div>
@@ -94,7 +94,7 @@ export const Navbar = () => {
                                 className="flex items-center gap-2 px-4 py-2 rounded-lg border border-maroon/20 hover:bg-maroon/5 transition-all text-maroon text-sm font-medium font-english"
                             >
                                 <LogOut className="w-4 h-4" />
-                                Sign Out
+                                {t.nav_signout}
                             </button>
                         ) : (
                             <Link
@@ -102,7 +102,7 @@ export const Navbar = () => {
                                 className="flex items-center gap-2 px-4 py-2 rounded-lg border border-maroon/20 hover:border-maroon/40 hover:bg-maroon/5 transition-all text-maroon text-sm font-medium font-english"
                             >
                                 <User className="w-4 h-4" />
-                                Sign In
+                                {t.nav_signin}
                             </Link>
                         )}
 
@@ -153,7 +153,7 @@ export const Navbar = () => {
                                     onClick={() => setIsOpen(false)}
                                     className="block text-lg font-english font-bold text-gold hover:text-maroon py-2 px-4 rounded-xl hover:bg-gold/5 transition-all"
                                 >
-                                    Admin
+                                    {t.nav_admin}
                                 </Link>
                             )}
                             <div className="pt-4 border-t border-gold/10 flex flex-col gap-3">
@@ -166,7 +166,7 @@ export const Navbar = () => {
                                         className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-maroon text-white font-english font-bold uppercase tracking-widest text-sm"
                                     >
                                         <LogOut className="w-4 h-4" />
-                                        Sign Out
+                                        {t.nav_signout}
                                     </button>
                                 ) : (
                                     <Link
@@ -175,7 +175,7 @@ export const Navbar = () => {
                                         className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-maroon text-white font-english font-bold uppercase tracking-widest text-sm"
                                     >
                                         <User className="w-4 h-4" />
-                                        Sign In
+                                        {t.nav_signin}
                                     </Link>
                                 )}
                             </div>

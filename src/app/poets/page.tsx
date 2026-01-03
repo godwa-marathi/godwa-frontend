@@ -6,11 +6,13 @@ import { Footer } from "@/components/Footer";
 import { PoetCard } from "@/components/Cards";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { useLanguage } from "@/lib/LanguageContext";
 import { PoetOut } from "@/lib/types";
 import { Loader2, Search, Users } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function PoetsPage() {
+    const { t } = useLanguage();
     const { data: poets, isLoading } = useQuery({
         queryKey: ["poets"],
         queryFn: () => api.get<PoetOut[]>("/api/poets/"),
@@ -26,16 +28,16 @@ export default function PoetsPage() {
                         <div className="inline-block p-4 rounded-full bg-gold/5 text-gold mb-6 border border-gold/10">
                             <Users className="w-8 h-8" />
                         </div>
-                        <h1 className="text-4xl md:text-5xl font-serif font-bold text-foreground mb-4">Celebrated Poets</h1>
+                        <h1 className="text-4xl md:text-5xl font-serif font-bold text-foreground mb-4">{t.poets_title}</h1>
                         <p className="text-foreground/60 font-english max-w-2xl mx-auto italic">
-                            Explore the lives and legacies of the master weavers of Marathi verse.
+                            {t.poets_subtitle}
                         </p>
                     </div>
 
                     {isLoading ? (
                         <div className="flex flex-col items-center justify-center py-24 gap-4">
                             <Loader2 className="w-10 h-10 text-maroon animate-spin" />
-                            <p className="text-gold font-english font-bold text-xs uppercase tracking-widest">Loading Literary Legends...</p>
+                            <p className="text-gold font-english font-bold text-xs uppercase tracking-widest">{t.poets_loading}</p>
                         </div>
                     ) : poets && poets.length > 0 ? (
                         <motion.div
@@ -49,7 +51,7 @@ export default function PoetsPage() {
                         </motion.div>
                     ) : (
                         <div className="text-center py-24 bg-white rounded-3xl border border-dashed border-gold/30">
-                            <p className="text-foreground/40 font-english italic">No poets found in our archives yet.</p>
+                            <p className="text-foreground/40 font-english italic">{t.poets_no_results}</p>
                         </div>
                     )}
                 </div>
