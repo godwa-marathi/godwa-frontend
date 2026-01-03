@@ -5,11 +5,13 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { PoemOut, WordOut } from "@/lib/types";
+import { useLanguage } from "@/lib/LanguageContext";
+import { PoemOut, WordOut, PoetOut } from "@/lib/types";
 import { Check, X, Wand2, Loader2, AlertCircle, Clock, BookOpen } from "lucide-react";
 
 export default function AdminDashboard() {
     const queryClient = useQueryClient();
+    const { language } = useLanguage();
     const [activeTab, setActiveTab] = useState<"submissions" | "words">("submissions");
 
     // Fetch pending submissions
@@ -23,6 +25,24 @@ export default function AdminDashboard() {
         queryKey: ["admin", "pending-words"],
         queryFn: () => api.get<WordOut[]>("/api/admin/words/pending"),
     });
+
+    // Fetch reference data for lookups
+    const { data: poets } = useQuery({
+        queryKey: ["poets"],
+        queryFn: () => api.get<PoetOut[]>("/api/poets/"),
+    });
+
+    // Fetch chhandas (simulated or real endpoint if available, assuming /api/chhandas/ exists or we use ID)
+    // Since I don't see a clear chhanda list endpoint in my search, I will start with poets which is the critical request.
+    // If chhanda names are needed and not in the poem object, we might need to fetch them too.
+    // However, the interface has chhanda_name? in PoemOut. Let's see if we can rely on that or ID.
+    // The user specifically asked for chhanda_id, but poet NAME.
+
+    // Create lookup maps
+    const poetMap = React.useMemo(() => {
+        if (!poets) return new Map<number, PoetOut>();
+        return new Map(poets.map(p => [p.id, p]));
+    }, [poets]);
 
     // Mutation: Approve Poem
     const approveMutation = useMutation({
@@ -69,37 +89,59 @@ export default function AdminDashboard() {
                         {loadingSubs ? (
                             <div className="py-20 flex justify-center"><Loader2 className="w-8 h-8 text-maroon animate-spin" /></div>
                         ) : submissions?.length ? (
-                            submissions.map((poem) => (
-                                <div key={poem.id} className="bg-white rounded-2xl border border-gold/10 p-6 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
-                                    <div className="flex items-center gap-6">
-                                        <div className="w-12 h-12 rounded-xl bg-gold/5 flex items-center justify-center text-gold">
-                                            <BookOpen className="w-6 h-6" />
-                                        </div>
-                                        <div>
-                                            <h3 className="text-xl font-marathi font-bold text-foreground">{poem.title}</h3>
-                                            <div className="text-xs font-english text-foreground/40 flex items-center gap-2">
-                                                <span className="font-bold text-gold uppercase tracking-widest">by {poem.poet?.name}</span>
-                                                <span>•</span>
-                                                <Clock className="w-3 h-3" />
-                                                Submitted 2h ago
+                            submissions.map((item: any) => {
+                                // Handle potential nested structure (Submission wrapper vs direct Poem)
+                                const poem = item.poem || item;
+                                // If nested (item.poem exists), the submission ID is on the wrapper (item.id).
+                                // If flat, poem is the item, so poem.id is the ID.
+                                const submissionId = item.poem ? item.id : poem.id;
+
+                                const poet = poem.poet || poetMap.get(poem.poet_id);
+                                const poetName = language === "devanagari"
+                                    ? (poet?.name || "Unknown Poet")
+                                    : (poet?.name_roman || poet?.name || "Unknown Poet");
+
+                                return (
+                                    <div key={submissionId} className="bg-white rounded-2xl border border-gold/10 p-6 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
+                                        <div className="flex items-center gap-6">
+                                            <div className="w-12 h-12 rounded-xl bg-gold/5 flex items-center justify-center text-gold">
+                                                <BookOpen className="w-6 h-6" />
+                                            </div>
+                                            <div>
+                                                <h3 className={`text-xl font-bold text-foreground ${language === "devanagari" ? "font-marathi" : "font-english"}`}>
+                                                    {language === "devanagari"
+                                                        ? (poem.title || poem.title_roman)
+                                                        : (poem.title_roman || poem.title)}
+                                                </h3>
+                                                <div className="text-xs font-english text-foreground/40 flex items-center gap-2">
+                                                    <span className="font-bold text-gold uppercase tracking-widest">by {poetName}</span>
+                                                    <span>•</span>
+                                                    <span className="text-foreground/60">
+                                                        Chhanda ID: {poem.chhanda_id ?? "N/A"}
+                                                    </span>
+                                                    <span>•</span>
+                                                    <Clock className="w-3 h-3" />
+                                                    Submitted 2h ago
+                                                </div>
                                             </div>
                                         </div>
+                                        <div className="flex items-center gap-2">
+                                            <button className="p-2 rounded-lg text-foreground/40 hover:bg-gold/5 hover:text-foreground">
+                                                <X className="w-5 h-5" />
+                                            </button>
+                                            <button
+                                                onClick={() => approveMutation.mutate(submissionId)}
+                                                disabled={approveMutation.isPending}
+                                                className="flex items-center gap-2 px-4 py-2 bg-maroon text-white rounded-xl font-english font-bold text-xs uppercase tracking-widest hover:shadow-lg hover:shadow-maroon/20 transition-all"
+                                            >
+                                                {approveMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                                                Approve
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <button className="p-2 rounded-lg text-foreground/40 hover:bg-gold/5 hover:text-foreground">
-                                            <X className="w-5 h-5" />
-                                        </button>
-                                        <button
-                                            onClick={() => approveMutation.mutate(poem.id)}
-                                            disabled={approveMutation.isPending}
-                                            className="flex items-center gap-2 px-4 py-2 bg-maroon text-white rounded-xl font-english font-bold text-xs uppercase tracking-widest hover:shadow-lg hover:shadow-maroon/20 transition-all"
-                                        >
-                                            {approveMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
-                                            Approve
-                                        </button>
-                                    </div>
-                                </div>
-                            ))
+                                )
+                            })
+
                         ) : (
                             <EmptyState title="Queue Empty" description="All submissions have been reviewed." />
                         )}

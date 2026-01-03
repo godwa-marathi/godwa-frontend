@@ -4,10 +4,12 @@ import React from "react";
 import Link from "next/link";
 import { Search, Menu, User, LogOut, X } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
+import { useLanguage } from "@/lib/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
 
 export const Navbar = () => {
     const { token, logout } = useAuth();
+    const { language, setLanguage } = useLanguage();
     const [isOpen, setIsOpen] = React.useState(false);
     const [mounted, setMounted] = React.useState(false);
 
@@ -55,6 +57,33 @@ export const Navbar = () => {
 
                     {/* Actions */}
                     <div className="flex items-center gap-4">
+                        {/* Language Toggle Dropdown */}
+                        <div className="relative group/lang">
+                            <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gold/20 hover:border-maroon/20 hover:bg-gold/5 transition-all">
+                                <span className="font-english font-bold text-xs uppercase tracking-widest text-maroon">
+                                    {language === "devanagari" ? "MAR" : "ENG"}
+                                </span>
+                                <span className="text-[10px] text-gold/60">▼</span>
+                            </button>
+
+                            <div className="absolute right-0 top-full mt-2 w-32 bg-white rounded-xl border border-gold/10 shadow-lg shadow-gold/5 py-1 opacity-0 invisible group-hover/lang:opacity-100 group-hover/lang:visible transition-all transform origin-top-right">
+                                <button
+                                    onClick={() => setLanguage("devanagari")}
+                                    className={`w-full text-left px-4 py-2 text-sm font-marathi hover:bg-gold/5 transition-colors flex items-center justify-between ${language === "devanagari" ? "text-maroon font-bold" : "text-foreground/60"}`}
+                                >
+                                    <span>Devanagari</span>
+                                    {language === "devanagari" && <span className="text-maroon text-xs">✓</span>}
+                                </button>
+                                <button
+                                    onClick={() => setLanguage("roman")}
+                                    className={`w-full text-left px-4 py-2 text-sm font-english hover:bg-gold/5 transition-colors flex items-center justify-between ${language === "roman" ? "text-maroon font-bold" : "text-foreground/60"}`}
+                                >
+                                    <span>English</span>
+                                    {language === "roman" && <span className="text-maroon text-xs">✓</span>}
+                                </button>
+                            </div>
+                        </div>
+
                         <button className="p-2 text-foreground/60 hover:text-maroon transition-colors">
                             <Search className="w-5 h-5" />
                         </button>
