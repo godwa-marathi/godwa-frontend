@@ -12,6 +12,7 @@ export interface WordOut {
 export interface PoetOut {
     id: number;
     name: string;
+    name_roman?: string;
     bio?: string;
     image_url?: string;
     life_span?: string; // e.g., "1850 - 1920"
@@ -21,6 +22,7 @@ export interface PoetOut {
 export interface PoemOut {
     id: number;
     title: string;
+    title_roman?: string;
     body_marathi: string;
     body_roman?: string;
     poet_id: number;
