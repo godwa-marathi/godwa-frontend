@@ -6,6 +6,7 @@ import { Footer } from "@/components/Footer";
 import { PoemCard } from "@/components/Cards";
 import { Search, SlidersHorizontal, ChevronRight, ChevronLeft } from "lucide-react";
 import { PoemOut } from "@/lib/types";
+import { useLanguage } from "@/lib/LanguageContext";
 
 const CATEGORIES = [
     "All", "Romantic", "Nature", "Patriotic", "Spiritual",
@@ -23,6 +24,7 @@ const ALL_POEMS: PoemOut[] = [
 ];
 
 export default function ExplorePage() {
+    const { t, language } = useLanguage();
     const [selectedCategory, setSelectedCategory] = useState("All");
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -40,15 +42,15 @@ export default function ExplorePage() {
             <section className="pt-12 pb-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
                     <div>
-                        <h1 className="text-4xl font-serif font-bold text-foreground">Explore Poetry</h1>
-                        <p className="text-foreground/60 font-english mt-1">Discover the vast landscape of Marathi verse</p>
+                        <h1 className="text-4xl font-serif font-bold text-foreground">{t.explore_title}</h1>
+                        <p className="text-foreground/60 font-english mt-1">{t.explore_subtitle}</p>
                     </div>
 
                     <div className="relative group max-w-md w-full">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground/40 group-focus-within:text-maroon transition-colors" />
                         <input
                             type="text"
-                            placeholder="Search by title or poet..."
+                            placeholder={t.explore_search_placeholder}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="w-full pl-12 pr-4 py-3 bg-white border border-gold/10 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-maroon/20 focus:border-maroon transition-all font-english"
@@ -68,7 +70,7 @@ export default function ExplorePage() {
                                     : "bg-white text-foreground/60 border border-gold/10 hover:border-maroon/40 hover:text-maroon"
                                     }`}
                             >
-                                {category}
+                                {(t as any)[`cat_${category.toLowerCase()}`] || category}
                             </button>
                         ))}
                     </div>
@@ -79,11 +81,11 @@ export default function ExplorePage() {
 
                 <div className="flex items-center justify-between mb-8">
                     <div className="text-sm font-english text-foreground/40 font-bold uppercase tracking-widest">
-                        {filteredPoems.length} Results Found
+                        {filteredPoems.length} {t.explore_results_found}
                     </div>
                     <button className="flex items-center gap-2 text-sm font-english font-bold text-maroon uppercase tracking-widest hover:underline decoration-2 underline-offset-4">
                         <SlidersHorizontal className="w-4 h-4" />
-                        Filter
+                        {t.explore_filter_btn}
                     </button>
                 </div>
 
@@ -97,8 +99,8 @@ export default function ExplorePage() {
                             <div className="text-gold mb-4 inline-block p-4 rounded-full bg-gold/5">
                                 <Search className="w-12 h-12" />
                             </div>
-                            <h3 className="text-xl font-serif font-bold text-foreground">No poems found</h3>
-                            <p className="text-foreground/60 font-english mt-1">Try adjusting your filters or search query</p>
+                            <h3 className="text-xl font-serif font-bold text-foreground">{t.explore_no_results_title}</h3>
+                            <p className="text-foreground/60 font-english mt-1">{t.explore_no_results_desc}</p>
                         </div>
                     )}
                 </div>

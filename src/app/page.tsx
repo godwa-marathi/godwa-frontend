@@ -11,8 +11,10 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { PoemOut, PoetOut } from "@/lib/types";
 import { Loader2 } from "lucide-react";
+import { useLanguage } from "@/lib/LanguageContext";
 
 export default function Home() {
+  const { t } = useLanguage();
   // Fetch featured poems
   const { data: poems, isLoading: loadingPoems } = useQuery({
     queryKey: ["poems", "featured"],
@@ -38,14 +40,13 @@ export default function Home() {
       <section className="py-24 bg-gold/5 border-y border-gold/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-16">
           <div className="inline-block px-3 py-1 rounded-full bg-maroon/5 text-maroon text-[10px] font-bold uppercase tracking-[0.2em] mb-4">
-            Interactive Experience
+            {t.home_interactive_tag}
           </div>
           <h2 className="text-4xl md:text-5xl font-serif font-bold text-foreground mb-6">
-            Every Word Tells a Story
+            {t.home_interactive_title}
           </h2>
           <p className="max-w-2xl mx-auto text-foreground/60 font-english">
-            Click on any highlighted word in the demo below to discover its meaning,
-            pronunciation, and linguistic details. Poetry becomes a journey of discovery.
+            {t.home_interactive_desc}
           </p>
         </div>
 
@@ -64,7 +65,7 @@ export default function Home() {
         {demoPoem && (
           <div className="text-center mt-12">
             <p className="text-xs text-gold font-bold uppercase tracking-widest flex items-center justify-center gap-2">
-              Try clicking on the highlighted words above
+              {t.home_interactive_hint}
             </p>
           </div>
         )}
@@ -74,11 +75,11 @@ export default function Home() {
       <section className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-end mb-12">
           <div>
-            <h2 className="text-3xl font-serif font-bold text-foreground">Timeless Verses</h2>
-            <p className="text-foreground/60 font-english mt-2">Handpicked masterpieces from our collection</p>
+            <h2 className="text-3xl font-serif font-bold text-foreground">{t.home_featured_title}</h2>
+            <p className="text-foreground/60 font-english mt-2">{t.home_featured_subtitle}</p>
           </div>
           <a href="/explore" className="text-maroon font-english font-bold text-sm uppercase tracking-widest hover:underline decoration-2 underline-offset-8">
-            View All
+            {t.home_view_all}
           </a>
         </div>
 
@@ -101,8 +102,8 @@ export default function Home() {
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-serif font-bold text-foreground">Celebrated Poets</h2>
-            <p className="text-foreground/60 font-english mt-2">The architects of Marathi literature</p>
+            <h2 className="text-3xl font-serif font-bold text-foreground">{t.home_poets_title}</h2>
+            <p className="text-foreground/60 font-english mt-2">{t.home_poets_subtitle}</p>
           </div>
 
           {loadingPoets ? (

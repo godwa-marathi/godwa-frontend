@@ -3,8 +3,10 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Book, Users, PenTool } from "lucide-react";
+import { useLanguage } from "@/lib/LanguageContext";
 
 export const Hero = () => {
+    const { t } = useLanguage();
     return (
         <section className="relative py-20 overflow-hidden">
             {/* Decorative background elements */}
@@ -22,26 +24,25 @@ export const Hero = () => {
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-gold"></span>
                         </span>
-                        Premium Poetry Experience
+                        {t.home_hero_tag}
                     </div>
 
                     <h1 className="text-5xl md:text-7xl font-serif font-bold text-foreground mb-6 leading-[1.1]">
-                        Experience the Soul of <br />
-                        <span className="text-maroon italic">Marathi Poetry</span>
+                        {t.home_hero_title_prefix} <br />
+                        <span className="text-maroon italic">{t.home_hero_title_suffix}</span>
                     </h1>
 
                     <p className="max-w-2xl mx-auto text-lg md:text-xl text-foreground/60 font-english leading-relaxed mb-10">
-                        Discover timeless verses, explore linguistic depths with our interactive reader,
-                        and join a community dedicated to the sweet essence of Marathi literature.
+                        {t.home_hero_desc}
                     </p>
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20">
                         <button className="w-full sm:w-auto px-8 py-4 bg-maroon text-white rounded-full font-english font-semibold flex items-center justify-center gap-2 transition-transform hover:scale-105 active:scale-95 shadow-lg shadow-maroon/20 group">
-                            Start Exploring
+                            {t.home_hero_btn_start}
                             <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                         </button>
                         <button className="w-full sm:w-auto px-8 py-4 bg-transparent text-maroon border-2 border-maroon rounded-full font-english font-semibold transition-all hover:bg-maroon/5 active:scale-95">
-                            Contribute Poetry
+                            {t.home_hero_btn_contribute}
                         </button>
                     </div>
 
@@ -52,21 +53,21 @@ export const Hero = () => {
                                 <Book className="w-6 h-6" />
                             </div>
                             <span className="text-2xl font-serif font-bold text-foreground">1,200+</span>
-                            <span className="text-[10px] font-english text-gold font-bold uppercase tracking-widest">Poems Archive</span>
+                            <span className="text-[10px] font-english text-gold font-bold uppercase tracking-widest">{t.home_stat_poems}</span>
                         </div>
                         <div className="flex flex-col items-center gap-1">
                             <div className="p-3 rounded-2xl bg-gold/10 text-gold mb-2">
                                 <Users className="w-6 h-6" />
                             </div>
                             <span className="text-2xl font-serif font-bold text-foreground">450+</span>
-                            <span className="text-[10px] font-english text-gold font-bold uppercase tracking-widest">Master Poets</span>
+                            <span className="text-[10px] font-english text-gold font-bold uppercase tracking-widest">{t.home_stat_poets}</span>
                         </div>
                         <div className="flex flex-col md:flex items-center gap-1 col-span-2 md:col-span-1">
                             <div className="p-3 rounded-2xl bg-gold/10 text-gold mb-2">
                                 <PenTool className="w-6 h-6" />
                             </div>
                             <span className="text-2xl font-serif font-bold text-foreground">15k+</span>
-                            <span className="text-[10px] font-english text-gold font-bold uppercase tracking-widest">Defined Words</span>
+                            <span className="text-[10px] font-english text-gold font-bold uppercase tracking-widest">{t.home_stat_words}</span>
                         </div>
                     </div>
                 </motion.div>

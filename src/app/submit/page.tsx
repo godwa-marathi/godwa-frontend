@@ -9,8 +9,10 @@ import { api } from "@/lib/api";
 import { PoetOut } from "@/lib/types";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/AuthContext";
+import { useLanguage } from "@/lib/LanguageContext";
 
 export default function SubmitPoemPage() {
+    const { t } = useLanguage();
     const [step, setStep] = useState(1);
     const [formData, setFormData] = useState({
         title: "",
@@ -85,8 +87,8 @@ export default function SubmitPoemPage() {
                     <div className="inline-block p-4 rounded-full bg-gold/5 text-gold mb-6 border border-gold/10">
                         <PenTool className="w-8 h-8" />
                     </div>
-                    <h1 className="text-4xl font-serif font-bold text-foreground mb-2">Contribute Poetry</h1>
-                    <p className="text-foreground/60 font-english italic">Share the beauty of Marathi verses with the world.</p>
+                    <h1 className="text-4xl font-serif font-bold text-foreground mb-2">{t.submit_title}</h1>
+                    <p className="text-foreground/60 font-english italic">{t.submit_subtitle}</p>
                 </div>
 
                 {/* Progress Stepper */}
@@ -114,11 +116,11 @@ export default function SubmitPoemPage() {
                                 className="space-y-6 flex-1"
                             >
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold">Poet Name</label>
+                                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold">{t.submit_label_poet_name}</label>
                                     <div className="relative">
                                         <input
                                             type="text"
-                                            placeholder="Type poet name..."
+                                            placeholder={t.submit_ph_poet_name}
                                             value={formData.poet_name}
                                             onChange={(e) => handlePoetSearch(e.target.value)}
                                             className="w-full px-4 py-3 bg-white border border-gold/10 rounded-xl focus:ring-2 focus:ring-maroon/20 focus:border-maroon outline-none transition-all font-marathi"
@@ -147,10 +149,10 @@ export default function SubmitPoemPage() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold">Poem Title</label>
+                                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold">{t.submit_label_poem_title}</label>
                                     <input
                                         type="text"
-                                        placeholder="Enter poem title..."
+                                        placeholder={t.submit_ph_poem_title}
                                         value={formData.title}
                                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                                         className="w-full px-4 py-3 bg-white border border-gold/10 rounded-xl focus:ring-2 focus:ring-maroon/20 focus:border-maroon outline-none transition-all font-marathi"
@@ -158,17 +160,17 @@ export default function SubmitPoemPage() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold">Genre / Tag</label>
+                                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold">{t.submit_label_genre}</label>
                                     <select
                                         value={formData.genre}
                                         onChange={(e) => setFormData({ ...formData, genre: e.target.value })}
                                         className="w-full px-4 py-3 bg-white border border-gold/10 rounded-xl focus:ring-2 focus:ring-maroon/20 focus:border-maroon outline-none transition-all font-english"
                                     >
-                                        <option value="">Select Genre</option>
-                                        <option value="Romantic">Romantic</option>
-                                        <option value="Nature">Nature</option>
-                                        <option value="Spiritual">Spiritual</option>
-                                        <option value="Patriotic">Patriotic</option>
+                                        <option value="">{t.submit_ph_genre}</option>
+                                        <option value="Romantic">{(t as any).cat_romantic}</option>
+                                        <option value="Nature">{(t as any).cat_nature}</option>
+                                        <option value="Spiritual">{(t as any).cat_spiritual}</option>
+                                        <option value="Patriotic">{(t as any).cat_patriotic}</option>
                                     </select>
                                 </div>
                             </motion.div>
@@ -183,14 +185,14 @@ export default function SubmitPoemPage() {
                                 className="space-y-6 flex-1"
                             >
                                 <div className="flex items-center justify-between mb-4">
-                                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold">Poem Body (Marathi)</label>
+                                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold">{t.submit_label_body}</label>
                                     <button className="flex items-center gap-2 text-xs font-bold text-maroon uppercase tracking-widest hover:bg-maroon/5 px-3 py-1.5 rounded-lg border border-maroon/20 transition-all">
                                         <ImageIcon className="w-4 h-4" />
-                                        Scan Manuscript
+                                        {t.submit_btn_scan}
                                     </button>
                                 </div>
                                 <textarea
-                                    placeholder="Paste or type poem in Devanagari..."
+                                    placeholder={t.submit_ph_body}
                                     value={formData.body_marathi}
                                     onChange={(e) => setFormData({ ...formData, body_marathi: e.target.value })}
                                     className="w-full h-80 px-6 py-6 bg-white border border-gold/10 rounded-2xl focus:ring-2 focus:ring-maroon/20 focus:border-maroon outline-none transition-all font-marathi text-xl leading-relaxed resize-none"
@@ -210,13 +212,13 @@ export default function SubmitPoemPage() {
                                     <ShieldCheck className="w-12 h-12" />
                                 </div>
                                 <div>
-                                    <h3 className="text-2xl font-serif font-bold text-foreground mb-2">Ready to Review</h3>
+                                    <h3 className="text-2xl font-serif font-bold text-foreground mb-2">{t.submit_review_title}</h3>
                                     <p className="text-foreground/60 font-english max-w-xs mx-auto">
-                                        Your poem will be submitted for community review and AI word enrichment before being published.
+                                        {t.submit_review_desc}
                                     </p>
                                 </div>
                                 <div className="w-full p-6 rounded-2xl bg-gold/5 border border-gold/10 text-left">
-                                    <div className="text-[10px] font-bold text-gold uppercase tracking-widest mb-2">Submission Preview</div>
+                                    <div className="text-[10px] font-bold text-gold uppercase tracking-widest mb-2">{t.submit_review_preview}</div>
                                     <div className="font-marathi font-bold text-lg text-maroon">{formData.title}</div>
                                     <div className="text-sm font-marathi text-foreground/60">by {formData.poet_name}</div>
                                 </div>
@@ -232,7 +234,7 @@ export default function SubmitPoemPage() {
                                 }`}
                         >
                             <ChevronLeft className="w-4 h-4" />
-                            Previous
+                            {t.submit_btn_prev}
                         </button>
 
                         {step < 3 ? (
@@ -241,7 +243,7 @@ export default function SubmitPoemPage() {
                                 disabled={step === 1 ? !formData.title || !formData.poet_name : !formData.body_marathi}
                                 className="flex items-center gap-2 px-8 py-3 bg-maroon text-white rounded-xl font-english font-bold text-sm uppercase tracking-widest transition-all disabled:opacity-50 disabled:grayscale hover:shadow-lg hover:shadow-maroon/20"
                             >
-                                Next Step
+                                {t.submit_btn_next}
                                 <ChevronRight className="w-4 h-4" />
                             </button>
                         ) : (
@@ -251,7 +253,7 @@ export default function SubmitPoemPage() {
                                 className="flex items-center gap-2 px-8 py-3 bg-maroon text-white rounded-xl font-english font-bold text-sm uppercase tracking-widest transition-all hover:shadow-lg hover:shadow-maroon/20"
                             >
                                 {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-                                Submit for Review
+                                {t.submit_btn_submit}
                             </button>
                         )}
                     </div>

@@ -11,7 +11,7 @@ import { Check, X, Wand2, Loader2, AlertCircle, Clock, BookOpen } from "lucide-r
 
 export default function AdminDashboard() {
     const queryClient = useQueryClient();
-    const { language } = useLanguage();
+    const { language, t } = useLanguage();
     const [activeTab, setActiveTab] = useState<"submissions" | "words">("submissions");
 
     // Fetch pending submissions
@@ -62,8 +62,8 @@ export default function AdminDashboard() {
 
             <section className="flex-1 max-w-7xl mx-auto w-full px-4 py-12">
                 <div className="mb-12">
-                    <h1 className="text-4xl font-serif font-bold text-foreground">Admin Center</h1>
-                    <p className="text-foreground/60 font-english mt-1">Manage submissions and linguistic enrichment</p>
+                    <h1 className="text-4xl font-serif font-bold text-foreground">{t.admin_title}</h1>
+                    <p className="text-foreground/60 font-english mt-1">{t.admin_subtitle}</p>
                 </div>
 
                 {/* Tabs */}
@@ -73,14 +73,14 @@ export default function AdminDashboard() {
                         className={`px-6 py-2.5 rounded-xl font-english font-bold text-xs uppercase tracking-widest transition-all ${activeTab === "submissions" ? "bg-maroon text-white shadow-lg shadow-maroon/20" : "text-foreground/40 hover:text-maroon"
                             }`}
                     >
-                        Review Queue
+                        {t.admin_tab_review}
                     </button>
                     <button
                         onClick={() => setActiveTab("words")}
                         className={`px-6 py-2.5 rounded-xl font-english font-bold text-xs uppercase tracking-widest transition-all ${activeTab === "words" ? "bg-maroon text-white shadow-lg shadow-maroon/20" : "text-foreground/40 hover:text-maroon"
                             }`}
                     >
-                        Word Enrichment
+                        {t.admin_tab_words}
                     </button>
                 </div>
 
@@ -135,7 +135,7 @@ export default function AdminDashboard() {
                                                 className="flex items-center gap-2 px-4 py-2 bg-maroon text-white rounded-xl font-english font-bold text-xs uppercase tracking-widest hover:shadow-lg hover:shadow-maroon/20 transition-all"
                                             >
                                                 {approveMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
-                                                Approve
+                                                {t.admin_btn_approve}
                                             </button>
                                         </div>
                                     </div>
@@ -143,7 +143,7 @@ export default function AdminDashboard() {
                             })
 
                         ) : (
-                            <EmptyState title="Queue Empty" description="All submissions have been reviewed." />
+                            <EmptyState title={t.admin_queue_empty} description="" />
                         )}
                     </div>
                 ) : (
@@ -159,18 +159,18 @@ export default function AdminDashboard() {
                                             onClick={() => enrichMutation.mutate(word.id)}
                                             disabled={enrichMutation.isPending}
                                             className="p-2 rounded-lg bg-gold/10 text-gold hover:bg-gold/20 transition-all group"
-                                            title="Enrich with AI"
+                                            title={t.admin_btn_enrich}
                                         >
                                             {enrichMutation.isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Wand2 className="w-5 h-5 group-hover:rotate-12 transition-transform" />}
                                         </button>
                                     </div>
                                     <p className="text-xs font-english text-foreground/40 leading-relaxed">
-                                        Lacks definition and linguistic metadata. Click the wand to auto-populate using LLM service.
+                                        {t.admin_word_hint}
                                     </p>
                                 </div>
                             ))
                         ) : (
-                            <EmptyState title="No Pending Words" description="All words in the system are enriched." />
+                            <EmptyState title={t.admin_queue_empty} description="" />
                         )}
                     </div>
                 )}
