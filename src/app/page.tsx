@@ -34,7 +34,7 @@ export default function Home() {
   });
 
   // Use the first approved poem for the demo if available, otherwise fallback
-  const demoPoem = poems?.find(p => p.status === "approved" && p.words.length > 0) || poems?.[0];
+  const demoPoem = poems?.find(p => p.status === "approved" && p.words?.length > 0) || poems?.[0];
 
   return (
     <main className="min-h-screen flex flex-col">
