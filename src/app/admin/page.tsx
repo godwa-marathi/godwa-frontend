@@ -145,19 +145,6 @@ export default function AdminDashboard() {
                                                 </div>
                                             </div>
                                         </Link>
-                                        <div className="flex items-center gap-2">
-                                            <button className="p-2 rounded-lg text-foreground/40 hover:bg-gold/5 hover:text-foreground">
-                                                <X className="w-5 h-5" />
-                                            </button>
-                                            <button
-                                                onClick={() => approveMutation.mutate(poemId)}
-                                                disabled={approveMutation.isPending}
-                                                className="flex items-center gap-2 px-4 py-2 bg-maroon text-white rounded-xl font-english font-bold text-xs uppercase tracking-widest hover:shadow-lg hover:shadow-maroon/20 transition-all"
-                                            >
-                                                {approveMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
-                                                {t.admin_btn_approve}
-                                            </button>
-                                        </div>
                                     </div>
                                 )
                             })
@@ -204,6 +191,16 @@ export default function AdminDashboard() {
                                                 </div>
                                             </div>
                                         </Link>
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                onClick={() => approveMutation.mutate(poemId)}
+                                                disabled={approveMutation.isPending}
+                                                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-xl font-english font-bold text-xs uppercase tracking-widest hover:shadow-lg hover:shadow-green-600/20 transition-all"
+                                            >
+                                                {approveMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                                                Approve
+                                            </button>
+                                        </div>
                                     </div>
                                 )
                             })

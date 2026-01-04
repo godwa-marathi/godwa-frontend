@@ -1,8 +1,8 @@
 import Cookies from 'js-cookie';
 
-// const BASE_URL = 'https://godwa-backend-my11.onrender.com';
+const BASE_URL = 'https://godwa-backend-my11.onrender.com';
 
-const BASE_URL = 'http://localhost:8000';
+// const BASE_URL = 'http://localhost:8000';
 
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const token = Cookies.get('godwa_access_token');
