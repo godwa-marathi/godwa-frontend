@@ -90,7 +90,7 @@ export default function PoemPage() {
                             <div className="text-lg text-maroon/80 font-marathi font-medium">
                                 <span className="text-foreground/40 mr-1.5 text-base font-english italic font-normal">by</span>
                                 <Link
-                                    href={`/poet/${poem.poet_id}`}
+                                    href={`/poets/${poem.poet_id}`}
                                     className="hover:text-maroon hover:underline decoration-maroon/30 underline-offset-4 transition-all"
                                 >
                                     {poem.poet?.name || "Traditional"}
@@ -120,12 +120,14 @@ export default function PoemPage() {
                                     )}
                                 </div>
                                 <h4 className="font-marathi font-bold text-xl mb-1 text-maroon">{poem.poet?.name || "Traditional"}</h4>
-                                <Link
-                                    href={`/poet/${poem.poet_id}`}
-                                    className="text-[10px] uppercase tracking-widest font-bold text-gold hover:text-maroon transition-colors mt-2 border-b border-transparent hover:border-maroon"
-                                >
-                                    View Poet Profile
-                                </Link>
+                                {poem.poet && (
+                                    <Link
+                                        href={`/poets/${poem.poet.id}`}
+                                        className="text-[10px] uppercase tracking-widest font-bold text-gold hover:text-maroon transition-colors mt-2 border-b border-transparent hover:border-maroon"
+                                    >
+                                        View Poet Profile
+                                    </Link>
+                                )}
                             </div>
                         </div>
 

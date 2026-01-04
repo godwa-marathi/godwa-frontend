@@ -680,24 +680,26 @@ export default function SubmissionDetailPage({ params }: Props) {
                                 />
                                 {isSearchingChhanda && (
                                     <div className="absolute top-full left-0 w-full mt-2 bg-white border border-gold/20 rounded-xl shadow-xl z-50 overflow-hidden max-h-60 overflow-y-auto">
-                                        {chhandaSuggestions.length > 0 ? chhandaSuggestions.map((ch: any) => (
-                                            <button
-                                                key={ch.id}
-                                                type="button"
-                                                onClick={() => {
-                                                    setEditedChandaName(ch.name);
-                                                    setEditedChandaId(ch.id);
-                                                    setIsSearchingChhanda(false);
-                                                }}
-                                                className="w-full text-left px-4 py-3 hover:bg-gold/5 flex items-center justify-between border-b border-gold/5 last:border-0 transition-colors"
-                                            >
-                                                <div>
-                                                    <span className="font-marathi font-bold text-lg">{ch.name}</span>
-                                                    {ch.name_roman && <span className="text-xs text-foreground/40 font-english ml-2">({ch.name_roman})</span>}
-                                                </div>
-                                                <Plus className="w-4 h-4 text-maroon" />
-                                            </button>
-                                        )) : (
+                                        {chhandaSuggestions.length > 0 ? chhandaSuggestions.map((ch: any, index: number) => {
+                                            return (
+                                                <button
+                                                    key={index}
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setEditedChandaName(ch.name);
+                                                        setEditedChandaId(ch.id);
+                                                        setIsSearchingChhanda(false);
+                                                    }}
+                                                    className="w-full text-left px-4 py-3 hover:bg-gold/5 flex items-center justify-between border-b border-gold/5 last:border-0 transition-colors"
+                                                >
+                                                    <div>
+                                                        <span className="font-marathi font-bold text-lg">{ch.name}</span>
+                                                        {ch.name_roman && <span className="text-xs text-foreground/40 font-english ml-2">({ch.name_roman})</span>}
+                                                    </div>
+                                                    <Plus className="w-4 h-4 text-maroon" />
+                                                </button>
+                                            )
+                                        }) : (
                                             <div className="px-4 py-3 text-sm text-foreground/40 italic">
                                                 Type to create "{editedChandaName}"
                                             </div>
