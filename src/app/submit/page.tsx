@@ -4,19 +4,22 @@ import React, { useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { motion, AnimatePresence } from "framer-motion";
-import { PenTool, Search, Plus, Send, ChevronRight, ChevronLeft, Image as ImageIcon, Loader2 } from "lucide-react";
+import { PenTool, Search, Plus, Send, ChevronRight, ChevronLeft, Image as ImageIcon, Loader2, Languages } from "lucide-react";
 import { api } from "@/lib/api";
 import { PoetOut } from "@/lib/types";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import Sanscript from "@indic-transliteration/sanscript";
 
 export default function SubmitPoemPage() {
     const { t } = useLanguage();
     const [step, setStep] = useState(1);
+    const [inputScript, setInputScript] = useState<"devanagari" | "roman">("devanagari");
     const [formData, setFormData] = useState({
         title: "",
         body_marathi: "",
+        body_roman: "",
         genre: "",
         poet_name: "",
         poet_id: null as number | null,
@@ -186,17 +189,69 @@ export default function SubmitPoemPage() {
                             >
                                 <div className="flex items-center justify-between mb-4">
                                     <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold">{t.submit_label_body}</label>
-                                    <button className="flex items-center gap-2 text-xs font-bold text-maroon uppercase tracking-widest hover:bg-maroon/5 px-3 py-1.5 rounded-lg border border-maroon/20 transition-all">
-                                        <ImageIcon className="w-4 h-4" />
-                                        {t.submit_btn_scan}
-                                    </button>
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => setInputScript(inputScript === "devanagari" ? "roman" : "devanagari")}
+                                            className="flex items-center gap-2 text-xs font-bold text-maroon uppercase tracking-widest hover:bg-maroon/5 px-3 py-1.5 rounded-lg border border-maroon/20 transition-all"
+                                        >
+                                            <Languages className="w-4 h-4" />
+                                            {inputScript === "devanagari" ? "Switch to Roman (IAST)" : "देवनागरी"}
+                                        </button>
+                                        <button type="button" className="flex items-center gap-2 text-xs font-bold text-maroon uppercase tracking-widest hover:bg-maroon/5 px-3 py-1.5 rounded-lg border border-maroon/20 transition-all">
+                                            <ImageIcon className="w-4 h-4" />
+                                            {t.submit_btn_scan}
+                                        </button>
+                                    </div>
                                 </div>
+
+                                {/* Help text for IAST */}
+                                {inputScript === "roman" && (
+                                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-xs text-blue-800">
+                                        <p className="font-bold mb-1">📝 IAST Input Tips:</p>
+                                        <p>Use macrons for long vowels: ā, ī, ū (e.g., "Pāūs" for पाऊस)</p>
+                                        <p className="mt-1 text-blue-600">Or type without macrons and we'll do our best to convert!</p>
+                                    </div>
+                                )}
+
                                 <textarea
-                                    placeholder={t.submit_ph_body}
-                                    value={formData.body_marathi}
-                                    onChange={(e) => setFormData({ ...formData, body_marathi: e.target.value })}
-                                    className="w-full h-80 px-6 py-6 bg-white border border-gold/10 rounded-2xl focus:ring-2 focus:ring-maroon/20 focus:border-maroon outline-none transition-all font-marathi text-xl leading-relaxed resize-none"
+                                    placeholder={inputScript === "devanagari" ? t.submit_ph_body : "Enter text in Roman script (IAST or plain)"}
+                                    value={inputScript === "devanagari" ? formData.body_marathi : formData.body_roman}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        if (inputScript === "devanagari") {
+                                            // Typing in Devanagari - auto-convert to IAST
+                                            const romanConverted = Sanscript.t(value, "devanagari", "iast");
+                                            setFormData({
+                                                ...formData,
+                                                body_marathi: value,
+                                                body_roman: romanConverted
+                                            });
+                                        } else {
+                                            // Typing in Roman - auto-convert to Devanagari
+                                            const devanagariConverted = Sanscript.t(value, "iast", "devanagari");
+                                            setFormData({
+                                                ...formData,
+                                                body_roman: value,
+                                                body_marathi: devanagariConverted
+                                            });
+                                        }
+                                    }}
+                                    className={`w-full h-80 px-6 py-6 bg-white border border-gold/10 rounded-2xl focus:ring-2 focus:ring-maroon/20 focus:border-maroon outline-none transition-all text-xl leading-relaxed resize-none ${inputScript === "devanagari" ? "font-marathi" : "font-english"
+                                        }`}
                                 />
+
+                                {/* Preview of converted text */}
+                                {(formData.body_marathi || formData.body_roman) && (
+                                    <div className="bg-gold/5 border border-gold/10 rounded-xl p-4">
+                                        <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold mb-2">
+                                            {inputScript === "devanagari" ? "Roman Preview (IAST)" : "देवनागरी Preview"}
+                                        </div>
+                                        <p className={`text-base ${inputScript === "devanagari" ? "font-english" : "font-marathi"}`}>
+                                            {inputScript === "devanagari" ? formData.body_roman : formData.body_marathi}
+                                        </p>
+                                    </div>
+                                )}
                             </motion.div>
                         )}
 

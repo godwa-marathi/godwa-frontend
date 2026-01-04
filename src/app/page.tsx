@@ -27,6 +27,12 @@ export default function Home() {
     queryFn: () => api.get<PoetOut[]>("/api/poets/"),
   });
 
+  // Fetch dashboard stats
+  const { data: stats } = useQuery({
+    queryKey: ["home", "stats"],
+    queryFn: () => api.get<any>("/api/home"),
+  });
+
   // Use the first approved poem for the demo if available, otherwise fallback
   const demoPoem = poems?.find(p => p.status === "approved" && p.words.length > 0) || poems?.[0];
 

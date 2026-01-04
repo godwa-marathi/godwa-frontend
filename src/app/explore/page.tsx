@@ -7,20 +7,12 @@ import { PoemCard } from "@/components/Cards";
 import { Search, SlidersHorizontal, ChevronRight, ChevronLeft } from "lucide-react";
 import { PoemOut } from "@/lib/types";
 import { useLanguage } from "@/lib/LanguageContext";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
 const CATEGORIES = [
     "All", "Romantic", "Nature", "Patriotic", "Spiritual",
     "Social", "Inspirational", "Folklore", "Classical", "Modern"
-];
-
-// Mock data
-const ALL_POEMS: PoemOut[] = [
-    { id: 1, title: "सांजवळ", genre: "Romantic", poet_id: 1, body_marathi: "...", poet: { id: 1, name: "B.B. Borkar" }, status: "approved", words: [] },
-    { id: 2, title: "कणा", genre: "Inspirational", poet_id: 2, body_marathi: "...", poet: { id: 2, name: "Kusumagraj" }, status: "approved", words: [] },
-    { id: 3, title: "श्रावणमास", genre: "Nature", poet_id: 3, body_marathi: "...", poet: { id: 3, name: "Balakavi" }, status: "approved", words: [] },
-    { id: 4, title: "गर्जा जयजयकार", genre: "Patriotic", poet_id: 2, body_marathi: "...", poet: { id: 2, name: "Kusumagraj" }, status: "approved", words: [] },
-    { id: 5, title: "पसायदान", genre: "Spiritual", poet_id: 5, body_marathi: "...", poet: { id: 5, name: "Sant Dnyaneshwar" }, status: "approved", words: [] },
-    { id: 6, title: "विठ्ठला तू", genre: "Spiritual", poet_id: 6, body_marathi: "...", poet: { id: 6, name: "Namdeo Dhasal" }, status: "approved", words: [] },
 ];
 
 export default function ExplorePage() {
@@ -28,12 +20,22 @@ export default function ExplorePage() {
     const [selectedCategory, setSelectedCategory] = useState("All");
     const [searchQuery, setSearchQuery] = useState("");
 
-    const filteredPoems = ALL_POEMS.filter(poem => {
-        const matchesCategory = selectedCategory === "All" || poem.genre === selectedCategory;
-        const matchesSearch = poem.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            poem.poet?.name.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesCategory && matchesSearch;
+    // Fetch approved poems from database
+    const { data: allPoems, isLoading, error } = useQuery({
+        queryKey: ["poems", "explore"],
+        queryFn: () => api.get<PoemOut[]>("/api/poems"),
     });
+
+    // Client-side filtering for better UX (can be moved to server-side later)
+    const filteredPoems = React.useMemo(() => {
+        if (!allPoems) return [];
+        return allPoems.filter(poem => {
+            const matchesCategory = selectedCategory === "All" || poem.genre === selectedCategory;
+            const matchesSearch = poem.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                poem.poet?.name.toLowerCase().includes(searchQuery.toLowerCase());
+            return matchesCategory && matchesSearch;
+        });
+    }, [allPoems, selectedCategory, searchQuery]);
 
     return (
         <main className="min-h-screen flex flex-col bg-background">
@@ -90,20 +92,36 @@ export default function ExplorePage() {
                 </div>
 
                 {/* Results Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                    {filteredPoems.map((poem) => (
-                        <PoemCard key={poem.id} poem={poem} />
-                    ))}
-                    {filteredPoems.length === 0 && (
-                        <div className="col-span-full py-20 text-center">
-                            <div className="text-gold mb-4 inline-block p-4 rounded-full bg-gold/5">
-                                <Search className="w-12 h-12" />
-                            </div>
-                            <h3 className="text-xl font-serif font-bold text-foreground">{t.explore_no_results_title}</h3>
-                            <p className="text-foreground/60 font-english mt-1">{t.explore_no_results_desc}</p>
+                {isLoading ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+                        {[1, 2, 3, 4, 5, 6].map(i => (
+                            <div key={i} className="h-80 rounded-3xl bg-gold/5 animate-pulse border border-gold/10" />
+                        ))}
+                    </div>
+                ) : error ? (
+                    <div className="col-span-full py-20 text-center bg-red-50 rounded-3xl border border-red-100">
+                        <div className="text-red-500 mb-4 inline-block p-4 rounded-full bg-red-100">
+                            <Search className="w-12 h-12" />
                         </div>
-                    )}
-                </div>
+                        <h3 className="text-xl font-serif font-bold text-foreground">Failed to load poems</h3>
+                        <p className="text-foreground/60 font-english mt-1">Please try refreshing the page.</p>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        {filteredPoems.map((poem) => (
+                            <PoemCard key={poem.id} poem={poem} />
+                        ))}
+                        {filteredPoems.length === 0 && (
+                            <div className="col-span-full py-20 text-center">
+                                <div className="text-gold mb-4 inline-block p-4 rounded-full bg-gold/5">
+                                    <Search className="w-12 h-12" />
+                                </div>
+                                <h3 className="text-xl font-serif font-bold text-foreground">{t.explore_no_results_title}</h3>
+                                <p className="text-foreground/60 font-english mt-1">{t.explore_no_results_desc}</p>
+                            </div>
+                        )}
+                    </div>
+                )}
             </section>
 
             <Footer />
