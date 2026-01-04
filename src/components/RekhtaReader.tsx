@@ -19,7 +19,7 @@ export const RekhtaReader: React.FC<RekhtaReaderProps> = ({ poem }) => {
     return (
         <div className="flex flex-col w-full">
             {/* Centered content container - max 600px like Rekhta, but responsive */}
-            <div className="w-full max-w-[600px] mx-auto lg:mx-0 lg:max-w-[600px]">
+            <div className="w-full max-w-[600px] mx-auto">
 
                 {/* Minimal Reader Toolbar */}
                 <div className="flex items-center justify-between mb-6 pb-3 border-b border-gold/10">

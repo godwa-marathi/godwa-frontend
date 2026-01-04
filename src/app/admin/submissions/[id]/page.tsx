@@ -223,9 +223,8 @@ export default function SubmissionDetailPage({ params }: Props) {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["poem", id] });
             queryClient.invalidateQueries({ queryKey: ["admin", "submissions"] });
-            alert("Poem tokenized successfully! Words have been created and linked.");
-            // Optionally redirect to admin words page to review/enrich words
-            // router.push("/admin?tab=words");
+            // Navigate to word enrichment page
+            router.push(`/admin/poems/${id}/words`);
         },
         onError: (error: any) => {
             console.error('Tokenization failed:', error);
