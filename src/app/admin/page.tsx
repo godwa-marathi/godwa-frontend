@@ -8,6 +8,7 @@ import { api } from "@/lib/api";
 import { useLanguage } from "@/lib/LanguageContext";
 import { PoemOut, WordOut, PoetOut } from "@/lib/types";
 import { Check, X, Wand2, Loader2, AlertCircle, Clock, BookOpen } from "lucide-react";
+import Link from "next/link";
 
 export default function AdminDashboard() {
     const queryClient = useQueryClient();
@@ -52,7 +53,7 @@ export default function AdminDashboard() {
 
     // Mutation: Enrich Word via AI
     const enrichMutation = useMutation({
-        mutationFn: (id: number) => api.post(`/api/admin/words/${id}/enrich-ai`, {}),
+        mutationFn: (id: number) => api.post(`/api/admin/words/${id}/enrich`, {}),
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin", "pending-words"] }),
     });
 
@@ -92,23 +93,32 @@ export default function AdminDashboard() {
                             submissions.map((item: any) => {
                                 // Handle potential nested structure (Submission wrapper vs direct Poem)
                                 const poem = item.poem || item;
-                                // If nested (item.poem exists), the submission ID is on the wrapper (item.id).
-                                // If flat, poem is the item, so poem.id is the ID.
-                                const submissionId = item.poem ? item.id : poem.id;
+                                // Robustly determine ID: poem.id, item.poem_id, or item.id
+                                const poemId = poem.id || item.poem_id || (item.poem ? undefined : item.id);
+
+                                // Debug logging
+                                // console.log('Submission item:', item);
+                                // console.log('Poem object:', poem);
+                                // console.log('Resolved Poem ID:', poemId);
 
                                 const poet = poem.poet || poetMap.get(poem.poet_id);
                                 const poetName = language === "devanagari"
                                     ? (poet?.name || "Unknown Poet")
                                     : (poet?.name_roman || poet?.name || "Unknown Poet");
 
+                                if (!poemId) {
+                                    console.error("Could not resolve poem ID for item:", item);
+                                    return null; // Skip invalid items
+                                }
+
                                 return (
-                                    <div key={submissionId} className="bg-white rounded-2xl border border-gold/10 p-6 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
-                                        <div className="flex items-center gap-6">
-                                            <div className="w-12 h-12 rounded-xl bg-gold/5 flex items-center justify-center text-gold">
+                                    <div key={poemId} className="bg-white rounded-2xl border border-gold/10 p-6 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
+                                        <Link href={`/admin/submissions/${poemId}`} className="flex items-center gap-6 flex-1 group cursor-pointer">
+                                            <div className="w-12 h-12 rounded-xl bg-gold/5 flex items-center justify-center text-gold group-hover:bg-gold/10 transition-colors">
                                                 <BookOpen className="w-6 h-6" />
                                             </div>
                                             <div>
-                                                <h3 className={`text-xl font-bold text-foreground ${language === "devanagari" ? "font-marathi" : "font-english"}`}>
+                                                <h3 className={`text-xl font-bold text-foreground group-hover:text-maroon transition-colors ${language === "devanagari" ? "font-marathi" : "font-english"}`}>
                                                     {language === "devanagari"
                                                         ? (poem.title || poem.title_roman)
                                                         : (poem.title_roman || poem.title)}
@@ -124,13 +134,13 @@ export default function AdminDashboard() {
                                                     Submitted 2h ago
                                                 </div>
                                             </div>
-                                        </div>
+                                        </Link>
                                         <div className="flex items-center gap-2">
                                             <button className="p-2 rounded-lg text-foreground/40 hover:bg-gold/5 hover:text-foreground">
                                                 <X className="w-5 h-5" />
                                             </button>
                                             <button
-                                                onClick={() => approveMutation.mutate(submissionId)}
+                                                onClick={() => approveMutation.mutate(poemId)}
                                                 disabled={approveMutation.isPending}
                                                 className="flex items-center gap-2 px-4 py-2 bg-maroon text-white rounded-xl font-english font-bold text-xs uppercase tracking-widest hover:shadow-lg hover:shadow-maroon/20 transition-all"
                                             >

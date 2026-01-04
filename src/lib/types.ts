@@ -1,6 +1,11 @@
 export interface WordOut {
     id: number;
     devnagri: string;
+    word?: string; // New API field
+    word_alternate?: string; // New API field
+    definition_primary?: string; // New API field
+    definition_secondary?: string; // New API field
+    script_detected?: string; // New API field
     inscript?: string;
     gender?: string;
     definition_en?: string;
@@ -32,6 +37,8 @@ export interface PoemOut {
     chhanda_name?: string;
     genre?: string;
     description?: string;
+    metadata_json?: any;
+    search_slug?: string;
     status: 'draft' | 'pending' | 'approved';
     words: WordOut[];
 }
