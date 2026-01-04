@@ -6,25 +6,34 @@ import { Footer } from "@/components/Footer";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useLanguage } from "@/lib/LanguageContext";
-import { PoemOut, WordOut, PoetOut } from "@/lib/types";
-import { Check, X, Wand2, Loader2, AlertCircle, Clock, BookOpen } from "lucide-react";
+import { PoemOut, PoetOut } from "@/lib/types";
+import { Check, X, Loader2, AlertCircle, Clock, BookOpen } from "lucide-react";
 import Link from "next/link";
 
 export default function AdminDashboard() {
     const queryClient = useQueryClient();
     const { language, t } = useLanguage();
-    const [activeTab, setActiveTab] = useState<"submissions" | "words">("submissions");
+    const [activeTab, setActiveTab] = useState<"review" | "tokenized" | "approved">("review");
 
-    // Fetch pending submissions
+    // Fetch pending submissions (review queue)
     const { data: submissions, isLoading: loadingSubs } = useQuery({
         queryKey: ["admin", "submissions"],
-        queryFn: () => api.get<PoemOut[]>("/api/admin/poems/submissions"),
+        queryFn: () => api.get<PoemOut[]>("/api/poems?status=pending"),
+        enabled: activeTab === "review",
     });
 
-    // Fetch words lacking definitions
-    const { data: pendingWords, isLoading: loadingWords } = useQuery({
-        queryKey: ["admin", "pending-words"],
-        queryFn: () => api.get<WordOut[]>("/api/admin/words/pending"),
+    // Fetch tokenized poems
+    const { data: tokenizedPoems, isLoading: loadingTokenized } = useQuery({
+        queryKey: ["admin", "tokenized"],
+        queryFn: () => api.get<PoemOut[]>("/api/poems?status=tokenized"),
+        enabled: activeTab === "tokenized",
+    });
+
+    // Fetch approved poems
+    const { data: approvedPoems, isLoading: loadingApproved } = useQuery({
+        queryKey: ["admin", "approved"],
+        queryFn: () => api.get<PoemOut[]>("/api/poems?status=approved"),
+        enabled: activeTab === "approved",
     });
 
     // Fetch reference data for lookups
@@ -51,12 +60,6 @@ export default function AdminDashboard() {
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin", "submissions"] }),
     });
 
-    // Mutation: Enrich Word via AI
-    const enrichMutation = useMutation({
-        mutationFn: (id: number) => api.post(`/api/admin/words/${id}/enrich`, {}),
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin", "pending-words"] }),
-    });
-
     return (
         <main className="min-h-screen flex flex-col bg-background">
             <Navbar />
@@ -70,22 +73,29 @@ export default function AdminDashboard() {
                 {/* Tabs */}
                 <div className="flex bg-white rounded-2xl border border-gold/10 p-1 mb-8 w-fit shadow-sm">
                     <button
-                        onClick={() => setActiveTab("submissions")}
-                        className={`px-6 py-2.5 rounded-xl font-english font-bold text-xs uppercase tracking-widest transition-all ${activeTab === "submissions" ? "bg-maroon text-white shadow-lg shadow-maroon/20" : "text-foreground/40 hover:text-maroon"
+                        onClick={() => setActiveTab("review")}
+                        className={`px-6 py-2.5 rounded-xl font-english font-bold text-xs uppercase tracking-widest transition-all ${activeTab === "review" ? "bg-maroon text-white shadow-lg shadow-maroon/20" : "text-foreground/40 hover:text-maroon"
                             }`}
                     >
-                        {t.admin_tab_review}
+                        Review Queue
                     </button>
                     <button
-                        onClick={() => setActiveTab("words")}
-                        className={`px-6 py-2.5 rounded-xl font-english font-bold text-xs uppercase tracking-widest transition-all ${activeTab === "words" ? "bg-maroon text-white shadow-lg shadow-maroon/20" : "text-foreground/40 hover:text-maroon"
+                        onClick={() => setActiveTab("tokenized")}
+                        className={`px-6 py-2.5 rounded-xl font-english font-bold text-xs uppercase tracking-widest transition-all ${activeTab === "tokenized" ? "bg-maroon text-white shadow-lg shadow-maroon/20" : "text-foreground/40 hover:text-maroon"
                             }`}
                     >
-                        {t.admin_tab_words}
+                        Tokenized Poems
+                    </button>
+                    <button
+                        onClick={() => setActiveTab("approved")}
+                        className={`px-6 py-2.5 rounded-xl font-english font-bold text-xs uppercase tracking-widest transition-all ${activeTab === "approved" ? "bg-maroon text-white shadow-lg shadow-maroon/20" : "text-foreground/40 hover:text-maroon"
+                            }`}
+                    >
+                        Approved Poems
                     </button>
                 </div>
 
-                {activeTab === "submissions" ? (
+                {activeTab === "review" && (
                     <div className="space-y-4">
                         {loadingSubs ? (
                             <div className="py-20 flex justify-center"><Loader2 className="w-8 h-8 text-maroon animate-spin" /></div>
@@ -156,31 +166,94 @@ export default function AdminDashboard() {
                             <EmptyState title={t.admin_queue_empty} description="" />
                         )}
                     </div>
-                ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {loadingWords ? (
-                            <div className="col-span-full py-20 flex justify-center"><Loader2 className="w-8 h-8 text-maroon animate-spin" /></div>
-                        ) : pendingWords?.length ? (
-                            pendingWords.map((word) => (
-                                <div key={word.id} className="bg-white rounded-2xl border border-gold/10 p-6 shadow-sm">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <span className="text-2xl font-marathi font-bold text-maroon">{word.devnagri}</span>
-                                        <button
-                                            onClick={() => enrichMutation.mutate(word.id)}
-                                            disabled={enrichMutation.isPending}
-                                            className="p-2 rounded-lg bg-gold/10 text-gold hover:bg-gold/20 transition-all group"
-                                            title={t.admin_btn_enrich}
-                                        >
-                                            {enrichMutation.isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Wand2 className="w-5 h-5 group-hover:rotate-12 transition-transform" />}
-                                        </button>
+                )}
+
+                {activeTab === "tokenized" && (
+                    <div className="space-y-4">
+                        {loadingTokenized ? (
+                            <div className="py-20 flex justify-center"><Loader2 className="w-8 h-8 text-maroon animate-spin" /></div>
+                        ) : tokenizedPoems?.length ? (
+                            tokenizedPoems.map((item: any) => {
+                                const poem = item.poem || item;
+                                const poemId = poem.id || item.poem_id || (item.poem ? undefined : item.id);
+                                const poet = poem.poet || poetMap.get(poem.poet_id);
+                                const poetName = language === "devanagari"
+                                    ? (poet?.name || "Unknown Poet")
+                                    : (poet?.name_roman || poet?.name || "Unknown Poet");
+
+                                if (!poemId) return null;
+
+                                return (
+                                    <div key={poemId} className="bg-white rounded-2xl border border-gold/10 p-6 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
+                                        <Link href={`/admin/poems/${poemId}/words`} className="flex items-center gap-6 flex-1 group cursor-pointer">
+                                            <div className="w-12 h-12 rounded-xl bg-gold/5 flex items-center justify-center text-gold group-hover:bg-gold/10 transition-colors">
+                                                <BookOpen className="w-6 h-6" />
+                                            </div>
+                                            <div>
+                                                <h3 className={`text-xl font-bold text-foreground group-hover:text-maroon transition-colors ${language === "devanagari" ? "font-marathi" : "font-english"}`}>
+                                                    {language === "devanagari"
+                                                        ? (poem.title || poem.title_roman)
+                                                        : (poem.title_roman || poem.title)}
+                                                </h3>
+                                                <div className="text-xs font-english text-foreground/40 flex items-center gap-2">
+                                                    <span className="font-bold text-gold uppercase tracking-widest">by {poetName}</span>
+                                                    <span>•</span>
+                                                    <span className="text-foreground/60">
+                                                        Genre: {poem.genre || "N/A"}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </Link>
                                     </div>
-                                    <p className="text-xs font-english text-foreground/40 leading-relaxed">
-                                        {t.admin_word_hint}
-                                    </p>
-                                </div>
-                            ))
+                                )
+                            })
                         ) : (
-                            <EmptyState title={t.admin_queue_empty} description="" />
+                            <EmptyState title="No Tokenized Poems" description="Tokenize poems to see them here" />
+                        )}
+                    </div>
+                )}
+
+                {activeTab === "approved" && (
+                    <div className="space-y-4">
+                        {loadingApproved ? (
+                            <div className="py-20 flex justify-center"><Loader2 className="w-8 h-8 text-maroon animate-spin" /></div>
+                        ) : approvedPoems?.length ? (
+                            approvedPoems.map((item: any) => {
+                                const poem = item.poem || item;
+                                const poemId = poem.id || item.poem_id || (item.poem ? undefined : item.id);
+                                const poet = poem.poet || poetMap.get(poem.poet_id);
+                                const poetName = language === "devanagari"
+                                    ? (poet?.name || "Unknown Poet")
+                                    : (poet?.name_roman || poet?.name || "Unknown Poet");
+
+                                if (!poemId) return null;
+
+                                return (
+                                    <div key={poemId} className="bg-white rounded-2xl border border-gold/10 p-6 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
+                                        <Link href={`/admin/submissions/${poemId}`} className="flex items-center gap-6 flex-1 group cursor-pointer">
+                                            <div className="w-12 h-12 rounded-xl bg-gold/5 flex items-center justify-center text-gold group-hover:bg-gold/10 transition-colors">
+                                                <BookOpen className="w-6 h-6" />
+                                            </div>
+                                            <div>
+                                                <h3 className={`text-xl font-bold text-foreground group-hover:text-maroon transition-colors ${language === "devanagari" ? "font-marathi" : "font-english"}`}>
+                                                    {language === "devanagari"
+                                                        ? (poem.title || poem.title_roman)
+                                                        : (poem.title_roman || poem.title)}
+                                                </h3>
+                                                <div className="text-xs font-english text-foreground/40 flex items-center gap-2">
+                                                    <span className="font-bold text-gold uppercase tracking-widest">by {poetName}</span>
+                                                    <span>•</span>
+                                                    <span className="text-foreground/60">
+                                                        Genre: {poem.genre || "N/A"}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    </div>
+                                )
+                            })
+                        ) : (
+                            <EmptyState title="No Approved Poems" description="Approve poems to see them here" />
                         )}
                     </div>
                 )}
