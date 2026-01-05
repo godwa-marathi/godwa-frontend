@@ -49,18 +49,12 @@ export const RekhtaReader: React.FC<RekhtaReaderProps> = ({ poem }) => {
                             <div className={showRoman ? "hidden" : "block"}>
                                 {/* Center-aligned, elegant font size (Rekhta style), generous line-height (2.0) */}
                                 <div className="text-2xl md:text-3xl font-marathi leading-[2.2] text-foreground/90 text-center flex flex-wrap justify-center gap-x-1.5 gap-y-2">
-                                    {splitMarathiText(line).map((word, wordIdx) => {
-                                        const cleanWord = word.trim().replace(/[^\u0900-\u097F]/g, "");
-                                        // Use optional chaining since poem.words might be undefined
-                                        const wordData = poem.words?.find(w => w.devnagri === cleanWord);
-                                        return (
-                                            <WordTooltip
-                                                key={wordIdx}
-                                                word={word}
-                                                data={wordData}
-                                            />
-                                        );
-                                    })}
+                                    {splitMarathiText(line).map((word, wordIdx) => (
+                                        <WordTooltip
+                                            key={wordIdx}
+                                            word={word}
+                                        />
+                                    ))}
                                 </div>
                             </div>
 
@@ -68,24 +62,13 @@ export const RekhtaReader: React.FC<RekhtaReaderProps> = ({ poem }) => {
                             {/* Roman Transliteration */}
                             {showRoman && romanLines[lineIdx] && (
                                 <div className="text-xl md:text-2xl font-english italic text-maroon/70 leading-relaxed text-center flex flex-wrap justify-center gap-x-1.5 gap-y-2">
-                                    {romanLines[lineIdx].split(" ").map((word, wordIdx) => {
-                                        // Attempt to find word data by matching alternate/roman field in poem.words
-                                        // Use Unicode property escapes to preserve diacritics (e.g. ḻ, ṃ)
-                                        const cleanRoman = word.trim().replace(/[^\p{L}\p{M}\p{N}]/gu, "");
-                                        const wordData = poem.words?.find(w =>
-                                            w.word_alternate?.toLowerCase() === cleanRoman.toLowerCase() ||
-                                            w.word?.toLowerCase() === cleanRoman.toLowerCase()
-                                        );
-
-                                        return (
-                                            <WordTooltip
-                                                key={wordIdx}
-                                                word={word}
-                                                data={wordData}
-                                                isRoman={true}
-                                            />
-                                        );
-                                    })}
+                                    {romanLines[lineIdx].split(" ").map((word, wordIdx) => (
+                                        <WordTooltip
+                                            key={wordIdx}
+                                            word={word}
+                                            isRoman={true}
+                                        />
+                                    ))}
                                 </div>
                             )}
                         </div>

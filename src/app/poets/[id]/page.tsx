@@ -25,7 +25,7 @@ export default function PoetProfilePage() {
     // Fetch poems by this poet
     const { data: poems, isLoading: loadingPoems } = useQuery({
         queryKey: ["poets", id, "poems"],
-        queryFn: () => api.get<PoemOut[]>(`/api/poems/?poet=${id}`),
+        queryFn: () => api.get<PoemOut[]>(`/api/poems/?poet_id=${id}`),
         enabled: !!id,
     });
 
