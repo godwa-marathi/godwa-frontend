@@ -4,8 +4,23 @@ import React from "react";
 import Link from "next/link";
 import { PoemOut, PoetOut } from "@/lib/types";
 import { Calendar, User } from "lucide-react";
+import { useLanguage } from "@/lib/LanguageContext";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
 export const PoemCard = ({ poem }: { poem: PoemOut }) => {
+    const { language } = useLanguage();
+    const { data: poets } = useQuery({
+        queryKey: ["poets"],
+        queryFn: () => api.get<PoetOut[]>("/api/poets/"),
+    });
+
+    const fullPoet = poets?.find(p => p.id === poem.poet_id);
+
+    const displayTitle = language === 'roman' ? (poem.title_roman || poem.title) : poem.title;
+    const displayBody = language === 'roman' ? (poem.body_roman || poem.body_marathi) : poem.body_marathi;
+    const displayPoetName = language === 'roman' ? (poem.poet?.name_roman || poem.poet?.name) : poem.poet?.name;
+
     return (
         <Link href={`/poem/${poem.id}`} className="group relative block">
             <div className="h-full bg-white p-8 rounded-2xl border border-gold/10 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1 overflow-hidden">
@@ -19,20 +34,24 @@ export const PoemCard = ({ poem }: { poem: PoemOut }) => {
                         {poem.genre || "Collection"}
                     </div>
 
-                    <h3 className="text-2xl font-marathi font-bold text-foreground mb-3 group-hover:text-maroon transition-colors">
-                        {poem.title}
+                    <h3 className={`text-2xl font-bold text-foreground mb-3 group-hover:text-maroon transition-colors ${language === 'roman' ? 'font-english' : 'font-marathi'}`}>
+                        {displayTitle}
                     </h3>
 
-                    <p className="text-foreground/60 font-marathi leading-relaxed mb-6 line-clamp-3">
-                        {poem.body_marathi.split("\n")[0]}...
+                    <p className={`text-foreground/60 leading-relaxed mb-6 line-clamp-3 ${language === 'roman' ? 'font-english text-sm' : 'font-marathi'}`}>
+                        {displayBody.split("\n")[0]}...
                     </p>
 
                     <div className="mt-auto flex items-center gap-3 pt-4 border-t border-gold/10">
-                        <div className="w-8 h-8 rounded-full bg-maroon/5 flex items-center justify-center text-maroon">
-                            <User className="w-4 h-4" />
+                        <div className="w-8 h-8 rounded-full bg-maroon/5 flex items-center justify-center text-maroon overflow-hidden">
+                            {fullPoet?.image_url ? (
+                                <img src={fullPoet.image_url} alt={displayPoetName || ''} className="w-full h-full object-cover" />
+                            ) : (
+                                <User className="w-4 h-4" />
+                            )}
                         </div>
                         <span className="text-sm font-english font-medium text-foreground/80">
-                            {poem.poet?.name || "Traditional"}
+                            {displayPoetName || "Traditional"}
                         </span>
                     </div>
                 </div>
@@ -42,6 +61,9 @@ export const PoemCard = ({ poem }: { poem: PoemOut }) => {
 };
 
 export const PoetCard = ({ poet }: { poet: PoetOut }) => {
+    const { language } = useLanguage();
+    const displayPoetName = language === 'roman' ? (poet.name_roman || poet.name) : poet.name;
+
     return (
         <Link href={`/poets/${poet.id}`} className="group block">
             <div className="flex flex-col items-center p-6 text-center transition-transform hover:-translate-y-2">
@@ -62,13 +84,13 @@ export const PoetCard = ({ poet }: { poet: PoetOut }) => {
                     )}
                 </div>
 
-                <h3 className="text-xl font-marathi font-bold text-foreground mb-1 group-hover:text-maroon transition-colors">
-                    {poet.name}
+                <h3 className={`text-xl font-bold text-foreground mb-1 group-hover:text-maroon transition-colors ${language === 'roman' ? 'font-english' : 'font-marathi'}`}>
+                    {displayPoetName}
                 </h3>
 
                 <div className="flex items-center gap-1.5 text-gold text-[10px] font-bold uppercase tracking-widest mb-3">
                     <Calendar className="w-3 h-3" />
-                    {poet.life_span || "Timless Poet"}
+                    {poet.life_span || "Timeless Poet"}
                 </div>
 
                 {poet.bio && (

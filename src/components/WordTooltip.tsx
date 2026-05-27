@@ -61,12 +61,23 @@ export const WordTooltip: React.FC<WordTooltipProps> = ({ word, data, isRoman = 
 
     return (
         <Tooltip.Provider delayDuration={0}>
-            <Tooltip.Root open={open} onOpenChange={setOpen}>
+            <Tooltip.Root open={open} onOpenChange={(newOpen) => {
+                // Prevent automatic hover behavior - only allow manual control
+                // Don't update state here, let onClick handle it
+            }}>
                 <Tooltip.Trigger asChild>
                     <span
                         onClick={(e) => {
                             e.stopPropagation();
                             setOpen(!open);
+                        }}
+                        onPointerEnter={(e) => {
+                            // Prevent hover from opening tooltip
+                            e.preventDefault();
+                        }}
+                        onPointerLeave={(e) => {
+                            // Prevent hover leave from closing tooltip
+                            e.preventDefault();
                         }}
                         className="cursor-pointer hover:text-maroon transition-colors decoration-gold/30 hover:underline underline-offset-4 decoration-2 inline-block mx-0.5"
                     >

@@ -10,9 +10,11 @@ import { PoetOut, PoemOut } from "@/lib/types";
 import { Loader2, User, BookOpen, Quote } from "lucide-react";
 import { motion } from "framer-motion";
 import { useParams } from "next/navigation";
+import { useLanguage } from "@/lib/LanguageContext";
 
 export default function PoetProfilePage() {
     const { id } = useParams();
+    const { t, language } = useLanguage();
 
     // Fetch all poets to find this one (since there's no single poet API)
     const { data: poets, isLoading: loadingPoets } = useQuery({
@@ -46,13 +48,15 @@ export default function PoetProfilePage() {
                 <Navbar />
                 <div className="flex-1 flex flex-col items-center justify-center py-24 bg-white m-8 rounded-3xl border border-dashed border-gold/30">
                     <BookOpen className="w-12 h-12 text-gold/20 mb-4" />
-                    <h1 className="text-2xl font-serif font-bold text-foreground">Poet Not Found</h1>
-                    <p className="text-foreground/40 font-english mt-2">The person you are looking for has not yet reached our archives.</p>
+                    <h1 className="text-2xl font-serif font-bold text-foreground">{t.poet_not_found}</h1>
+                    <p className="text-foreground/40 font-english mt-2">{t.poet_not_found_desc}</p>
                 </div>
                 <Footer />
             </div>
         );
     }
+
+    const displayPoetName = language === 'roman' ? (poet.name_roman || poet.name) : poet.name;
 
     return (
         <main className="min-h-screen flex flex-col bg-background">
@@ -69,25 +73,25 @@ export default function PoetProfilePage() {
                             <div className="w-48 h-48 md:w-64 md:h-64 rounded-3xl border-2 border-gold/20 p-2 overflow-hidden bg-white shadow-xl">
                                 <div className="w-full h-full rounded-2xl overflow-hidden bg-gold/5 flex items-center justify-center">
                                     {poet.image_url ? (
-                                        <img src={poet.image_url} alt={poet.name} className="w-full h-full object-cover" />
+                                        <img src={poet.image_url} alt={displayPoetName} className="w-full h-full object-cover" />
                                     ) : (
                                         <User className="w-20 h-20 text-gold/20" />
                                     )}
                                 </div>
                             </div>
-                            <div className="absolute -bottom-4 -right-4 bg-maroon text-white p-4 rounded-2xl shadow-xl flex flex-col items-center">
+                            <div className="absolute -bottom-4 -right-4 bg-maroon text-white p-4 rounded-2xl shadow-xl flex flex-col items-center min-w-[76px]">
                                 <span className="text-2xl font-bold font-serif">{poems?.length || 0}</span>
-                                <span className="text-[10px] uppercase font-bold tracking-widest">Works</span>
+                                <span className="text-[10px] uppercase font-bold tracking-widest">{t.poet_works}</span>
                             </div>
                         </div>
 
                         {/* Content */}
                         <div className="flex-1 text-center md:text-left">
                             <div className="inline-block px-3 py-1 rounded-full bg-maroon/5 text-maroon text-[10px] font-bold uppercase tracking-[0.2em] mb-4">
-                                Grand Master
+                                {t.poet_grand_master}
                             </div>
-                            <h1 className="text-5xl md:text-6xl font-marathi font-bold text-foreground mb-4">
-                                {poet.name}
+                            <h1 className={`text-5xl md:text-6xl font-bold text-foreground mb-4 ${language === 'roman' ? 'font-english' : 'font-marathi'}`}>
+                                {displayPoetName}
                             </h1>
                             {poet.life_span && (
                                 <p className="text-gold font-english font-bold text-sm tracking-[0.3em] uppercase mb-8">
@@ -97,7 +101,7 @@ export default function PoetProfilePage() {
 
                             <div className="relative pt-4">
                                 <Quote className="absolute -top-4 -left-8 w-12 h-12 text-gold/10 -z-10" />
-                                <p className="text-lg md:text-xl text-foreground/80 font-marathi leading-relaxed italic max-w-2xl">
+                                <p className={`text-lg md:text-xl text-foreground/80 leading-relaxed italic max-w-2xl ${language === 'roman' ? 'font-english' : 'font-marathi'}`}>
                                     {poet.bio || "His verses continue to echo in the heart of Marathi literature, bridging generations with timeless wisdom."}
                                 </p>
                             </div>
@@ -111,7 +115,7 @@ export default function PoetProfilePage() {
                 <div className="max-w-7xl mx-auto">
                     <div className="flex items-center gap-4 mb-12">
                         <BookOpen className="w-6 h-6 text-maroon" />
-                        <h2 className="text-2xl font-serif font-bold text-foreground">Authored Works</h2>
+                        <h2 className="text-2xl font-serif font-bold text-foreground">{t.poet_authored_works}</h2>
                         <div className="flex-1 h-px bg-gold/10" />
                     </div>
 
@@ -133,7 +137,7 @@ export default function PoetProfilePage() {
                         </motion.div>
                     ) : (
                         <div className="text-center py-20 bg-gold/5 rounded-3xl border border-gold/10">
-                            <p className="text-foreground/40 font-english italic">No poems by this poet found in the selected collection.</p>
+                            <p className="text-foreground/40 font-english italic">{t.poet_no_poems}</p>
                         </div>
                     )}
                 </div>

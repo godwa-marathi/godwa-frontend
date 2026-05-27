@@ -4,22 +4,31 @@ import React from "react";
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { PoemOut } from "@/lib/types";
+import { PoemOut, PoetOut } from "@/lib/types";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { RekhtaReader } from "@/components/RekhtaReader";
-import { Loader2, AlertCircle, ArrowLeft, User, Bookmark } from "lucide-react";
+import { Loader2, AlertCircle, ArrowLeft, User } from "lucide-react";
 import Link from "next/link";
+import { useLanguage } from "@/lib/LanguageContext";
 
 export default function PoemPage() {
     const { id } = useParams();
     const [isFocused, setIsFocused] = React.useState(false);
+    const { t, language } = useLanguage();
 
     const { data: poem, isLoading, error } = useQuery({
         queryKey: ["poem", id],
         queryFn: () => api.get<PoemOut>(`/api/poems/${id}`),
         enabled: !!id && id !== "0", // 0 is for demo
     });
+
+    const { data: poets } = useQuery({
+        queryKey: ["poets"],
+        queryFn: () => api.get<PoetOut[]>("/api/poets/"),
+    });
+
+    const fullPoet = poets?.find(p => p.id === poem?.poet_id);
 
     if (isLoading) {
         return (
@@ -50,6 +59,9 @@ export default function PoemPage() {
         );
     }
 
+    const displayTitle = language === 'roman' ? (poem.title_roman || poem.title) : poem.title;
+    const displayPoetName = language === 'roman' ? (poem.poet?.name_roman || poem.poet?.name || t.poem_traditional) : (poem.poet?.name || t.poem_traditional);
+
     return (
         <main className="min-h-screen flex flex-col bg-[#F9F7F5]">
             <Navbar />
@@ -58,8 +70,8 @@ export default function PoemPage() {
                 {/* Top Controls: Back & Focus Toggle */}
                 <div className="flex items-center justify-between mb-6">
                     <Link href="/explore" className="inline-flex items-center gap-1.5 text-foreground/40 hover:text-maroon transition-colors text-xs font-medium uppercase tracking-widest">
-                        <ArrowLeft className="w-3 h-3" />
-                        Back
+                        <ArrowLeft className="w-3 h-3 animate-in fade-in duration-300" />
+                        {t.poem_back}
                     </Link>
                     <button
                         onClick={() => setIsFocused(!isFocused)}
@@ -68,12 +80,12 @@ export default function PoemPage() {
                         {isFocused ? (
                             <>
                                 <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                                Exit Focus
+                                {t.poem_exit_focus}
                             </>
                         ) : (
                             <>
                                 <span className="w-2 h-2 rounded-full bg-foreground/20"></span>
-                                Focus Mode
+                                {t.poem_focus_mode}
                             </>
                         )}
                     </button>
@@ -83,17 +95,26 @@ export default function PoemPage() {
                     {/* Left Column: The Poem */}
                     <article className={`${isFocused ? 'w-full max-w-2xl mx-auto' : 'lg:col-span-7 xl:col-span-8'}`}>
                         <div className={`flex flex-col mb-6 ${isFocused ? 'items-center text-center' : 'items-center lg:items-start text-center lg:text-left'}`}>
-                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-marathi font-bold text-foreground leading-tight mb-2">
-                                {poem.title}
+                            <h1 className={`text-2xl md:text-3xl lg:text-4xl font-bold text-foreground leading-tight mb-2 ${language === 'roman' ? 'font-english' : 'font-marathi'}`}>
+                                {displayTitle}
                             </h1>
                             {/* Byline - Restore Link functionality */}
-                            <div className="text-lg text-maroon/80 font-marathi font-medium">
-                                <span className="text-foreground/40 mr-1.5 text-base font-english italic font-normal">by</span>
+                            <div className="flex items-center gap-2 text-lg text-maroon/80 font-medium">
+                                <span className="text-foreground/40 text-base font-english italic font-normal">{t.poem_by}</span>
                                 <Link
                                     href={`/poets/${poem.poet_id}`}
-                                    className="hover:text-maroon hover:underline decoration-maroon/30 underline-offset-4 transition-all"
+                                    className={`inline-flex items-center gap-2 hover:text-maroon hover:underline decoration-maroon/30 underline-offset-4 transition-all ${language === 'roman' ? 'font-english' : 'font-marathi'}`}
                                 >
-                                    {poem.poet?.name || "Traditional"}
+                                    {fullPoet?.image_url && (
+                                        <span className="relative flex h-6 w-6 shrink-0 overflow-hidden rounded-full border border-maroon/10 shadow-sm">
+                                            <img
+                                                src={fullPoet.image_url}
+                                                alt={displayPoetName}
+                                                className="aspect-square h-full w-full object-cover"
+                                            />
+                                        </span>
+                                    )}
+                                    <span>{displayPoetName}</span>
                                 </Link>
                             </div>
                         </div>
@@ -105,7 +126,7 @@ export default function PoemPage() {
                     </article>
 
                     {/* Right Column: Sidebar (Hidden in Focus Mode) */}
-                    <aside className={`space-y-8 ${isFocused ? 'hidden' : 'lg:block lg:col-span-5 xl:col-span-4'}`}>
+                    <aside className={`space-y-8 ${isFocused ? 'hidden' : 'block lg:col-span-5 xl:col-span-4'}`}>
 
                         {/* 1. Poet Card (Now at TOP) */}
                         <div className="bg-white p-6 rounded-2xl border border-maroon/10 shadow-sm relative overflow-hidden group">
@@ -113,19 +134,19 @@ export default function PoemPage() {
 
                             <div className="relative flex flex-col items-center text-center z-10">
                                 <div className="w-20 h-20 rounded-full bg-main/5 border border-maroon/10 flex items-center justify-center text-maroon/40 mb-3 overflow-hidden">
-                                    {poem.poet?.image_url ? (
-                                        <img src={poem.poet.image_url} alt={poem.poet.name} className="w-full h-full object-cover" />
+                                    {fullPoet?.image_url ? (
+                                        <img src={fullPoet.image_url} alt={poem.poet?.name || ''} className="w-full h-full object-cover" />
                                     ) : (
                                         <User className="w-8 h-8" />
                                     )}
                                 </div>
-                                <h4 className="font-marathi font-bold text-xl mb-1 text-maroon">{poem.poet?.name || "Traditional"}</h4>
+                                <h4 className={`font-bold text-xl mb-1 text-maroon ${language === 'roman' ? 'font-english' : 'font-marathi'}`}>{displayPoetName}</h4>
                                 {poem.poet && (
                                     <Link
                                         href={`/poets/${poem.poet.id}`}
                                         className="text-[10px] uppercase tracking-widest font-bold text-gold hover:text-maroon transition-colors mt-2 border-b border-transparent hover:border-maroon"
                                     >
-                                        View Poet Profile
+                                        {t.poem_view_poet_profile}
                                     </Link>
                                 )}
                             </div>
@@ -133,7 +154,7 @@ export default function PoemPage() {
 
                         {/* 2. About Poem */}
                         <div className="space-y-3">
-                            <h3 className="text-xs font-bold uppercase tracking-widest text-foreground/30 pl-1">About this Poem</h3>
+                            <h3 className="text-xs font-bold uppercase tracking-widest text-foreground/30 pl-1">{t.poem_about_title}</h3>
                             <div className="bg-white/40 p-5 rounded-2xl border border-maroon/5 space-y-4">
                                 {poem.description && (
                                     <p className="text-sm leading-relaxed text-foreground/80 font-english">
@@ -143,12 +164,12 @@ export default function PoemPage() {
 
                                 <div className="grid grid-cols-2 gap-4 pt-1">
                                     <div className="bg-white p-3 rounded-lg border border-maroon/5">
-                                        <div className="text-[9px] uppercase text-foreground/40 mb-1 font-bold">Genre</div>
+                                        <div className="text-[9px] uppercase text-foreground/40 mb-1 font-bold">{t.poem_genre}</div>
                                         <div className="text-xs font-medium text-foreground/70">{poem.genre || "N/A"}</div>
                                     </div>
                                     <div className="bg-white p-3 rounded-lg border border-maroon/5">
-                                        <div className="text-[9px] uppercase text-foreground/40 mb-1 font-bold">Metre</div>
-                                        <div className="text-xs font-medium text-foreground/70">{poem.chhanda_name || "Free Verse"}</div>
+                                        <div className="text-[9px] uppercase text-foreground/40 mb-1 font-bold">{t.poem_metre}</div>
+                                        <div className="text-xs font-medium text-foreground/70">{poem.chhanda_name || t.poem_free_verse}</div>
                                     </div>
                                 </div>
                             </div>
@@ -156,7 +177,7 @@ export default function PoemPage() {
 
                         {/* 3. Suggestions */}
                         <div className="space-y-3">
-                            <h3 className="text-xs font-bold uppercase tracking-widest text-foreground/30 pl-1">Explore More</h3>
+                            <h3 className="text-xs font-bold uppercase tracking-widest text-foreground/30 pl-1">{t.poem_explore_more}</h3>
                             <div className="space-y-2">
                                 {[1, 2, 3].map((i) => (
                                     <Link key={i} href="/explore" className="flex items-center justify-between p-3 bg-white hover:bg-white/80 border border-transparent hover:border-maroon/10 rounded-xl transition-all group cursor-pointer">
