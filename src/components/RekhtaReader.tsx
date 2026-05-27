@@ -1,17 +1,20 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { PoemOut } from "@/lib/types";
 import { splitMarathiText } from "@/lib/utils";
 import { WordTooltip } from "./WordTooltip";
-import { Languages, BookOpen } from "lucide-react";
+import { BookOpen } from "lucide-react";
+import { useLanguage } from "@/lib/LanguageContext";
 
 interface RekhtaReaderProps {
     poem: PoemOut;
 }
 
 export const RekhtaReader: React.FC<RekhtaReaderProps> = ({ poem }) => {
-    const [showRoman, setShowRoman] = useState(false);
+    const { language } = useLanguage();
+    const hasRoman = !!poem.body_roman;
+    const showRoman = language === "roman" && hasRoman;
 
     const lines = poem.body_marathi.split("\n");
     const romanLines = poem.body_roman?.split("\n") || [];
@@ -29,50 +32,49 @@ export const RekhtaReader: React.FC<RekhtaReaderProps> = ({ poem }) => {
                             Interactive Reader
                         </span>
                     </div>
-
-                    {poem.body_roman && (
-                        <button
-                            onClick={() => setShowRoman(!showRoman)}
-                            className="flex items-center gap-1.5 px-3 py-1 rounded-full border border-gold/30 hover:bg-gold/5 hover:border-gold/50 transition-all text-maroon text-xs font-medium"
-                        >
-                            <Languages className="w-3.5 h-3.5" />
-                            {showRoman ? "देवनागरी" : "Roman"}
-                        </button>
-                    )}
                 </div>
 
-                {/* Poem Body - Minimalist, centered, generous spacing like Rekhta */}
-                <div className="space-y-8 animate-in fade-in duration-700">
-                    {lines.map((line, lineIdx) => (
-                        <div key={lineIdx} className="w-full">
-                            {/* Devanagari Line */}
-                            <div className={showRoman ? "hidden" : "block"}>
-                                {/* Center-aligned, elegant font size (Rekhta style), generous line-height (2.0) */}
-                                <div className="text-2xl md:text-3xl font-marathi leading-[2.2] text-foreground/90 text-center flex flex-wrap justify-center gap-x-1.5 gap-y-2">
-                                    {splitMarathiText(line).map((word, wordIdx) => (
-                                        <WordTooltip
-                                            key={wordIdx}
-                                            word={word}
-                                        />
-                                    ))}
-                                </div>
-                            </div>
+                {/* Poem Body - Minimalist, centered, tight lines, stanza breaks */}
+                <div className="animate-in fade-in duration-700">
+                    {lines.map((line, lineIdx) => {
+                        const isEmptyLine = line.trim() === "";
+                        const romanLine = romanLines[lineIdx];
+                        const isRomanEmpty = !romanLine || romanLine.trim() === "";
 
-                            {/* Roman Transliteration */}
-                            {/* Roman Transliteration */}
-                            {showRoman && romanLines[lineIdx] && (
-                                <div className="text-xl md:text-2xl font-english italic text-maroon/70 leading-relaxed text-center flex flex-wrap justify-center gap-x-1.5 gap-y-2">
-                                    {romanLines[lineIdx].split(" ").map((word, wordIdx) => (
-                                        <WordTooltip
-                                            key={wordIdx}
-                                            word={word}
-                                            isRoman={true}
-                                        />
-                                    ))}
+                        // Empty line = stanza break spacer
+                        if (isEmptyLine && (!showRoman || isRomanEmpty)) {
+                            return <div key={lineIdx} className="h-6 md:h-8" />;
+                        }
+
+                        return (
+                            <div key={lineIdx} className="w-full mb-1">
+                                {/* Devanagari Line */}
+                                <div className={showRoman ? "hidden" : "block"}>
+                                    <div className="text-base min-[480px]:text-lg sm:text-xl md:text-2xl lg:text-[1.75rem] font-marathi leading-[1.7] text-foreground/90 text-left flex flex-wrap justify-start gap-x-1 md:gap-x-1.5">
+                                        {splitMarathiText(line).map((word, wordIdx) => (
+                                            <WordTooltip
+                                                key={wordIdx}
+                                                word={word}
+                                            />
+                                        ))}
+                                    </div>
                                 </div>
-                            )}
-                        </div>
-                    ))}
+
+                                {/* Roman Transliteration */}
+                                {showRoman && romanLine && (
+                                    <div className="text-sm min-[480px]:text-base sm:text-lg md:text-xl lg:text-[1.4rem] font-english text-foreground/85 leading-[1.6] text-left flex flex-wrap justify-start gap-x-1 md:gap-x-1.5">
+                                        {romanLine.split(" ").map((word, wordIdx) => (
+                                            <WordTooltip
+                                                key={wordIdx}
+                                                word={word}
+                                                isRoman={true}
+                                            />
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
                 </div>
 
                 {/* Metre/Chhanda Info - Minimal card below poem */}

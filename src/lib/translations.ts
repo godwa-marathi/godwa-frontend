@@ -103,6 +103,23 @@ export interface TranslationDictionary {
     submit_btn_prev: string;
     submit_btn_next: string;
     submit_btn_submit: string;
+    poem_back: string;
+    poem_focus_mode: string;
+    poem_exit_focus: string;
+    poem_by: string;
+    poem_about_title: string;
+    poem_genre: string;
+    poem_metre: string;
+    poem_free_verse: string;
+    poem_explore_more: string;
+    poem_view_poet_profile: string;
+    poem_traditional: string;
+    poet_grand_master: string;
+    poet_works: string;
+    poet_authored_works: string;
+    poet_no_poems: string;
+    poet_not_found: string;
+    poet_not_found_desc: string;
 }
 
 export const translations: Record<Language, TranslationDictionary> = {
@@ -201,6 +218,23 @@ export const translations: Record<Language, TranslationDictionary> = {
         submit_btn_prev: "Previous",
         submit_btn_next: "Next Step",
         submit_btn_submit: "Submit for Review",
+        poem_back: "Back",
+        poem_focus_mode: "Focus Mode",
+        poem_exit_focus: "Exit Focus",
+        poem_by: "by",
+        poem_about_title: "About this Poem",
+        poem_genre: "Genre",
+        poem_metre: "Metre",
+        poem_free_verse: "Free Verse",
+        poem_explore_more: "Explore More",
+        poem_view_poet_profile: "View Poet Profile",
+        poem_traditional: "Traditional",
+        poet_grand_master: "Grand Master",
+        poet_works: "Works",
+        poet_authored_works: "Authored Works",
+        poet_no_poems: "No poems by this poet found in our archives yet.",
+        poet_not_found: "Poet Not Found",
+        poet_not_found_desc: "The person you are looking for has not yet reached our archives.",
     },
     devanagari: {
         nav_explore: "एक्सप्लोर", // Transliterated "Explore" or proper Marathi "अन्वेषण", sticking to common UI terms
@@ -297,5 +331,22 @@ export const translations: Record<Language, TranslationDictionary> = {
         submit_btn_prev: "मागे",
         submit_btn_next: "पुढील पायरी",
         submit_btn_submit: "पुनरावलोकनासाठी पाठवा",
+        poem_back: "मागे",
+        poem_focus_mode: "फोकस मोड",
+        poem_exit_focus: "फोकस मोड बाहेर पडा",
+        poem_by: "कवी",
+        poem_about_title: "कवितेबद्दल",
+        poem_genre: "प्रकार",
+        poem_metre: "वृत्त / छंद",
+        poem_free_verse: "मुक्त छंद",
+        poem_explore_more: "अधिक शोधा",
+        poem_view_poet_profile: "कवीचे प्रोफाइल पहा",
+        poem_traditional: "पारंपारिक",
+        poet_grand_master: "महान कवी",
+        poet_works: "कविता",
+        poet_authored_works: "लिखित कविता संग्रह",
+        poet_no_poems: "या कवीची एकही कविता अद्याप आमच्या संग्रहात आढळली नाही.",
+        poet_not_found: "कवी आढळले नाहीत",
+        poet_not_found_desc: "आपण शोधत असलेले कवी अद्याप आमच्या संग्रहात समाविष्ट केलेले नाहीत.",
     }
 };

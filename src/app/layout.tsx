@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Mukta, EB_Garamond, Playfair_Display } from "next/font/google";
+import { Mukta, Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
 import Providers from "@/components/Providers";
@@ -10,9 +10,9 @@ const mukta = Mukta({
   variable: "--font-mukta",
 });
 
-const ebGaramond = EB_Garamond({
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-eb-garamond",
+  variable: "--font-inter",
 });
 
 const playfair = Playfair_Display({
@@ -39,7 +39,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${mukta.variable} ${ebGaramond.variable} ${playfair.variable} antialiased font-marathi selection:bg-gold/30`}
+        className={`${mukta.variable} ${inter.variable} ${playfair.variable} antialiased font-marathi selection:bg-gold/30`}
       >
         <Providers>
           {children}

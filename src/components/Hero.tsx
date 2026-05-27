@@ -28,7 +28,7 @@ export const Hero = () => {
                     </div>
 
                     <h1 className="text-5xl md:text-7xl font-serif font-bold text-foreground mb-6 leading-[1.1]">
-                        {t.home_hero_title_prefix} <br />
+                        {t.home_hero_title_prefix} <br /><br />
                         <span className="text-maroon italic">{t.home_hero_title_suffix}</span>
                     </h1>
 
