@@ -1,8 +1,8 @@
-import type { Metadata } from "next";
-import { Mukta, Inter, Playfair_Display } from "next/font/google";
-import "./globals.css";
-import Script from "next/script";
 import Providers from "@/components/Providers";
+import type { Metadata } from "next";
+import { Inter, Mukta, Playfair_Display } from "next/font/google";
+import Script from "next/script";
+import "./globals.css";
 
 const mukta = Mukta({
   subsets: ["latin", "devanagari"],
@@ -39,8 +39,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${mukta.variable} ${inter.variable} ${playfair.variable} antialiased font-marathi selection:bg-gold/30`}
-      >
+        className={`${mukta.variable} ${inter.variable} ${playfair.variable} antialiased font-marathi selection:bg-gold/30`}      >
         <Providers>
           {children}
         </Providers>
