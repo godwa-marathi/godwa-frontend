@@ -1,20 +1,34 @@
 "use client";
 
-import React from "react";
-import Link from "next/link";
-import { Search, Menu, User, LogOut, X } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { LogOut, Menu, Search, User, X } from "lucide-react";
+import Link from "next/link";
+import React from "react";
 
 export const Navbar = () => {
     const { token, logout } = useAuth();
     const { language, setLanguage, t } = useLanguage();
     const [isOpen, setIsOpen] = React.useState(false);
     const [mounted, setMounted] = React.useState(false);
+    const [isLangOpen, setIsLangOpen] = React.useState(false);
+    const langDropdownRef = React.useRef<HTMLDivElement>(null);
 
     React.useEffect(() => {
         setMounted(true);
+    }, []);
+
+    React.useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (langDropdownRef.current && !langDropdownRef.current.contains(event.target as Node)) {
+                setIsLangOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
     }, []);
 
     if (!mounted) return (
@@ -58,24 +72,33 @@ export const Navbar = () => {
                     {/* Actions */}
                     <div className="flex items-center gap-4">
                         {/* Language Toggle Dropdown */}
-                        <div className="relative group/lang">
-                            <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gold/20 hover:border-maroon/20 hover:bg-gold/5 transition-all">
+                        <div className="relative group/lang" ref={langDropdownRef}>
+                            <button
+                                onClick={() => setIsLangOpen(!isLangOpen)}
+                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gold/20 hover:border-maroon/20 hover:bg-gold/5 transition-all focus:outline-none"
+                            >
                                 <span className="font-english font-bold text-xs uppercase tracking-widest text-maroon">
                                     {language === "devanagari" ? "MAR" : "ENG"}
                                 </span>
-                                <span className="text-[10px] text-gold/60">▼</span>
+                                <span className="text-[10px] text-gold/60 transition-transform duration-200" style={{ transform: isLangOpen ? 'rotate(180deg)' : 'none' }}>▼</span>
                             </button>
 
-                            <div className="absolute right-0 top-full mt-2 w-32 bg-white rounded-xl border border-gold/10 shadow-lg shadow-gold/5 py-1 opacity-0 invisible group-hover/lang:opacity-100 group-hover/lang:visible transition-all transform origin-top-right">
+                            <div className={`absolute right-0 top-full mt-2 w-32 bg-white rounded-xl border border-gold/10 shadow-lg shadow-gold/5 py-1 z-50 transition-all transform origin-top-right md:group-hover/lang:opacity-100 md:group-hover/lang:visible md:group-hover/lang:scale-100 ${isLangOpen ? 'opacity-100 visible scale-100' : 'opacity-0 invisible scale-95 pointer-events-none md:pointer-events-auto'}`}>
                                 <button
-                                    onClick={() => setLanguage("devanagari")}
+                                    onClick={() => {
+                                        setLanguage("devanagari");
+                                        setIsLangOpen(false);
+                                    }}
                                     className={`w-full text-left px-4 py-2 text-sm font-marathi hover:bg-gold/5 transition-colors flex items-center justify-between ${language === "devanagari" ? "text-maroon font-bold" : "text-foreground/60"}`}
                                 >
                                     <span>Devanagari</span>
                                     {language === "devanagari" && <span className="text-maroon text-xs">✓</span>}
                                 </button>
                                 <button
-                                    onClick={() => setLanguage("roman")}
+                                    onClick={() => {
+                                        setLanguage("roman");
+                                        setIsLangOpen(false);
+                                    }}
                                     className={`w-full text-left px-4 py-2 text-sm font-english hover:bg-gold/5 transition-colors flex items-center justify-between ${language === "roman" ? "text-maroon font-bold" : "text-foreground/60"}`}
                                 >
                                     <span>English</span>
@@ -91,7 +114,7 @@ export const Navbar = () => {
                         {token ? (
                             <button
                                 onClick={logout}
-                                className="flex items-center gap-2 px-4 py-2 rounded-lg border border-maroon/20 hover:bg-maroon/5 transition-all text-maroon text-sm font-medium font-english"
+                                className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg border border-maroon/20 hover:bg-maroon/5 transition-all text-maroon text-sm font-medium font-english shrink-0"
                             >
                                 <LogOut className="w-4 h-4" />
                                 {t.nav_signout}
@@ -99,7 +122,7 @@ export const Navbar = () => {
                         ) : (
                             <Link
                                 href="/auth/login"
-                                className="flex items-center gap-2 px-4 py-2 rounded-lg border border-maroon/20 hover:border-maroon/40 hover:bg-maroon/5 transition-all text-maroon text-sm font-medium font-english"
+                                className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg border border-maroon/20 hover:border-maroon/40 hover:bg-maroon/5 transition-all text-maroon text-sm font-medium font-english shrink-0"
                             >
                                 <User className="w-4 h-4" />
                                 {t.nav_signin}
