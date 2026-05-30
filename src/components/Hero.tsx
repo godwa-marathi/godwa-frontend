@@ -27,9 +27,9 @@ export const Hero = () => {
                         {t.home_hero_tag}
                     </div>
 
-                    <h1 className="text-5xl md:text-7xl font-serif font-bold text-foreground mb-6 leading-[1.1]">
-                        {t.home_hero_title_prefix} <br /><br />
-                        <span className="text-maroon italic">{t.home_hero_title_suffix}</span>
+                    <h1 className="text-4xl sm:text-5xl md:text-7xl font-serif font-bold text-foreground mb-6 leading-[1.15] tracking-tight">
+                        <span className="block">{t.home_hero_title_prefix}</span>
+                        <span className="text-maroon italic block mt-1 sm:mt-2">{t.home_hero_title_suffix}</span>
                     </h1>
 
                     <p className="max-w-2xl mx-auto text-lg md:text-xl text-foreground/60 font-english leading-relaxed mb-10">
