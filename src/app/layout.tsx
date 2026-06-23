@@ -24,11 +24,9 @@ export const metadata: Metadata = {
   title: "Godwa | Premium Marathi Poetry Platform",
   description: "Experience the beauty of Marathi literature with our interactive Rekhta-style reader.",
   icons: {
-    icon: [
-      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
-      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
-    ],
-    apple: [{ url: '/icon-192.png', sizes: '192x192', type: 'image/png' }],
+    icon: [{ url: '/icon-512.png', type: 'image/png' }],
+    apple: [{ url: '/icon-512.png', type: 'image/png' }],
+    shortcut: '/icon-512.png',
   },
   openGraph: {
     siteName: 'Godwa Marathi Poem Platform',
