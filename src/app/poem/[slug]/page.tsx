@@ -13,14 +13,18 @@ import Link from "next/link";
 import { useLanguage } from "@/lib/LanguageContext";
 
 export default function PoemPage() {
-    const { id } = useParams();
+    const { slug } = useParams();
     const [isFocused, setIsFocused] = React.useState(false);
     const { t, language } = useLanguage();
 
     const { data: poem, isLoading, error } = useQuery({
-        queryKey: ["poem", id],
-        queryFn: () => api.get<PoemOut>(`/api/poems/${id}`),
-        enabled: !!id && id !== "0", // 0 is for demo
+        queryKey: ["poem", slug],
+        queryFn: () => {
+            // Support both old ID format and new slug format for backward compatibility
+            const endpoint = isNaN(Number(slug)) ? `/api/poems/slug/${slug}` : `/api/poems/${slug}`;
+            return api.get<PoemOut>(endpoint);
+        },
+        enabled: !!slug && slug !== "0", // 0 is for demo
     });
 
     const { data: poets } = useQuery({
