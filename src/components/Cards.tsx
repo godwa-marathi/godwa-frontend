@@ -22,7 +22,7 @@ export const PoemCard = ({ poem }: { poem: PoemOut }) => {
     const displayPoetName = language === 'roman' ? (poem.poet?.name_roman || poem.poet?.name) : poem.poet?.name;
 
     return (
-        <Link href={`/poem/${poem.id}`} className="group relative block">
+        <Link href={`/poem/${poem.url_slug || poem.id}`} className="group relative block">
             <div className="h-full bg-white p-8 rounded-2xl border border-gold/10 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1 overflow-hidden">
                 {/* Paper fold effect */}
                 <div className="absolute top-0 right-0 w-12 h-12 bg-gold/5 transition-colors group-hover:bg-gold/10" />

@@ -39,6 +39,7 @@ export interface PoemOut {
     description?: string;
     metadata_json?: any;
     search_slug?: string;
+    url_slug?: string;
     status: 'draft' | 'pending' | 'approved';
     words: WordOut[];
 }
