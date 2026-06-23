@@ -26,7 +26,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         
         // Clean description or use default
         const description = poem.description || poem.body_marathi?.substring(0, 150) + "..." || "Read this beautiful Marathi poem on Godwa.";
-        const image = poem.poet?.image_url || '/icon-512.png';
+        
+        // OG images must be absolute URLs — relative paths won't load in WhatsApp/Twitter previews
+        const SITE_URL = process.env.SITE_URL || 'https://godwa.iampratham29.com';
+        const fallbackImage = `${SITE_URL}/icon-512.png`;
+        // Use poet's image if available, otherwise fallback to Godwa logo
+        const ogImage = poem.poet?.image_url || fallbackImage;
 
         return {
             title: displayTitle,
@@ -35,14 +40,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
                 title: displayTitle,
                 description: description,
                 type: 'article',
-                images: [{ url: image, width: 512, height: 512 }],
+                images: [{ 
+                    url: ogImage,
+                    width: 512, 
+                    height: 512,
+                    alt: `${authorText} - Godwa Marathi Poetry`,
+                }],
                 siteName: 'Godwa Marathi Poem Platform',
             },
             twitter: {
                 card: 'summary_large_image',
                 title: displayTitle,
                 description: description,
-                images: [image],
+                images: [ogImage],
             }
         };
     } catch (e) {
