@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://iampratham29-godwa-backend.hf.space';
 
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const token = Cookies.get('godwa_access_token');
