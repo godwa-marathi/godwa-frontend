@@ -10,7 +10,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     try {
         // Support both old ID format and new slug format
         const endpoint = isNaN(Number(slug)) ? `/api/poems/slug/${slug}` : `/api/poems/${slug}`;
-        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+        // API_URL (no NEXT_PUBLIC) is for server-side use; NEXT_PUBLIC_API_URL as fallback
+        const API_URL = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || 'https://iampratham29-godwa-backend.hf.space';
         
         const res = await fetch(`${API_URL}${endpoint}`, { cache: 'no-store' });
         if (!res.ok) {
@@ -21,11 +22,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         
         const titleText = poem.title_roman || poem.title;
         const authorText = poem.poet?.name_roman || poem.poet?.name || 'Unknown';
-        const displayTitle = `${titleText} 'by' ${authorText} | Godwa Marathi Poem Platform`;
+        const displayTitle = `${titleText} by ${authorText} | Godwa`;
         
         // Clean description or use default
         const description = poem.description || poem.body_marathi?.substring(0, 150) + "..." || "Read this beautiful Marathi poem on Godwa.";
-        const image = poem.poet?.image_url || '/favicon.ico';
+        const image = poem.poet?.image_url || '/icon-512.png';
 
         return {
             title: displayTitle,
@@ -34,7 +35,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
                 title: displayTitle,
                 description: description,
                 type: 'article',
-                images: [image],
+                images: [{ url: image, width: 512, height: 512 }],
                 siteName: 'Godwa Marathi Poem Platform',
             },
             twitter: {

@@ -23,6 +23,17 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: "Godwa | Premium Marathi Poetry Platform",
   description: "Experience the beauty of Marathi literature with our interactive Rekhta-style reader.",
+  icons: {
+    icon: [
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+    ],
+    apple: [{ url: '/icon-192.png', sizes: '192x192', type: 'image/png' }],
+  },
+  openGraph: {
+    siteName: 'Godwa Marathi Poem Platform',
+    images: [{ url: '/icon-512.png', width: 512, height: 512 }],
+  },
 };
 
 export default function RootLayout({
