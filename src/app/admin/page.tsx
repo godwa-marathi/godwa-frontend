@@ -18,21 +18,21 @@ export default function AdminDashboard() {
     // Fetch pending submissions (review queue)
     const { data: submissions, isLoading: loadingSubs } = useQuery({
         queryKey: ["admin", "submissions"],
-        queryFn: () => api.get<PoemOut[]>("/api/poems?status=pending"),
+        queryFn: () => api.get<PoemOut[]>("/api/poems/?status=pending"),
         enabled: activeTab === "review",
     });
 
     // Fetch tokenized poems
     const { data: tokenizedPoems, isLoading: loadingTokenized } = useQuery({
         queryKey: ["admin", "tokenized"],
-        queryFn: () => api.get<PoemOut[]>("/api/poems?status=tokenized"),
+        queryFn: () => api.get<PoemOut[]>("/api/poems/?status=tokenized"),
         enabled: activeTab === "tokenized",
     });
 
     // Fetch approved poems
     const { data: approvedPoems, isLoading: loadingApproved } = useQuery({
         queryKey: ["admin", "approved"],
-        queryFn: () => api.get<PoemOut[]>("/api/poems?status=approved"),
+        queryFn: () => api.get<PoemOut[]>("/api/poems/?status=approved"),
         enabled: activeTab === "approved",
     });
 
