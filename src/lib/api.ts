@@ -1,6 +1,7 @@
 import Cookies from 'js-cookie';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://iampratham29-godwa-backend.hf.space';
+const RAW_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://iampratham29-godwa-backend.hf.space';
+const BASE_URL = RAW_BASE_URL.endsWith('/') ? RAW_BASE_URL.slice(0, -1) : RAW_BASE_URL;
 
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const token = Cookies.get('godwa_access_token');
@@ -11,7 +12,10 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     }
     headers.set('Content-Type', 'application/json');
 
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
+    // Ensure endpoint starts with /
+    const normalizedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+
+    const response = await fetch(`${BASE_URL}${normalizedEndpoint}`, {
         ...options,
         headers,
     });

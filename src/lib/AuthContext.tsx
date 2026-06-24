@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import Cookies from "js-cookie";
 import { api } from "@/lib/api";
 import { AuthResponse } from "@/lib/types";
@@ -19,6 +20,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [token, setToken] = useState<string | null>(null);
     const [user, setUser] = useState<any | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const queryClient = useQueryClient();
 
     useEffect(() => {
         const savedToken = Cookies.get("godwa_access_token");
@@ -35,6 +37,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const { access_token } = response;
             Cookies.set("godwa_access_token", access_token, { expires: 7 });
             setToken(access_token);
+            // Invalidate all queries to refetch with the new token
+            queryClient.invalidateQueries();
             // Optional: Fetch user profile
         } catch (error) {
             console.error("Login failed:", error);

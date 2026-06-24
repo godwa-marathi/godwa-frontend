@@ -23,7 +23,7 @@ export default function ExplorePage() {
     // Fetch approved poems from database
     const { data: allPoems, isLoading, error } = useQuery({
         queryKey: ["poems", "explore"],
-        queryFn: () => api.get<PoemOut[]>("/api/poems"),
+        queryFn: () => api.get<PoemOut[]>("/api/poems/"),
     });
 
     // Client-side filtering for better UX (can be moved to server-side later)
@@ -32,7 +32,7 @@ export default function ExplorePage() {
         return allPoems.filter(poem => {
             const matchesCategory = selectedCategory === "All" || poem.genre === selectedCategory;
             const matchesSearch = poem.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                poem.poet?.name.toLowerCase().includes(searchQuery.toLowerCase());
+                (poem.poet?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false);
             return matchesCategory && matchesSearch;
         });
     }, [allPoems, selectedCategory, searchQuery]);
