@@ -100,7 +100,21 @@ export default function PoemPage() {
                     <article className={`${isFocused ? 'w-full max-w-2xl mx-auto' : 'lg:col-span-7 xl:col-span-8'}`}>
                         <div className={`flex flex-col mb-6 ${isFocused ? 'items-center text-center' : 'items-center lg:items-start text-center lg:text-left'}`}>
                             <h1 className={`text-2xl md:text-3xl lg:text-4xl font-bold text-foreground leading-tight mb-2 ${language === 'roman' ? 'font-english' : 'font-marathi'}`}>
-                                {displayTitle}
+                                {language === 'roman' ? (
+                                    <>
+                                        {poem.title_roman || poem.title}
+                                        {poem.title_roman && poem.title && (
+                                            <span className="text-lg font-normal text-foreground/40 font-marathi ml-3 font-sans">({poem.title})</span>
+                                        )}
+                                    </>
+                                ) : (
+                                    <>
+                                        {poem.title}
+                                        {poem.title_roman && (
+                                            <span className="text-sm font-normal text-foreground/45 font-english ml-3 font-serif">({poem.title_roman})</span>
+                                        )}
+                                    </>
+                                )}
                             </h1>
                             {/* Byline - Restore Link functionality */}
                             <div className="flex items-center gap-2 text-lg text-maroon/80 font-medium">
@@ -118,7 +132,23 @@ export default function PoemPage() {
                                             />
                                         </span>
                                     )}
-                                    <span>{displayPoetName}</span>
+                                    <span>
+                                        {language === 'roman' ? (
+                                            <>
+                                                {poem.poet?.name_roman || poem.poet?.name || t.poem_traditional}
+                                                {poem.poet?.name_roman && poem.poet?.name && (
+                                                    <span className="text-xs font-normal text-foreground/40 font-marathi ml-1.5 font-sans">({poem.poet.name})</span>
+                                                )}
+                                            </>
+                                        ) : (
+                                            <>
+                                                {poem.poet?.name || t.poem_traditional}
+                                                {poem.poet?.name_roman && (
+                                                    <span className="text-xs font-normal text-foreground/45 font-english ml-1.5 font-serif">({poem.poet.name_roman})</span>
+                                                )}
+                                            </>
+                                        )}
+                                    </span>
                                 </Link>
                             </div>
                         </div>
@@ -144,7 +174,23 @@ export default function PoemPage() {
                                         <User className="w-8 h-8" />
                                     )}
                                 </div>
-                                <h4 className={`font-bold text-xl mb-1 text-maroon ${language === 'roman' ? 'font-english' : 'font-marathi'}`}>{displayPoetName}</h4>
+                                <h4 className={`font-bold text-xl mb-1 text-maroon ${language === 'roman' ? 'font-english' : 'font-marathi'}`}>
+                                    {language === 'roman' ? (
+                                        <>
+                                            {poem.poet?.name_roman || poem.poet?.name || t.poem_traditional}
+                                            {poem.poet?.name_roman && poem.poet?.name && (
+                                                <span className="text-xs font-normal text-foreground/40 font-marathi ml-1.5 font-sans">({poem.poet.name})</span>
+                                            )}
+                                        </>
+                                    ) : (
+                                        <>
+                                            {poem.poet?.name || t.poem_traditional}
+                                            {poem.poet?.name_roman && (
+                                                <span className="text-xs font-normal text-foreground/45 font-english ml-1.5 font-serif">({poem.poet.name_roman})</span>
+                                            )}
+                                        </>
+                                    )}
+                                </h4>
                                 {poem.poet && (
                                     <Link
                                         href={`/poets/${poem.poet.id}`}

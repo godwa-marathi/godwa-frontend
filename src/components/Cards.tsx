@@ -35,7 +35,21 @@ export const PoemCard = ({ poem }: { poem: PoemOut }) => {
                     </div>
 
                     <h3 className={`text-2xl font-bold text-foreground mb-3 group-hover:text-maroon transition-colors ${language === 'roman' ? 'font-english' : 'font-marathi'}`}>
-                        {displayTitle}
+                        {language === 'roman' ? (
+                            <>
+                                {poem.title_roman || poem.title}
+                                {poem.title_roman && poem.title && (
+                                    <span className="text-sm font-normal text-foreground/40 font-marathi ml-2 font-sans">({poem.title})</span>
+                                )}
+                            </>
+                        ) : (
+                            <>
+                                {poem.title}
+                                {poem.title_roman && (
+                                    <span className="text-xs font-normal text-foreground/45 font-english ml-2 font-serif">({poem.title_roman})</span>
+                                )}
+                            </>
+                        )}
                     </h3>
 
                     <p className={`text-foreground/60 leading-relaxed mb-6 line-clamp-3 ${language === 'roman' ? 'font-english text-sm' : 'font-marathi'}`}>
@@ -51,7 +65,21 @@ export const PoemCard = ({ poem }: { poem: PoemOut }) => {
                             )}
                         </div>
                         <span className="text-sm font-english font-medium text-foreground/80">
-                            {displayPoetName || "Traditional"}
+                            {language === 'roman' ? (
+                                <>
+                                    {poem.poet?.name_roman || poem.poet?.name || "Traditional"}
+                                    {poem.poet?.name_roman && poem.poet?.name && (
+                                        <span className="text-xs font-normal text-foreground/40 font-marathi ml-1.5 font-sans">({poem.poet.name})</span>
+                                    )}
+                                </>
+                            ) : (
+                                <>
+                                    {poem.poet?.name || "Traditional"}
+                                    {poem.poet?.name_roman && (
+                                        <span className="text-xs font-normal text-foreground/45 font-english ml-1.5 font-serif">({poem.poet.name_roman})</span>
+                                    )}
+                                </>
+                            )}
                         </span>
                     </div>
                 </div>
@@ -85,7 +113,21 @@ export const PoetCard = ({ poet }: { poet: PoetOut }) => {
                 </div>
 
                 <h3 className={`text-xl font-bold text-foreground mb-1 group-hover:text-maroon transition-colors ${language === 'roman' ? 'font-english' : 'font-marathi'}`}>
-                    {displayPoetName}
+                    {language === 'roman' ? (
+                        <>
+                            {poet.name_roman || poet.name}
+                            {poet.name_roman && poet.name && (
+                                <span className="text-xs font-normal text-foreground/40 font-marathi ml-2 font-sans">({poet.name})</span>
+                            )}
+                        </>
+                    ) : (
+                        <>
+                            {poet.name}
+                            {poet.name_roman && (
+                                <span className="text-xs font-normal text-foreground/45 font-english ml-2 font-serif">({poet.name_roman})</span>
+                            )}
+                        </>
+                    )}
                 </h3>
 
                 <div className="flex items-center gap-1.5 text-gold text-[10px] font-bold uppercase tracking-widest mb-3">

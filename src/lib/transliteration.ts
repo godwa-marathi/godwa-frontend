@@ -145,6 +145,16 @@ export function titleCasePreserveFormat(text: string): string {
     });
 }
 
-export function transliterateMarathi(text: string): string {
-    return titleCasePreserveFormat(devToRoman(text));
+export function capitalizeFirstWord(text: string): string {
+    if (!text) return text;
+    const index = text.search(/[a-zA-Z]/);
+    if (index !== -1) {
+        return text.slice(0, index) + text.charAt(index).toUpperCase() + text.slice(index + 1);
+    }
+    return text;
+}
+
+export function transliterateMarathi(text: string, capitalizeFirst: boolean = false): string {
+    const pratham = devToRoman(text);
+    return capitalizeFirst ? capitalizeFirstWord(pratham) : pratham;
 }
