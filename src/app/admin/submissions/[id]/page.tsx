@@ -11,6 +11,7 @@ import { Loader2, ArrowLeft, Check, X, User, Edit3, Link2, Unlink, Plus } from "
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Sanscript from "@indic-transliteration/sanscript";
+import { transliterateMarathi } from "@/lib/transliteration";
 
 interface Props {
     params: Promise<{
@@ -771,8 +772,8 @@ export default function SubmissionDetailPage({ params }: Props) {
                                     const newValue = e.target.value;
                                     setEditedMarathi(newValue);
                                     if (autoSync) {
-                                        // Transliterate Devanagari to IAST
-                                        const transliterated = Sanscript.t(newValue, "devanagari", "iast");
+                                        // Transliterate Devanagari to Pratham Roman Style
+                                        const transliterated = transliterateMarathi(newValue);
                                         setEditedRoman(transliterated);
                                     }
                                 }}

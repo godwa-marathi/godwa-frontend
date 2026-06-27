@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import Sanscript from "@indic-transliteration/sanscript";
+import { transliterateMarathi } from "@/lib/transliteration";
 
 export default function SubmitPoemPage() {
     const { t } = useLanguage();
@@ -208,9 +209,9 @@ export default function SubmitPoemPage() {
                                 {/* Help text for IAST */}
                                 {inputScript === "roman" && (
                                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-xs text-blue-800">
-                                        <p className="font-bold mb-1">📝 IAST Input Tips:</p>
-                                        <p>Use macrons for long vowels: ā, ī, ū (e.g., "Pāūs" for पाऊस)</p>
-                                        <p className="mt-1 text-blue-600">Or type without macrons and we'll do our best to convert!</p>
+                                        <p className="font-bold mb-1">📝 Pratham Roman Input Tips:</p>
+                                        <p>Use UPPERCASE for retroflexes: T, Th, D, Dh, N, L, R (e.g., "PaaLii" for पाळी)</p>
+                                        <p className="mt-1 text-blue-600">Or type standard Roman and the system will auto-convert!</p>
                                     </div>
                                 )}
 
@@ -220,8 +221,8 @@ export default function SubmitPoemPage() {
                                     onChange={(e) => {
                                         const value = e.target.value;
                                         if (inputScript === "devanagari") {
-                                            // Typing in Devanagari - auto-convert to IAST
-                                            const romanConverted = Sanscript.t(value, "devanagari", "iast");
+                                            // Typing in Devanagari - auto-convert to Pratham Roman
+                                            const romanConverted = transliterateMarathi(value);
                                             setFormData({
                                                 ...formData,
                                                 body_marathi: value,
@@ -245,7 +246,7 @@ export default function SubmitPoemPage() {
                                 {(formData.body_marathi || formData.body_roman) && (
                                     <div className="bg-gold/5 border border-gold/10 rounded-xl p-4">
                                         <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold mb-2">
-                                            {inputScript === "devanagari" ? "Roman Preview (IAST)" : "देवनागरी Preview"}
+                                            {inputScript === "devanagari" ? "Roman Preview (Pratham Style)" : "देवनागरी Preview"}
                                         </div>
                                         <p className={`text-base ${inputScript === "devanagari" ? "font-english" : "font-marathi"}`}>
                                             {inputScript === "devanagari" ? formData.body_roman : formData.body_marathi}
