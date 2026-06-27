@@ -30,6 +30,7 @@ export interface PoemOut {
     title_roman?: string;
     body_marathi: string;
     body_roman?: string;
+    body_meaning?: string;
     poet_id: number;
     poet?: PoetOut;
     book_id?: number;
