@@ -91,7 +91,21 @@ export default function PoetProfilePage() {
                                 {t.poet_grand_master}
                             </div>
                             <h1 className={`text-5xl md:text-6xl font-bold text-foreground mb-4 ${language === 'roman' ? 'font-english' : 'font-marathi'}`}>
-                                {displayPoetName}
+                                {language === 'roman' ? (
+                                    <>
+                                        {poet.name_roman || poet.name}
+                                        {poet.name_roman && poet.name && (
+                                            <span className="text-2xl font-normal text-foreground/40 font-marathi ml-4 font-sans">({poet.name})</span>
+                                        )}
+                                    </>
+                                ) : (
+                                    <>
+                                        {poet.name}
+                                        {poet.name_roman && (
+                                            <span className="text-2xl font-normal text-foreground/45 font-english ml-4 font-serif">({poet.name_roman})</span>
+                                        )}
+                                    </>
+                                )}
                             </h1>
                             {poet.life_span && (
                                 <p className="text-gold font-english font-bold text-sm tracking-[0.3em] uppercase mb-8">
