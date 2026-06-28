@@ -33,6 +33,7 @@ export default function SubmissionDetailPage({ params }: Props) {
     const [editedTitleRoman, setEditedTitleRoman] = React.useState("");
     const [editedMarathi, setEditedMarathi] = React.useState("");
     const [editedRoman, setEditedRoman] = React.useState("");
+    const [editedMeaning, setEditedMeaning] = React.useState("");
     const [editedGenre, setEditedGenre] = React.useState("");
     const [editedDescription, setEditedDescription] = React.useState("");
     const [editedPoetName, setEditedPoetName] = React.useState("");
@@ -119,6 +120,7 @@ export default function SubmissionDetailPage({ params }: Props) {
             setEditedTitleRoman(poem.title_roman || "");
             setEditedMarathi(poem.body_marathi || "");
             setEditedRoman(poem.body_roman || "");
+            setEditedMeaning(poem.body_meaning || "");
             setEditedGenre(poem.genre || "");
             setEditedDescription(poem.description || "");
             setEditedPoetId(poem.poet_id || null);
@@ -201,6 +203,7 @@ export default function SubmissionDetailPage({ params }: Props) {
             chhanda_name?: string;
             metadata_json?: any;
             search_slug?: string;
+            body_meaning?: string;
         }) => {
             console.log('Saving poem with data:', data);
             return api.patch(`/api/admin/poems/${id}`, data);
@@ -293,6 +296,7 @@ export default function SubmissionDetailPage({ params }: Props) {
                                             setEditedTitleRoman(poem.title_roman || "");
                                             setEditedMarathi(poem.body_marathi || "");
                                             setEditedRoman(poem.body_roman || "");
+                                            setEditedMeaning(poem.body_meaning || "");
                                             setEditedGenre(poem.genre || "");
                                             setEditedDescription(poem.description || "");
                                             setEditedPoetName(poem.poet?.name || "");
@@ -326,6 +330,7 @@ export default function SubmissionDetailPage({ params }: Props) {
                                                 title_roman: editedTitleRoman,
                                                 body_marathi: editedMarathi,
                                                 body_roman: editedRoman,
+                                                body_meaning: editedMeaning,
                                                 genre: editedGenre,
                                                 description: editedDescription,
                                                 poet_name: editedPoetName,
@@ -757,11 +762,11 @@ export default function SubmissionDetailPage({ params }: Props) {
                 )}
 
 
-                {/* Split View */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+                {/* 3-Column Split View */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mb-8">
                     {/* Devanagari Column */}
-                    <div className="bg-white rounded-3xl border border-gold/10 shadow-sm p-8 flex flex-col">
-                        <div className="pb-4 mb-6 border-b border-gold/10 flex items-center justify-between">
+                    <div className="bg-white rounded-3xl border border-gold/10 shadow-sm p-6 flex flex-col">
+                        <div className="pb-4 mb-4 border-b border-gold/10 flex items-center justify-between">
                             <span className="text-xs font-bold text-gold uppercase tracking-widest">Devanagari (Original)</span>
                             <span className="text-xs text-foreground/40 font-marathi">मराठी</span>
                         </div>
@@ -777,7 +782,7 @@ export default function SubmissionDetailPage({ params }: Props) {
                                         setEditedRoman(transliterated);
                                     }
                                 }}
-                                className="w-full min-h-[500px] px-6 py-6 bg-white border border-gold/20 rounded-2xl focus:ring-2 focus:ring-gold/40 focus:border-gold outline-none transition-all font-marathi text-xl leading-loose resize-none"
+                                className="w-full min-h-[400px] px-4 py-4 bg-white border border-gold/20 rounded-xl focus:ring-2 focus:ring-gold/40 focus:border-gold outline-none transition-all font-marathi text-lg leading-loose resize-none"
                                 placeholder="Enter Devanagari content..."
                             />
                         ) : (
@@ -787,11 +792,11 @@ export default function SubmissionDetailPage({ params }: Props) {
                         )}
                     </div>
 
-                    {/* Roman/Translation Column */}
-                    <div className="bg-white rounded-3xl border border-gold/10 shadow-sm p-8 flex flex-col bg-slate-50/50">
-                        <div className="pb-4 mb-6 border-b border-gold/10 flex items-center justify-between">
+                    {/* Roman Column */}
+                    <div className="bg-white rounded-3xl border border-gold/10 shadow-sm p-6 flex flex-col bg-slate-50/50">
+                        <div className="pb-4 mb-4 border-b border-gold/10 flex items-center justify-between">
                             <span className="text-xs font-bold text-gold uppercase tracking-widest">Roman Transliteration</span>
-                            <span className="text-xs text-foreground/40 font-english">English</span>
+                            <span className="text-xs text-foreground/40 font-english">English Translit</span>
                         </div>
                         {isEditing ? (
                             <textarea
@@ -805,16 +810,126 @@ export default function SubmissionDetailPage({ params }: Props) {
                                         setEditedMarathi(transliterated);
                                     }
                                 }}
-                                className="w-full min-h-[500px] px-6 py-6 bg-white border border-gold/20 rounded-2xl focus:ring-2 focus:ring-gold/40 focus:border-gold outline-none transition-all font-english text-xl leading-loose resize-none"
+                                className="w-full min-h-[400px] px-4 py-4 bg-white border border-gold/20 rounded-xl focus:ring-2 focus:ring-gold/40 focus:border-gold outline-none transition-all font-english text-lg leading-loose resize-none"
                                 placeholder="Enter Roman transliteration..."
                             />
                         ) : (
                             <div className="prose prose-lg max-w-none font-english leading-loose text-foreground/80 whitespace-pre-wrap">
-                                {poem.body_roman || "Roman transliteration not available for this poem."}
+                                {poem.body_roman || "Roman transliteration not available."}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Meaning Column */}
+                    <div className="bg-white rounded-3xl border border-gold/10 shadow-sm p-6 flex flex-col bg-emerald-50/10">
+                        <div className="pb-4 mb-4 border-b border-gold/10 flex items-center justify-between">
+                            <span className="text-xs font-bold text-gold uppercase tracking-widest">English Meaning</span>
+                            <span className="text-xs text-foreground/40 font-english">Translation</span>
+                        </div>
+                        {isEditing ? (
+                            <textarea
+                                value={editedMeaning}
+                                onChange={(e) => setEditedMeaning(e.target.value)}
+                                className="w-full min-h-[400px] px-4 py-4 bg-white border border-gold/20 rounded-xl focus:ring-2 focus:ring-gold/40 focus:border-gold outline-none transition-all font-english text-lg leading-loose resize-none"
+                                placeholder="Enter line-by-line English meaning..."
+                            />
+                        ) : (
+                            <div className="prose prose-lg max-w-none font-english leading-loose text-foreground/80 whitespace-pre-wrap">
+                                {poem.body_meaning || "No English meaning available."}
                             </div>
                         )}
                     </div>
                 </div>
+
+                {/* Line-by-Line Alignment Check (View Mode Only) */}
+                {!isEditing && (() => {
+                    const normalizeNewlines = (text: string) => {
+                        if (!text) return "";
+                        return text
+                            .replace(/\\r\\n/g, "\n")
+                            .replace(/\\n/g, "\n")
+                            .replace(/\\r/g, "\n")
+                            .replace(/\r\n/g, "\n")
+                            .replace(/\r/g, "\n");
+                    };
+
+                    const marathi = poem.body_marathi || "";
+                    const roman = poem.body_roman || "";
+                    const meaning = poem.body_meaning || "";
+
+                    const originalLines = marathi ? normalizeNewlines(marathi).split("\n") : [];
+                    const cleanMarathi = marathi ? normalizeNewlines(marathi).split("\n").map(l => l.trim()).filter(l => l !== "") : [];
+                    const cleanRoman = roman ? normalizeNewlines(roman).split("\n").map(l => l.trim()).filter(l => l !== "") : [];
+                    const cleanMeaning = meaning ? normalizeNewlines(meaning).split("\n").map(l => l.trim()).filter(l => l !== "") : [];
+
+                    let cleanIdx = 0;
+                    const alignedRows: Array<{
+                        marathiLine: string;
+                        romanLine: string;
+                        meaningLine: string;
+                        isStanzaBreak: boolean;
+                    }> = [];
+
+                    for (const line of originalLines) {
+                        if (line.trim() === "") {
+                            alignedRows.push({
+                                marathiLine: "",
+                                romanLine: "",
+                                meaningLine: "",
+                                isStanzaBreak: true
+                            });
+                        } else {
+                            alignedRows.push({
+                                marathiLine: cleanMarathi[cleanIdx] || "",
+                                romanLine: cleanRoman[cleanIdx] || "",
+                                meaningLine: cleanMeaning[cleanIdx] || "",
+                                isStanzaBreak: false
+                            });
+                            cleanIdx++;
+                        }
+                    }
+
+                    const maxLeftover = Math.max(cleanRoman.length, cleanMeaning.length);
+                    while (cleanIdx < maxLeftover) {
+                        alignedRows.push({
+                            marathiLine: cleanMarathi[cleanIdx] || "",
+                            romanLine: cleanRoman[cleanIdx] || "",
+                            meaningLine: cleanMeaning[cleanIdx] || "",
+                            isStanzaBreak: false
+                        });
+                        cleanIdx++;
+                    }
+
+                    return (
+                        <div className="mt-8 bg-white rounded-3xl border border-gold/10 shadow-sm p-8 animate-in fade-in duration-300">
+                            <h2 className="text-xl font-serif font-bold text-foreground mb-6 pb-4 border-b border-gold/10">
+                                Line-by-Line Meaning Alignment
+                            </h2>
+                            <div className="space-y-4">
+                                {alignedRows.map((row, idx) => {
+                                    if (row.isStanzaBreak) {
+                                        return <div key={idx} className="h-6 border-b border-gold/5" />;
+                                    }
+
+                                    return (
+                                        <div key={idx} className="grid grid-cols-1 lg:grid-cols-3 gap-4 py-3 border-b border-gold/5 last:border-0 hover:bg-gold/5 rounded-xl px-4 transition-colors">
+                                            <div className="font-marathi text-lg text-foreground/90 leading-relaxed">
+                                                {row.marathiLine || <span className="text-foreground/20 italic">Empty line</span>}
+                                            </div>
+                                            <div className="font-english italic text-foreground/60 leading-relaxed">
+                                                {row.romanLine || <span className="text-foreground/20 italic">No transliteration</span>}
+                                            </div>
+                                            <div className="font-english text-foreground/75 font-medium leading-relaxed">
+                                                {row.meaningLine || <span className="text-foreground/20 italic">No meaning</span>}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    );
+                })()}
+
 
             </section>
             <Footer />
