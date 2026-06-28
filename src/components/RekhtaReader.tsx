@@ -3,7 +3,7 @@
 import { useLanguage } from "@/lib/LanguageContext";
 import { PoemOut } from "@/lib/types";
 import { splitMarathiText } from "@/lib/utils";
-import { BookOpen, AlignCenter, AlignLeft, AlignJustify, FileText, Languages, Info } from "lucide-react";
+import { BookOpen, AlignCenter, AlignLeft, AlignJustify, FileText, Languages, Info, Settings } from "lucide-react";
 import React from "react";
 import { WordTooltip } from "./WordTooltip";
 
@@ -11,10 +11,55 @@ interface RekhtaReaderProps {
     poem: PoemOut;
 }
 
+// 5 Typography Options Config as requested
+const STYLE_VARIANTS = {
+    lora: {
+        id: "lora",
+        name: "Option 1: Lora + Inter",
+        romanOnly: "font-lora italic font-medium text-[17px] sm:text-[18px] md:text-[20px] lg:text-[22px] leading-[1.85] tracking-[0.015em] text-foreground/90 max-w-[40ch] mx-auto",
+        romanBilingual: "font-lora italic font-medium text-[15px] sm:text-[16px] md:text-[18px] lg:text-[20px] leading-[1.4] tracking-[0.015em] text-foreground/90",
+        translationBilingual: "font-sans text-[11px] sm:text-[12px] md:text-[13px] text-foreground/50 leading-relaxed font-normal tracking-wide mt-1.5 mb-2.5 pl-3 ml-2 border-l border-gold/20"
+    },
+    cormorant: {
+        id: "cormorant",
+        name: "Option 2: Cormorant Garamond + Outfit",
+        romanOnly: "font-cormorant italic font-semibold text-[19px] sm:text-[20px] md:text-[22px] lg:text-[24px] leading-[1.95] tracking-[0.010em] text-foreground/90 max-w-[38ch] mx-auto",
+        romanBilingual: "font-cormorant italic font-semibold text-[17px] sm:text-[18px] md:text-[20px] lg:text-[22px] leading-[1.4] tracking-[0.010em] text-foreground/90",
+        translationBilingual: "font-outfit text-[11px] sm:text-[12px] md:text-[13px] text-foreground/50 leading-relaxed font-light tracking-wider mt-1.5 mb-2.5 pl-3 ml-2 border-l border-gold/20"
+    },
+    playfair: {
+        id: "playfair",
+        name: "Option 3: Playfair Display + Mulish",
+        romanOnly: "font-serif italic font-medium text-[18px] sm:text-[19px] md:text-[21px] lg:text-[23px] leading-[1.90] tracking-[0.020em] text-foreground/90 max-w-[42ch] mx-auto",
+        romanBilingual: "font-serif italic font-medium text-[16px] sm:text-[17px] md:text-[19px] lg:text-[21px] leading-[1.4] tracking-[0.015em] text-foreground/90",
+        translationBilingual: "font-mulish text-[11px] sm:text-[12px] md:text-[13px] text-foreground/50 leading-relaxed font-light tracking-normal mt-1.5 mb-2.5 pl-3 ml-2 border-l border-gold/20"
+    },
+    garamond: {
+        id: "garamond",
+        name: "Option 4: EB Garamond + Plus Jakarta Sans",
+        romanOnly: "font-eb-garamond italic font-medium text-[18px] sm:text-[19px] md:text-[21px] lg:text-[23px] leading-[1.80] tracking-[0.025em] text-foreground/90 max-w-[40ch] mx-auto",
+        romanBilingual: "font-eb-garamond italic font-medium text-[16px] sm:text-[17px] md:text-[19px] lg:text-[21px] leading-[1.4] tracking-[0.020em] text-foreground/90",
+        translationBilingual: "font-jakarta text-[11px] sm:text-[12px] md:text-[13px] text-foreground/50 leading-relaxed font-normal tracking-wide mt-1.5 mb-2.5 pl-3 ml-2 border-l border-gold/20"
+    },
+    alegreya: {
+        id: "alegreya",
+        name: "Option 5: Alegreya + Alegreya Sans",
+        romanOnly: "font-alegreya italic font-medium text-[17px] sm:text-[18px] md:text-[20px] lg:text-[22px] leading-[1.80] tracking-[0.015em] text-foreground/90 max-w-[40ch] mx-auto",
+        romanBilingual: "font-alegreya italic font-medium text-[15px] sm:text-[16px] md:text-[18px] lg:text-[20px] leading-[1.4] tracking-[0.015em] text-foreground/90",
+        translationBilingual: "font-alegreya-sans text-[11px] sm:text-[12px] md:text-[13px] text-foreground/50 leading-relaxed font-normal tracking-wide mt-1.5 mb-2.5 pl-3 ml-2 border-l border-gold/20"
+    }
+} as const;
+
+type VariantKey = keyof typeof STYLE_VARIANTS;
+
 export const RekhtaReader: React.FC<RekhtaReaderProps> = ({ poem }) => {
     const { language } = useLanguage();
     const [viewMode, setViewMode] = React.useState<"poem" | "with_meaning" | "meaning">("poem");
     const [alignment, setAlignment] = React.useState<"center" | "left" | "justify">("center");
+    
+    // Dynamic Typography Variant State - Default to 'lora' as requested
+    const [romanStyleVariant, setRomanStyleVariant] = React.useState<VariantKey>("lora");
+    const [showPreview, setShowPreview] = React.useState(false);
 
     const hasRoman = !!poem.body_roman;
     const showRoman = language === "roman" && hasRoman;
@@ -37,6 +82,47 @@ export const RekhtaReader: React.FC<RekhtaReaderProps> = ({ poem }) => {
     const lines = marathiBody ? normalizeNewlines(marathiBody).split("\n") : [];
     const romanLines = romanBody ? normalizeNewlines(romanBody).split("\n") : [];
     const meaningLines = meaningBody ? normalizeNewlines(meaningBody).split("\n") : [];
+
+    const alignmentClass = alignment === "center" ? "justify-center text-center" : "justify-start text-left";
+
+    // Helper to get Roman Class based on active state and variant
+    const getRomanClass = (variant: VariantKey, isOnlyRoman: boolean) => {
+        const config = STYLE_VARIANTS[variant];
+        const base = isOnlyRoman ? config.romanOnly : config.romanBilingual;
+        const alignClass = alignment === "justify" 
+            ? "text-justify [text-align-last:justify] w-full max-w-[90%] mx-auto block" 
+            : `flex flex-wrap ${alignmentClass} gap-x-1 md:gap-x-1.5`;
+        return `${base} ${alignClass}`;
+    };
+
+    // Helper to get Translation Class based on active state and variant
+    const getTranslationClass = (variant: VariantKey, isBilingual: boolean) => {
+        const base = STYLE_VARIANTS[variant].translationBilingual;
+        if (viewMode === "meaning") {
+            const sizeClass = "text-[14px] sm:text-[15px] md:text-[17px]";
+            const fontClass = variant === "cormorant" ? "font-outfit font-light" 
+                            : variant === "playfair" ? "font-mulish font-light"
+                            : variant === "garamond" ? "font-jakarta font-normal"
+                            : variant === "alegreya" ? "font-alegreya-sans font-normal"
+                            : "font-sans font-normal";
+            const alignClass = alignment === "center" ? "text-center" 
+                             : alignment === "justify" ? "text-justify max-w-[90%] mx-auto" 
+                             : "text-left";
+            return `${fontClass} ${sizeClass} ${alignClass} text-foreground/80 leading-relaxed py-1`;
+        }
+        
+        let layoutModifiers = "";
+        if (alignment === "center") {
+            layoutModifiers = "border-l-0 pl-0 ml-0 text-center";
+        } else if (alignment === "justify") {
+            layoutModifiers = "border-l-0 pl-0 ml-0 text-justify max-w-[90%] mx-auto";
+        } else {
+            layoutModifiers = "border-l border-gold/20 pl-3 ml-1 sm:ml-2 text-left";
+        }
+        
+        const cleanedBase = base.replace("border-l border-gold/20 pl-3 ml-2", "");
+        return `${cleanedBase} ${layoutModifiers}`;
+    };
 
     return (
         <div className="flex flex-col w-full">
@@ -91,6 +177,21 @@ export const RekhtaReader: React.FC<RekhtaReaderProps> = ({ poem }) => {
                             </button>
                         </div>
 
+                        {/* Typography Live Sandbox Trigger Toggle (Bilingual/Roman only modes) */}
+                        {showRoman && (
+                            <button
+                                onClick={() => setShowPreview(!showPreview)}
+                                className={`p-1.5 rounded-md transition-all ${
+                                    showPreview
+                                        ? "bg-maroon text-white shadow-sm"
+                                        : "text-foreground/60 hover:text-maroon hover:bg-foreground/5"
+                                }`}
+                                title="Typography Preview Control Panel"
+                            >
+                                <Settings className="w-3.5 h-3.5 animate-spin-slow" />
+                            </button>
+                        )}
+
                         {/* Meaning Mode Toggle (Only if hasMeaning) */}
                         {hasMeaning && (
                             <div className="flex items-center bg-foreground/5 p-0.5 rounded-md border border-gold/5 text-xs font-english">
@@ -135,7 +236,7 @@ export const RekhtaReader: React.FC<RekhtaReaderProps> = ({ poem }) => {
                     </div>
                 </div>
 
-                {/* Poem Body - Minimalist, centered, left-aligned or justified, tight line heights, stanza breaks */}
+                {/* Main Poem Body Display area */}
                 <div className={`animate-in fade-in duration-700 w-full py-2 ${alignment === "center" ? "text-center" : (alignment === "justify" ? "text-justify" : "text-left")}`}>
                     {lines.map((line, lineIdx) => {
                         const isEmptyLine = line.trim() === "";
@@ -154,7 +255,8 @@ export const RekhtaReader: React.FC<RekhtaReaderProps> = ({ poem }) => {
                             return <div key={lineIdx} className="h-4 md:h-5" />;
                         }
 
-                        const alignmentClass = alignment === "center" ? "justify-center text-center" : "justify-start text-left";
+                        const romanClass = showRoman ? getRomanClass(romanStyleVariant, viewMode === "poem") : "";
+                        const translationClass = getTranslationClass(romanStyleVariant, viewMode === "with_meaning");
 
                         return (
                             <div 
@@ -184,22 +286,28 @@ export const RekhtaReader: React.FC<RekhtaReaderProps> = ({ poem }) => {
                                             </div>
                                         </div>
 
-                                        {/* Roman Transliteration */}
+                                        {/* Roman Transliteration with Dynamic Variant Classes */}
                                         {showRoman && romanLine && (
-                                            <div className={`text-[11px] min-[360px]:text-[12px] min-[400px]:text-sm sm:text-base md:text-lg lg:text-[1.25rem] font-serif italic text-foreground/80 leading-[1.4] py-0.5 tracking-wide ${
-                                                alignment === "justify" 
-                                                    ? "text-justify [text-align-last:justify] w-full max-w-[90%] mx-auto block" 
-                                                    : `flex flex-wrap ${alignmentClass} gap-x-1 md:gap-x-1.5`
-                                            }`}>
-                                                {romanLine.split(" ").map((word, wordIdx) => (
-                                                    <React.Fragment key={wordIdx}>
+                                            <div className={`${romanClass} py-0.5 py-0.5`}>
+                                                {alignment === "justify" ? (
+                                                    romanLine.split(" ").map((word, wordIdx) => (
+                                                        <React.Fragment key={wordIdx}>
+                                                            <WordTooltip
+                                                                word={word}
+                                                                isRoman={true}
+                                                            />
+                                                            {wordIdx < romanLine.split(" ").length - 1 && " "}
+                                                        </React.Fragment>
+                                                    ))
+                                                ) : (
+                                                    romanLine.split(" ").map((word, wordIdx) => (
                                                         <WordTooltip
+                                                            key={wordIdx}
                                                             word={word}
                                                             isRoman={true}
                                                         />
-                                                        {wordIdx < romanLine.split(" ").length - 1 && " "}
-                                                    </React.Fragment>
-                                                ))}
+                                                    ))
+                                                )}
                                             </div>
                                         )}
                                     </>
@@ -207,17 +315,7 @@ export const RekhtaReader: React.FC<RekhtaReaderProps> = ({ poem }) => {
 
                                 {/* Meaning Line (only if in with_meaning or meaning_only mode) */}
                                 {viewMode !== "poem" && !isMeaningEmpty && (
-                                    <div 
-                                        className={`w-full font-english text-foreground/60 leading-relaxed ${
-                                            viewMode === "meaning" 
-                                                ? "text-sm sm:text-base md:text-lg py-1" 
-                                                : "text-[11px] min-[360px]:text-[12px] min-[400px]:text-xs sm:text-sm md:text-base italic mt-1 mb-1 py-0.5 border-l-2 border-gold/20 pl-3 ml-1 sm:ml-2"
-                                        } ${
-                                            alignment === "center" 
-                                                ? "text-center border-l-0 pl-0 ml-0" 
-                                                : (alignment === "justify" ? "text-justify w-full max-w-[90%] mx-auto border-l-0 pl-0 ml-0" : "text-left")
-                                        }`}
-                                    >
+                                    <div className={translationClass}>
                                         {meaningLine}
                                     </div>
                                 )}
@@ -225,6 +323,114 @@ export const RekhtaReader: React.FC<RekhtaReaderProps> = ({ poem }) => {
                         );
                     })}
                 </div>
+
+                {/* Dev-only Typography Options Preview Stack (Renders first stanza in 5 options for comparison) */}
+                {showPreview && showRoman && lines.length > 0 && (
+                    <div className="mt-8 border border-gold/25 rounded-2xl bg-white p-5 space-y-6 shadow-sm animate-in slide-in-from-bottom duration-300">
+                        <div className="flex items-center justify-between border-b border-gold/10 pb-3">
+                            <div>
+                                <h4 className="font-english font-bold text-xs uppercase tracking-wider text-gold">
+                                    Typography Preview Board
+                                </h4>
+                                <p className="text-[10px] font-english text-foreground/40 mt-0.5">Compare layout variations side-by-side</p>
+                            </div>
+                            <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-gold/10 text-gold font-bold">DEV ONLY</span>
+                        </div>
+
+                        <div className="space-y-6 text-left">
+                            {(["lora", "cormorant", "playfair", "garamond", "alegreya"] as const).map((variant) => {
+                                const cfg = STYLE_VARIANTS[variant];
+                                
+                                // Preview first 4 lines of the poem
+                                const previewLimit = Math.min(lines.length, 4);
+                                const previewLines = lines.slice(0, previewLimit);
+                                const previewRoman = romanLines.slice(0, previewLimit);
+                                const previewMeaning = meaningLines.slice(0, previewLimit);
+
+                                // Use variant-specific styles
+                                const romanStyle = viewMode === "poem" ? cfg.romanOnly : cfg.romanBilingual;
+                                const isSelected = romanStyleVariant === variant;
+
+                                return (
+                                    <div key={variant} className={`p-4 rounded-xl border transition-all ${
+                                        isSelected 
+                                            ? "border-gold/50 bg-gold/2 shadow-inner" 
+                                            : "border-foreground/5 bg-foreground/3 hover:bg-foreground/4"
+                                    }`}>
+                                        <div className="flex items-center justify-between border-b border-foreground/5 pb-2 mb-3">
+                                            <span className="text-[10px] font-english font-bold text-foreground/60 tracking-wider">
+                                                {cfg.name}
+                                            </span>
+                                            <button
+                                                onClick={() => setRomanStyleVariant(variant)}
+                                                className={`px-2.5 py-1 rounded-md text-[9px] uppercase tracking-wider font-bold transition-all ${
+                                                    isSelected
+                                                        ? "bg-gold text-white"
+                                                        : "bg-foreground/10 text-foreground/60 hover:bg-gold/20"
+                                                }`}
+                                            >
+                                                {isSelected ? "Active" : "Apply"}
+                                            </button>
+                                        </div>
+
+                                        <div className={`py-1 ${alignment === "center" ? "text-center" : (alignment === "justify" ? "text-justify" : "text-left")}`}>
+                                            {previewLines.map((l, idx) => {
+                                                const rLine = previewRoman[idx];
+                                                const mLine = previewMeaning[idx];
+                                                const isMEmpty = !mLine || mLine.trim() === "";
+
+                                                if (l.trim() === "" && (!showRoman || !rLine || rLine.trim() === "")) {
+                                                    return <div key={idx} className="h-3" />;
+                                                }
+
+                                                // Base translation settings
+                                                let layoutModifiers = "";
+                                                if (alignment === "center") {
+                                                    layoutModifiers = "border-l-0 pl-0 ml-0 text-center";
+                                                } else if (alignment === "justify") {
+                                                    layoutModifiers = "border-l-0 pl-0 ml-0 text-justify max-w-[90%] mx-auto";
+                                                } else {
+                                                    layoutModifiers = "border-l border-gold/20 pl-3 ml-2 text-left";
+                                                }
+                                                const cleanedTransBase = cfg.translationBilingual.replace("border-l border-gold/20 pl-3 ml-2", "");
+                                                const finalTransClass = `${cleanedTransBase} ${layoutModifiers}`;
+
+                                                return (
+                                                    <div 
+                                                        key={idx} 
+                                                        className={`w-full mb-3 flex flex-col ${
+                                                            alignment === "center" 
+                                                                ? "items-center" 
+                                                                : (alignment === "justify" ? "items-stretch" : "items-start")
+                                                        }`}
+                                                    >
+                                                        {viewMode !== "meaning" && rLine && (
+                                                            <div className={`${romanStyle} leading-[1.5] py-0.5 ${
+                                                                alignment === "justify" 
+                                                                    ? "text-justify [text-align-last:justify] w-full max-w-[90%] mx-auto block" 
+                                                                    : `flex flex-wrap ${alignmentClass} gap-x-1`
+                                                            }`}>
+                                                                {rLine.split(" ").map((w, wIdx) => (
+                                                                    <span key={wIdx} className="inline-block">{w}&nbsp;</span>
+                                                                ))}
+                                                            </div>
+                                                        )}
+
+                                                        {viewMode !== "poem" && !isMEmpty && (
+                                                            <div className={finalTransClass}>
+                                                                {mLine}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                )}
 
                 {/* Metre/Chhanda Info - Minimal card below poem */}
                 {poem.chhanda_name && (
