@@ -33,6 +33,8 @@
   --font-marathi: var(--font-mukta), sans-serif;
   --font-english: var(--font-inter), sans-serif;
   --font-serif: var(--font-playfair), serif;
+
+  --font-lora: var(--font-lora), serif;
 }
 
 @utility no-scrollbar {

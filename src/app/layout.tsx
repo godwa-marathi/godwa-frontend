@@ -1,6 +1,6 @@
 import Providers from "@/components/Providers";
 import type { Metadata } from "next";
-import { Inter, Mukta, Playfair_Display } from "next/font/google";
+import { Inter, Mukta, Playfair_Display, Lora } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 
@@ -18,6 +18,12 @@ const inter = Inter({
 const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-playfair",
+});
+
+const lora = Lora({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-lora",
 });
 
 export const metadata: Metadata = {
@@ -48,7 +54,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${mukta.variable} ${inter.variable} ${playfair.variable} antialiased font-marathi selection:bg-gold/30`}      >
+        className={`${mukta.variable} ${inter.variable} ${playfair.variable} ${lora.variable} antialiased font-marathi selection:bg-gold/30`}      >
         <Providers>
           {children}
         </Providers>

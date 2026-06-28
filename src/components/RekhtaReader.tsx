@@ -45,94 +45,90 @@ export const RekhtaReader: React.FC<RekhtaReaderProps> = ({ poem }) => {
 
                 {/* Minimal Reader Toolbar */}
                 <div className="flex items-center justify-between gap-3 mb-4 pb-3 border-b border-gold/10">
-                    <div className="hidden sm:flex items-center gap-2 text-foreground/50">
-                        <BookOpen className="w-4 h-4" />
-                        <span className="font-english font-medium text-xs uppercase tracking-wider">
-                            Interactive Reader
-                        </span>
+                    {/* Left: Alignment Toggle */}
+                    <div className="flex items-center bg-foreground/5 p-0.5 rounded-md border border-gold/5 animate-in fade-in duration-300">
+                        <button
+                            onClick={() => setAlignment("left")}
+                            className={`p-1.5 rounded-md transition-all ${
+                                alignment === "left"
+                                    ? "bg-gold text-white shadow-sm"
+                                    : "text-foreground/60 hover:text-foreground hover:bg-foreground/5"
+                            }`}
+                            title="Left Align"
+                        >
+                            <AlignLeft className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                            onClick={() => setAlignment("center")}
+                            className={`p-1.5 rounded-md transition-all ${
+                                alignment === "center"
+                                    ? "bg-gold text-white shadow-sm"
+                                    : "text-foreground/60 hover:text-foreground hover:bg-foreground/5"
+                            }`}
+                            title="Center Align"
+                        >
+                            <AlignCenter className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                            onClick={() => setAlignment("justify")}
+                            className={`p-1.5 rounded-md transition-all ${
+                                alignment === "justify"
+                                    ? "bg-gold text-white shadow-sm"
+                                    : "text-foreground/60 hover:text-foreground hover:bg-foreground/5"
+                            }`}
+                            title="Justify Align"
+                        >
+                            <AlignJustify className="w-3.5 h-3.5" />
+                        </button>
                     </div>
 
-                    {/* Toggles Container */}
-                    <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
-                        {/* Alignment Toggle */}
-                        <div className="flex items-center bg-foreground/5 p-0.5 rounded-md border border-gold/5">
+                    {/* Right: Meaning Mode Toggle (Only if hasMeaning) */}
+                    {hasMeaning && (
+                        <div className="flex items-center bg-foreground/5 p-0.5 rounded-md border border-gold/5 text-xs font-english animate-in fade-in duration-300">
                             <button
-                                onClick={() => setAlignment("left")}
-                                className={`p-1.5 rounded-md transition-all ${
-                                    alignment === "left"
+                                onClick={() => setViewMode("poem")}
+                                className={`px-2.5 py-1.5 rounded-md transition-all flex items-center ${
+                                    viewMode === "poem"
                                         ? "bg-gold text-white shadow-sm"
                                         : "text-foreground/60 hover:text-foreground hover:bg-foreground/5"
                                 }`}
-                                title="Left Align"
+                                title="Poem Only"
                             >
-                                <AlignLeft className="w-3.5 h-3.5" />
+                                <FileText className="w-3.5 h-3.5" />
+                                {viewMode === "poem" && (
+                                    <span className="text-[11px] font-medium ml-1.5 animate-in fade-in duration-200">Poem</span>
+                                )}
                             </button>
                             <button
-                                onClick={() => setAlignment("center")}
-                                className={`p-1.5 rounded-md transition-all ${
-                                    alignment === "center"
+                                onClick={() => setViewMode("with_meaning")}
+                                className={`px-2.5 py-1.5 rounded-md transition-all flex items-center ${
+                                    viewMode === "with_meaning"
                                         ? "bg-gold text-white shadow-sm"
                                         : "text-foreground/60 hover:text-foreground hover:bg-foreground/5"
                                 }`}
-                                title="Center Align"
+                                title="Poem + Meaning"
                             >
-                                <AlignCenter className="w-3.5 h-3.5" />
+                                <Languages className="w-3.5 h-3.5" />
+                                {viewMode === "with_meaning" && (
+                                    <span className="text-[11px] font-medium ml-1.5 animate-in fade-in duration-200">Bilingual</span>
+                                )}
                             </button>
                             <button
-                                onClick={() => setAlignment("justify")}
-                                className={`p-1.5 rounded-md transition-all ${
-                                    alignment === "justify"
+                                onClick={() => setViewMode("meaning")}
+                                className={`px-2.5 py-1.5 rounded-md transition-all flex items-center ${
+                                    viewMode === "meaning"
                                         ? "bg-gold text-white shadow-sm"
                                         : "text-foreground/60 hover:text-foreground hover:bg-foreground/5"
                                 }`}
-                                title="Justify Align"
+                                title="Meaning Only"
                             >
-                                <AlignJustify className="w-3.5 h-3.5" />
+                                <Info className="w-3.5 h-3.5" />
+                                {viewMode === "meaning" && (
+                                    <span className="text-[11px] font-medium ml-1.5 animate-in fade-in duration-200">Meaning</span>
+                                )}
                             </button>
                         </div>
-
-                        {/* Meaning Mode Toggle (Only if hasMeaning) */}
-                        {hasMeaning && (
-                            <div className="flex items-center bg-foreground/5 p-0.5 rounded-md border border-gold/5 text-xs font-english">
-                                <button
-                                    onClick={() => setViewMode("poem")}
-                                    className={`px-2.5 py-1.5 rounded-md transition-all flex items-center ${
-                                        viewMode === "poem"
-                                            ? "bg-gold text-white shadow-sm"
-                                            : "text-foreground/60 hover:text-foreground hover:bg-foreground/5"
-                                    }`}
-                                    title="Poem Only"
-                                >
-                                    <FileText className="w-3.5 h-3.5" />
-                                    <span className="hidden sm:inline text-[11px] font-medium ml-1.5">Poem</span>
-                                </button>
-                                <button
-                                    onClick={() => setViewMode("with_meaning")}
-                                    className={`px-2.5 py-1.5 rounded-md transition-all flex items-center ${
-                                        viewMode === "with_meaning"
-                                            ? "bg-gold text-white shadow-sm"
-                                            : "text-foreground/60 hover:text-foreground hover:bg-foreground/5"
-                                    }`}
-                                    title="Poem + Meaning"
-                                >
-                                    <Languages className="w-3.5 h-3.5" />
-                                    <span className="hidden sm:inline text-[11px] font-medium ml-1.5">Bilingual</span>
-                                </button>
-                                <button
-                                    onClick={() => setViewMode("meaning")}
-                                    className={`px-2.5 py-1.5 rounded-md transition-all flex items-center ${
-                                        viewMode === "meaning"
-                                            ? "bg-gold text-white shadow-sm"
-                                            : "text-foreground/60 hover:text-foreground hover:bg-foreground/5"
-                                    }`}
-                                    title="Meaning Only"
-                                >
-                                    <Info className="w-3.5 h-3.5" />
-                                    <span className="hidden sm:inline text-[11px] font-medium ml-1.5">Meaning</span>
-                                </button>
-                            </div>
-                        )}
-                    </div>
+                    )}
                 </div>
 
                 {/* Poem Body - Minimalist, centered, left-aligned or justified, tight line heights, stanza breaks */}
@@ -186,9 +182,9 @@ export const RekhtaReader: React.FC<RekhtaReaderProps> = ({ poem }) => {
 
                                         {/* Roman Transliteration */}
                                         {showRoman && romanLine && (
-                                            <div className={`text-[11px] min-[360px]:text-[12px] min-[400px]:text-sm sm:text-base md:text-lg lg:text-[1.25rem] font-serif italic text-foreground/80 leading-[1.4] py-0.5 tracking-wide ${
+                                            <div className={`text-[17px] min-[360px]:text-[18px] sm:text-[19px] md:text-[21px] lg:text-[22px] font-lora italic font-medium text-foreground/90 leading-[1.85] py-0.5 tracking-[0.015em] max-w-[55ch] mx-auto ${
                                                 alignment === "justify" 
-                                                    ? "text-justify [text-align-last:justify] w-full max-w-[90%] mx-auto block" 
+                                                    ? "text-justify [text-align-last:justify] w-full block" 
                                                     : `flex flex-wrap ${alignmentClass} gap-x-1 md:gap-x-1.5`
                                             }`}>
                                                 {romanLine.split(" ").map((word, wordIdx) => (
