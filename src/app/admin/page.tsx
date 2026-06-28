@@ -56,8 +56,12 @@ export default function AdminDashboard() {
 
     // Mutation: Approve Poem
     const approveMutation = useMutation({
-        mutationFn: (id: number) => api.post(`/api/admin/poems/submissions/${id}/approve`, {}),
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin", "submissions"] }),
+        mutationFn: (id: number) => api.post(`/api/admin/poems/${id}/approve`, {}),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["admin", "submissions"] });
+            queryClient.invalidateQueries({ queryKey: ["admin", "tokenized"] });
+            queryClient.invalidateQueries({ queryKey: ["admin", "approved"] });
+        },
     });
 
     return (
@@ -96,21 +100,13 @@ export default function AdminDashboard() {
                 </div>
 
                 {activeTab === "review" && (
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                         {loadingSubs ? (
                             <div className="py-20 flex justify-center"><Loader2 className="w-8 h-8 text-maroon animate-spin" /></div>
                         ) : submissions?.length ? (
                             submissions.map((item: any) => {
-                                // Handle potential nested structure (Submission wrapper vs direct Poem)
                                 const poem = item.poem || item;
-                                // Robustly determine ID: poem.id, item.poem_id, or item.id
                                 const poemId = poem.id || item.poem_id || (item.poem ? undefined : item.id);
-
-                                // Debug logging
-                                // console.log('Submission item:', item);
-                                // console.log('Poem object:', poem);
-                                // console.log('Resolved Poem ID:', poemId);
-
                                 const poet = poem.poet || poetMap.get(poem.poet_id);
                                 const poetName = language === "devanagari"
                                     ? (poet?.name || "Unknown Poet")
@@ -118,33 +114,44 @@ export default function AdminDashboard() {
 
                                 if (!poemId) {
                                     console.error("Could not resolve poem ID for item:", item);
-                                    return null; // Skip invalid items
+                                    return null;
                                 }
 
                                 return (
-                                    <div key={poemId} className="bg-white rounded-2xl border border-gold/10 p-6 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
-                                        <Link href={`/admin/submissions/${poemId}`} className="flex items-center gap-6 flex-1 group cursor-pointer">
-                                            <div className="w-12 h-12 rounded-xl bg-gold/5 flex items-center justify-center text-gold group-hover:bg-gold/10 transition-colors">
-                                                <BookOpen className="w-6 h-6" />
+                                    <div key={poemId} className="bg-white rounded-xl border border-gold/10 p-4 flex items-center justify-between hover:border-gold/30 hover:shadow-sm transition-all">
+                                        <div className="flex items-center gap-4 flex-1">
+                                            <div className="w-9 h-9 rounded-lg bg-gold/5 flex items-center justify-center text-gold">
+                                                <BookOpen className="w-4 h-4" />
                                             </div>
                                             <div>
-                                                <h3 className={`text-xl font-bold text-foreground group-hover:text-maroon transition-colors ${language === "devanagari" ? "font-marathi" : "font-english"}`}>
+                                                <h3 className={`text-base font-bold text-foreground ${language === "devanagari" ? "font-marathi" : "font-english"}`}>
                                                     {language === "devanagari"
                                                         ? (poem.title || poem.title_roman)
                                                         : (poem.title_roman || poem.title)}
                                                 </h3>
-                                                <div className="text-xs font-english text-foreground/40 flex items-center gap-2">
-                                                    <span className="font-bold text-gold uppercase tracking-widest">by {poetName}</span>
+                                                <div className="text-xs font-english text-foreground/40 flex items-center gap-2 mt-0.5">
+                                                    <span className="font-bold text-gold uppercase tracking-wider">by {poetName}</span>
                                                     <span>•</span>
-                                                    <span className="text-foreground/60">
-                                                        Chhanda ID: {poem.chhanda_id ?? "N/A"}
+                                                    <span className="px-2 py-0.5 rounded-full bg-gold/5 text-gold text-[9px] font-bold uppercase tracking-wider border border-gold/10">
+                                                        {poem.genre || "Uncategorized"}
                                                     </span>
-                                                    <span>•</span>
-                                                    <Clock className="w-3 h-3" />
-                                                    Submitted 2h ago
+                                                    {poem.chhanda_id && (
+                                                        <>
+                                                            <span>•</span>
+                                                            <span>Chhanda ID: {poem.chhanda_id}</span>
+                                                        </>
+                                                    )}
                                                 </div>
                                             </div>
-                                        </Link>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <Link 
+                                                href={`/admin/submissions/${poemId}`}
+                                                className="px-4 py-2 border border-gold/20 text-gold rounded-lg font-english font-bold text-xs uppercase tracking-wider hover:bg-gold/5 transition-all"
+                                            >
+                                                Review & Edit
+                                            </Link>
+                                        </div>
                                     </div>
                                 )
                             })
@@ -156,7 +163,7 @@ export default function AdminDashboard() {
                 )}
 
                 {activeTab === "tokenized" && (
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                         {loadingTokenized ? (
                             <div className="py-20 flex justify-center"><Loader2 className="w-8 h-8 text-maroon animate-spin" /></div>
                         ) : tokenizedPoems?.length ? (
@@ -171,33 +178,45 @@ export default function AdminDashboard() {
                                 if (!poemId) return null;
 
                                 return (
-                                    <div key={poemId} className="bg-white rounded-2xl border border-gold/10 p-6 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
-                                        <Link href={`/admin/poems/${poemId}/words`} className="flex items-center gap-6 flex-1 group cursor-pointer">
-                                            <div className="w-12 h-12 rounded-xl bg-gold/5 flex items-center justify-center text-gold group-hover:bg-gold/10 transition-colors">
-                                                <BookOpen className="w-6 h-6" />
+                                    <div key={poemId} className="bg-white rounded-xl border border-gold/10 p-4 flex items-center justify-between hover:border-gold/30 hover:shadow-sm transition-all">
+                                        <div className="flex items-center gap-4 flex-1">
+                                            <div className="w-9 h-9 rounded-lg bg-gold/5 flex items-center justify-center text-gold">
+                                                <BookOpen className="w-4 h-4" />
                                             </div>
                                             <div>
-                                                <h3 className={`text-xl font-bold text-foreground group-hover:text-maroon transition-colors ${language === "devanagari" ? "font-marathi" : "font-english"}`}>
+                                                <h3 className={`text-base font-bold text-foreground ${language === "devanagari" ? "font-marathi" : "font-english"}`}>
                                                     {language === "devanagari"
                                                         ? (poem.title || poem.title_roman)
                                                         : (poem.title_roman || poem.title)}
                                                 </h3>
-                                                <div className="text-xs font-english text-foreground/40 flex items-center gap-2">
-                                                    <span className="font-bold text-gold uppercase tracking-widest">by {poetName}</span>
+                                                <div className="text-xs font-english text-foreground/40 flex items-center gap-2 mt-0.5">
+                                                    <span className="font-bold text-gold uppercase tracking-wider">by {poetName}</span>
                                                     <span>•</span>
-                                                    <span className="text-foreground/60">
-                                                        Genre: {poem.genre || "N/A"}
+                                                    <span className="px-2 py-0.5 rounded-full bg-gold/5 text-gold text-[9px] font-bold uppercase tracking-wider border border-gold/10">
+                                                        {poem.genre || "Uncategorized"}
                                                     </span>
+                                                    {poem.words && (
+                                                        <>
+                                                            <span>•</span>
+                                                            <span>{poem.words.length} Words</span>
+                                                        </>
+                                                    )}
                                                 </div>
                                             </div>
-                                        </Link>
+                                        </div>
                                         <div className="flex items-center gap-2">
+                                            <Link 
+                                                href={`/admin/poems/${poemId}/words`}
+                                                className="px-4 py-2 border border-maroon/20 text-maroon rounded-lg font-english font-bold text-xs uppercase tracking-wider hover:bg-maroon/5 transition-all"
+                                            >
+                                                Edit Words
+                                            </Link>
                                             <button
                                                 onClick={() => approveMutation.mutate(poemId)}
                                                 disabled={approveMutation.isPending}
-                                                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-xl font-english font-bold text-xs uppercase tracking-widest hover:shadow-lg hover:shadow-green-600/20 transition-all"
+                                                className="flex items-center gap-1.5 px-4 py-2 bg-green-600 text-white rounded-lg font-english font-bold text-xs uppercase tracking-wider hover:bg-green-700 hover:shadow-md hover:shadow-green-600/15 disabled:opacity-50 disabled:shadow-none transition-all"
                                             >
-                                                {approveMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                                                {approveMutation.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
                                                 Approve
                                             </button>
                                         </div>
@@ -211,7 +230,7 @@ export default function AdminDashboard() {
                 )}
 
                 {activeTab === "approved" && (
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                         {loadingApproved ? (
                             <div className="py-20 flex justify-center"><Loader2 className="w-8 h-8 text-maroon animate-spin" /></div>
                         ) : approvedPoems?.length ? (
@@ -226,26 +245,40 @@ export default function AdminDashboard() {
                                 if (!poemId) return null;
 
                                 return (
-                                    <div key={poemId} className="bg-white rounded-2xl border border-gold/10 p-6 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
-                                        <Link href={`/admin/submissions/${poemId}`} className="flex items-center gap-6 flex-1 group cursor-pointer">
-                                            <div className="w-12 h-12 rounded-xl bg-gold/5 flex items-center justify-center text-gold group-hover:bg-gold/10 transition-colors">
-                                                <BookOpen className="w-6 h-6" />
+                                    <div key={poemId} className="bg-white rounded-xl border border-gold/10 p-4 flex items-center justify-between hover:border-gold/30 hover:shadow-sm transition-all">
+                                        <div className="flex items-center gap-4 flex-1">
+                                            <div className="w-9 h-9 rounded-lg bg-green-50 flex items-center justify-center text-green-600">
+                                                <Check className="w-4 h-4" />
                                             </div>
                                             <div>
-                                                <h3 className={`text-xl font-bold text-foreground group-hover:text-maroon transition-colors ${language === "devanagari" ? "font-marathi" : "font-english"}`}>
+                                                <h3 className={`text-base font-bold text-foreground ${language === "devanagari" ? "font-marathi" : "font-english"}`}>
                                                     {language === "devanagari"
                                                         ? (poem.title || poem.title_roman)
                                                         : (poem.title_roman || poem.title)}
                                                 </h3>
-                                                <div className="text-xs font-english text-foreground/40 flex items-center gap-2">
-                                                    <span className="font-bold text-gold uppercase tracking-widest">by {poetName}</span>
+                                                <div className="text-xs font-english text-foreground/40 flex items-center gap-2 mt-0.5">
+                                                    <span className="font-bold text-gold uppercase tracking-wider">by {poetName}</span>
                                                     <span>•</span>
-                                                    <span className="text-foreground/60">
-                                                        Genre: {poem.genre || "N/A"}
+                                                    <span className="px-2 py-0.5 rounded-full bg-gold/5 text-gold text-[9px] font-bold uppercase tracking-wider border border-gold/10">
+                                                        {poem.genre || "Uncategorized"}
                                                     </span>
                                                 </div>
                                             </div>
-                                        </Link>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <Link 
+                                                href={`/admin/submissions/${poemId}`}
+                                                className="px-4 py-2 border border-gold/20 text-gold rounded-lg font-english font-bold text-xs uppercase tracking-wider hover:bg-gold/5 transition-all"
+                                            >
+                                                Edit Poem
+                                            </Link>
+                                            <Link 
+                                                href={`/admin/poems/${poemId}/words`}
+                                                className="px-4 py-2 border border-maroon/20 text-maroon rounded-lg font-english font-bold text-xs uppercase tracking-wider hover:bg-maroon/5 transition-all"
+                                            >
+                                                Edit Words
+                                            </Link>
+                                        </div>
                                     </div>
                                 )
                             })
