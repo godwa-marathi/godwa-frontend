@@ -35,13 +35,6 @@
   --font-serif: var(--font-playfair), serif;
 
   --font-lora: var(--font-lora), serif;
-  --font-cormorant: var(--font-cormorant), serif;
-  --font-eb-garamond: var(--font-eb-garamond), serif;
-  --font-alegreya: var(--font-alegreya), serif;
-  --font-outfit: var(--font-outfit), sans-serif;
-  --font-mulish: var(--font-mulish), sans-serif;
-  --font-jakarta: var(--font-jakarta), sans-serif;
-  --font-alegreya-sans: var(--font-alegreya-sans), sans-serif;
 }
 
 @utility no-scrollbar {
