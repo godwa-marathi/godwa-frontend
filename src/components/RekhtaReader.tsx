@@ -181,8 +181,8 @@ export const RekhtaReader: React.FC<RekhtaReaderProps> = ({ poem }) => {
                                         </div>
 
                                         {/* Roman Transliteration */}
-                                        {showRoman && romanLine && (
-                                            <div className={`text-[17px] min-[360px]:text-[18px] sm:text-[19px] md:text-[21px] lg:text-[22px] font-lora italic font-medium text-foreground/90 leading-[1.85] py-0.5 tracking-[0.015em] max-w-[55ch] mx-auto ${
+                                        {romanLine && (
+                                            <div className={`${showRoman ? "block" : "hidden"} text-[17px] min-[360px]:text-[18px] sm:text-[19px] md:text-[21px] lg:text-[22px] font-lora italic font-medium text-foreground/90 leading-[1.85] py-0.5 tracking-[0.015em] max-w-[55ch] mx-auto ${
                                                 alignment === "justify" 
                                                     ? "text-justify [text-align-last:justify] w-full block" 
                                                     : `flex flex-wrap ${alignmentClass} gap-x-1 md:gap-x-1.5`
@@ -202,9 +202,9 @@ export const RekhtaReader: React.FC<RekhtaReaderProps> = ({ poem }) => {
                                 )}
 
                                 {/* Meaning Line (only if in with_meaning or meaning_only mode) */}
-                                {viewMode !== "poem" && !isMeaningEmpty && (
+                                {!isMeaningEmpty && (
                                     <div 
-                                        className={`w-full font-english text-foreground/60 leading-relaxed ${
+                                        className={`${viewMode !== "poem" ? "block" : "hidden"} w-full font-english text-foreground/60 leading-relaxed ${
                                             viewMode === "meaning" 
                                                 ? "text-sm sm:text-base md:text-lg py-1" 
                                                 : "text-[11px] min-[360px]:text-[12px] min-[400px]:text-xs sm:text-sm md:text-base italic mt-1 mb-1 py-0.5 border-l-2 border-gold/20 pl-3 ml-1 sm:ml-2"
