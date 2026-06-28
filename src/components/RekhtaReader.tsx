@@ -15,6 +15,7 @@ export const RekhtaReader: React.FC<RekhtaReaderProps> = ({ poem }) => {
     const { language } = useLanguage();
     const [viewMode, setViewMode] = React.useState<"poem" | "with_meaning" | "meaning">("poem");
     const [alignment, setAlignment] = React.useState<"center" | "left" | "justify">("center");
+    const [activeWordId, setActiveWordId] = React.useState<string | null>(null);
 
     const hasRoman = !!poem.body_roman;
     const showRoman = language === "roman" && hasRoman;
@@ -171,12 +172,19 @@ export const RekhtaReader: React.FC<RekhtaReaderProps> = ({ poem }) => {
                                                     ? "text-justify [text-align-last:justify] w-full max-w-[90%] mx-auto block" 
                                                     : `flex flex-wrap ${alignmentClass} gap-x-1 md:gap-x-1.5`
                                             }`}>
-                                                {splitMarathiText(line).map((word, wordIdx) => (
-                                                    <React.Fragment key={wordIdx}>
-                                                        <WordTooltip word={word} />
-                                                        {wordIdx < splitMarathiText(line).length - 1 && " "}
-                                                    </React.Fragment>
-                                                ))}
+                                                {splitMarathiText(line).map((word, wordIdx) => {
+                                                    const wordId = `mr-${lineIdx}-${wordIdx}`;
+                                                    return (
+                                                        <React.Fragment key={wordIdx}>
+                                                            <WordTooltip 
+                                                                word={word}
+                                                                isOpen={activeWordId === wordId}
+                                                                onOpenChange={(open) => setActiveWordId(open ? wordId : null)}
+                                                            />
+                                                            {wordIdx < splitMarathiText(line).length - 1 && " "}
+                                                        </React.Fragment>
+                                                    );
+                                                })}
                                             </div>
                                         </div>
 
@@ -187,15 +195,20 @@ export const RekhtaReader: React.FC<RekhtaReaderProps> = ({ poem }) => {
                                                     ? "text-justify [text-align-last:justify] w-full block" 
                                                     : `flex flex-wrap ${alignmentClass} gap-x-1 md:gap-x-1.5`
                                             }`}>
-                                                {romanLine.split(" ").map((word, wordIdx) => (
-                                                    <React.Fragment key={wordIdx}>
-                                                        <WordTooltip
-                                                            word={word}
-                                                            isRoman={true}
-                                                        />
-                                                        {wordIdx < romanLine.split(" ").length - 1 && " "}
-                                                    </React.Fragment>
-                                                ))}
+                                                {romanLine.split(" ").map((word, wordIdx) => {
+                                                    const wordId = `rom-${lineIdx}-${wordIdx}`;
+                                                    return (
+                                                        <React.Fragment key={wordIdx}>
+                                                            <WordTooltip
+                                                                word={word}
+                                                                isRoman={true}
+                                                                isOpen={activeWordId === wordId}
+                                                                onOpenChange={(open) => setActiveWordId(open ? wordId : null)}
+                                                            />
+                                                            {wordIdx < romanLine.split(" ").length - 1 && " "}
+                                                        </React.Fragment>
+                                                    );
+                                                })}
                                             </div>
                                         )}
                                     </>

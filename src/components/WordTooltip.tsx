@@ -7,16 +7,23 @@ import { WordOut } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { Loader2, AlertCircle } from "lucide-react";
+import { Loader2, AlertCircle, X } from "lucide-react";
 
 interface WordTooltipProps {
     word: string;
     data?: WordOut;
     isRoman?: boolean;
+    isOpen: boolean;
+    onOpenChange: (open: boolean) => void;
 }
 
-export const WordTooltip: React.FC<WordTooltipProps> = ({ word, data, isRoman = false }) => {
-    const [open, setOpen] = React.useState(false);
+export const WordTooltip: React.FC<WordTooltipProps> = ({ 
+    word, 
+    data, 
+    isRoman = false,
+    isOpen,
+    onOpenChange 
+}) => {
     const [showNotFound, setShowNotFound] = React.useState(false);
 
     // Extract clean word based on script type
@@ -27,15 +34,15 @@ export const WordTooltip: React.FC<WordTooltipProps> = ({ word, data, isRoman = 
     // 3-Second Timeout Logic
     React.useEffect(() => {
         let timer: NodeJS.Timeout;
-        if (open && !data && !showNotFound) {
+        if (isOpen && !data && !showNotFound) {
             timer = setTimeout(() => {
                 setShowNotFound(true);
             }, 3000);
-        } else if (!open) {
+        } else if (!isOpen) {
             setShowNotFound(false);
         }
         return () => clearTimeout(timer);
-    }, [open, data, showNotFound]);
+    }, [isOpen, data, showNotFound]);
 
     // Lazy load word meaning when tooltip opens (only if not pre-loaded)
     const { data: fetchedMeanings, isLoading } = useQuery({
@@ -46,7 +53,7 @@ export const WordTooltip: React.FC<WordTooltipProps> = ({ word, data, isRoman = 
             const result = await api.get<WordOut[]>(`/api/words/meaning?word=${encodeURIComponent(cleanWord)}`);
             return result;
         },
-        enabled: open && !data && cleanWord.length > 0 && !showNotFound, // Only fetch when tooltip opens and no pre-loaded data
+        enabled: isOpen && !data && cleanWord.length > 0 && !showNotFound, // Only fetch when tooltip opens and no pre-loaded data
     });
 
     // Use pre-loaded data if available, otherwise use fetched data
@@ -57,19 +64,21 @@ export const WordTooltip: React.FC<WordTooltipProps> = ({ word, data, isRoman = 
     const effectiveNotFound = showNotFound || (!effectiveLoading && !wordData);
 
     // If no word data and no clean word to search, just render text
-    if (!data && !open && !cleanWord) return <span>{word}</span>;
+    if (!data && !isOpen && !cleanWord) return <span>{word}</span>;
 
     return (
         <Tooltip.Provider delayDuration={0}>
-            <Tooltip.Root open={open} onOpenChange={(newOpen) => {
-                // Prevent automatic hover behavior - only allow manual control
-                // Don't update state here, let onClick handle it
+            <Tooltip.Root open={isOpen} onOpenChange={(newOpen) => {
+                // Prevent automatic hover behavior - only allow manual control for closing
+                if (!newOpen) {
+                    onOpenChange(false);
+                }
             }}>
                 <Tooltip.Trigger asChild>
                     <span
                         onClick={(e) => {
                             e.stopPropagation();
-                            setOpen(!open);
+                            onOpenChange(!isOpen);
                         }}
                         onPointerEnter={(e) => {
                             // Prevent hover from opening tooltip
@@ -93,9 +102,21 @@ export const WordTooltip: React.FC<WordTooltipProps> = ({ word, data, isRoman = 
                             initial={{ opacity: 0, y: 5, scale: 0.98 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: 5, scale: 0.98 }}
-                            className="bg-white border border-border/40 shadow-xl rounded-xl p-5 w-[350px] md:w-[400px] max-w-[90vw] overflow-hidden"
+                            className="bg-white border border-border/40 shadow-xl rounded-xl p-5 w-[350px] md:w-[400px] max-w-[90vw] relative overflow-hidden"
                             onClick={(e) => e.stopPropagation()}
                         >
+                            {/* Absolute Close Button */}
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onOpenChange(false);
+                                }}
+                                className="absolute top-4 right-4 p-1 rounded-full text-foreground/30 hover:text-foreground/75 hover:bg-foreground/5 transition-colors cursor-pointer z-10"
+                                title="Close"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+
                             {effectiveLoading ? (
                                 <div className="flex items-center justify-center py-6">
                                     <Loader2 className="w-6 h-6 text-maroon animate-spin" />
@@ -105,7 +126,7 @@ export const WordTooltip: React.FC<WordTooltipProps> = ({ word, data, isRoman = 
                                 <div className="flex flex-col gap-3">
                                     {/* Header: Word + Gender + Alternate */}
                                     <div className="flex flex-col border-b pb-2">
-                                        <div className="flex items-start justify-between">
+                                        <div className="flex items-start justify-between pr-6">
                                             <span className="text-2xl font-marathi font-bold text-maroon leading-none">
                                                 {wordData.devnagri || wordData.word || cleanWord}
                                             </span>
@@ -131,25 +152,37 @@ export const WordTooltip: React.FC<WordTooltipProps> = ({ word, data, isRoman = 
                                     </div>
 
                                     {/* Definitions: Primary (Marathi) & Secondary (English) */}
-                                    <div className="space-y-3">
-                                        {(wordData.definition_primary || wordData.definition_mr) && (
-                                            <div className="bg-gold/5 p-2 rounded-lg border border-gold/10">
-                                                <div className="text-[9px] uppercase tracking-wider text-gold font-bold mb-1">MARATHI</div>
-                                                <p className="text-sm font-marathi text-foreground leading-relaxed font-medium">
-                                                    {wordData.definition_primary || wordData.definition_mr}
-                                                </p>
-                                            </div>
-                                        )}
+                                    {(() => {
+                                        const isRomanScript = wordData.script_detected === "roman";
+                                        const marathiDefinition = isRomanScript
+                                            ? (wordData.definition_secondary || wordData.definition_mr)
+                                            : (wordData.definition_primary || wordData.definition_mr);
+                                        const englishDefinition = isRomanScript
+                                            ? (wordData.definition_primary || wordData.definition_en)
+                                            : (wordData.definition_secondary || wordData.definition_en);
 
-                                        {(wordData.definition_secondary || wordData.definition_en) && (
-                                            <div>
-                                                <div className="text-[9px] uppercase tracking-wider text-foreground/30 font-bold mb-0.5">ENGLISH</div>
-                                                <p className="text-sm font-english text-foreground leading-relaxed">
-                                                    {wordData.definition_secondary || wordData.definition_en}
-                                                </p>
+                                        return (
+                                            <div className="space-y-3">
+                                                {marathiDefinition && (
+                                                    <div className="bg-gold/5 p-2 rounded-lg border border-gold/10">
+                                                        <div className="text-[9px] uppercase tracking-wider text-gold font-bold mb-1">MARATHI</div>
+                                                        <p className="text-sm font-marathi text-foreground leading-relaxed font-medium">
+                                                            {marathiDefinition}
+                                                        </p>
+                                                    </div>
+                                                )}
+
+                                                {englishDefinition && (
+                                                    <div>
+                                                        <div className="text-[9px] uppercase tracking-wider text-foreground/30 font-bold mb-0.5">ENGLISH</div>
+                                                        <p className="text-sm font-english text-foreground leading-relaxed">
+                                                            {englishDefinition}
+                                                        </p>
+                                                    </div>
+                                                )}
                                             </div>
-                                        )}
-                                    </div>
+                                        );
+                                    })()}
 
                                     {/* Rich Metadata (if strictly available in metadata_json) */}
                                     {wordData.metadata_json && (
