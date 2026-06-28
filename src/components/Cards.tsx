@@ -88,9 +88,75 @@ export const PoemCard = ({ poem }: { poem: PoemOut }) => {
     );
 };
 
-export const PoetCard = ({ poet }: { poet: PoetOut }) => {
+export const PoetCard = ({ poet, viewMode = 'grid' }: { poet: PoetOut; viewMode?: 'grid' | 'list' }) => {
     const { language } = useLanguage();
     const displayPoetName = language === 'roman' ? (poet.name_roman || poet.name) : poet.name;
+
+    if (viewMode === 'list') {
+        return (
+            <Link href={`/poets/${poet.id}`} className="group block">
+                <div className="flex items-center gap-6 p-4 md:p-6 bg-white rounded-2xl border border-gold/10 shadow-sm transition-all duration-300 hover:shadow-md hover:border-maroon/20 hover:-translate-y-0.5">
+                    {/* Image */}
+                    <div className="relative flex-shrink-0">
+                        <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border-2 border-gold/20 p-1 group-hover:border-maroon transition-colors">
+                            <div className="w-full h-full rounded-full overflow-hidden bg-gold/10 flex items-center justify-center">
+                                {poet.image_url ? (
+                                    <img src={poet.image_url} alt={poet.name} className="w-full h-full object-cover" />
+                                ) : (
+                                    <User className="w-8 h-8 text-gold/40" />
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 min-w-0">
+                        <div className="flex flex-col md:flex-row md:items-baseline gap-x-3 mb-1">
+                            <h3 className={`text-xl font-bold text-foreground group-hover:text-maroon transition-colors truncate ${language === 'roman' ? 'font-english' : 'font-marathi'}`}>
+                                {language === 'roman' ? (
+                                    <>{poet.name_roman || poet.name}</>
+                                ) : (
+                                    <>{poet.name}</>
+                                )}
+                            </h3>
+                            {/* Devanagari or Romanized name beside */}
+                            {language === 'roman' && poet.name_roman && poet.name ? (
+                                <span className="font-marathi text-sm text-foreground/50 truncate">
+                                    {poet.name}
+                                </span>
+                            ) : language === 'devanagari' && poet.name_roman ? (
+                                <span className="font-english text-xs text-foreground/50 font-serif truncate">
+                                    {poet.name_roman}
+                                </span>
+                            ) : null}
+                        </div>
+
+                        {/* Lifespan & Count */}
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-gold text-[10px] font-bold uppercase tracking-widest mb-3">
+                            <div className="flex items-center gap-1.5">
+                                <Calendar className="w-3 h-3" />
+                                {poet.life_span || "Timeless Poet"}
+                            </div>
+                            {poet.poem_count && (
+                                <>
+                                    <span className="text-gold/30 font-sans">•</span>
+                                    <span className="text-maroon/90 bg-maroon/5 px-2.5 py-0.5 rounded-full normal-case tracking-wider font-sans font-bold">
+                                        {poet.poem_count} Poems
+                                    </span>
+                                </>
+                            )}
+                        </div>
+
+                        {poet.bio && (
+                            <p className="text-sm text-foreground/60 font-english line-clamp-1 md:line-clamp-2 italic">
+                                {poet.bio}
+                            </p>
+                        )}
+                    </div>
+                </div>
+            </Link>
+        );
+    }
 
     return (
         <Link href={`/poets/${poet.id}`} className="group block">
@@ -114,21 +180,21 @@ export const PoetCard = ({ poet }: { poet: PoetOut }) => {
 
                 <h3 className={`text-xl font-bold text-foreground mb-1 group-hover:text-maroon transition-colors ${language === 'roman' ? 'font-english' : 'font-marathi'}`}>
                     {language === 'roman' ? (
-                        <>
-                            {poet.name_roman || poet.name}
-                            {poet.name_roman && poet.name && (
-                                <span className="text-xs font-normal text-foreground/40 font-marathi ml-2 font-sans">({poet.name})</span>
-                            )}
-                        </>
+                        <>{poet.name_roman || poet.name}</>
                     ) : (
-                        <>
-                            {poet.name}
-                            {poet.name_roman && (
-                                <span className="text-xs font-normal text-foreground/45 font-english ml-2 font-serif">({poet.name_roman})</span>
-                            )}
-                        </>
+                        <>{poet.name}</>
                     )}
                 </h3>
+
+                {language === 'roman' && poet.name_roman && poet.name ? (
+                    <div className="font-marathi text-sm text-foreground/60 mb-2">
+                        {poet.name}
+                    </div>
+                ) : language === 'devanagari' && poet.name_roman ? (
+                    <div className="font-english text-xs text-foreground/60 font-serif mb-2">
+                        {poet.name_roman}
+                    </div>
+                ) : null}
 
                 <div className="flex items-center gap-1.5 text-gold text-[10px] font-bold uppercase tracking-widest mb-3">
                     <Calendar className="w-3 h-3" />
