@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { Joyride, STATUS } from "react-joyride";
-import type { Step, EventData } from "react-joyride";
+import { Joyride } from "react-joyride";
+import type { Step } from "react-joyride";
 
 export const TutorialTour = () => {
     const [run, setRun] = useState(false);
@@ -66,10 +66,12 @@ export const TutorialTour = () => {
             if (langEl && alignEl) {
                 clearInterval(interval);
                 setSteps(buildSteps());
+                localStorage.setItem("hasSeenTutorial", "true");
                 setRun(true);
             } else if (attempts >= maxAttempts) {
                 clearInterval(interval);
                 setSteps(buildSteps());
+                localStorage.setItem("hasSeenTutorial", "true");
                 setRun(true);
             }
         }, 500);
@@ -77,56 +79,7 @@ export const TutorialTour = () => {
         return () => clearInterval(interval);
     }, [buildSteps]);
 
-    const handleJoyrideCallback = (data: EventData) => {
-        const { status } = data;
-        const finishedStatuses = [STATUS.FINISHED, STATUS.SKIPPED];
-
-        if (finishedStatuses.includes(status)) {
-            localStorage.setItem("hasSeenTutorial", "true");
-            setRun(false);
-        }
-    };
-
     if (steps.length === 0) return null;
 
-    return (
-        <Joyride
-            callback={handleJoyrideCallback}
-            continuous
-            hideCloseButton
-            run={run}
-            scrollToFirstStep
-            showProgress
-            showSkipButton
-            steps={steps}
-            styles={{
-                tooltip: {
-                    backgroundColor: "#fff",
-                    color: "#333",
-                },
-                buttonNext: {
-                    backgroundColor: "#800000",
-                    borderRadius: 8,
-                },
-                buttonBack: {
-                    marginRight: 10,
-                },
-                buttonSkip: {
-                    color: "#800000",
-                },
-                tooltipContainer: {
-                    textAlign: "left",
-                },
-                tooltipTitle: {
-                    fontFamily: "var(--font-serif)",
-                },
-                tooltipContent: {
-                    fontFamily: "var(--font-english)",
-                },
-                overlay: {
-                    zIndex: 1000,
-                },
-            }}
-        />
-    );
+    return <Joyride run={run} steps={steps} />;
 };
