@@ -20,8 +20,25 @@ export interface PoetOut {
     name_roman?: string;
     bio?: string;
     image_url?: string;
-    life_span?: string; // e.g., "1850 - 1920"
+    pet_name?: string;
+    genre?: string;
+    life_span?: string; // e.g., "1850 – 1920"
     poem_count?: number;
+}
+
+export interface PoetMiniOut {
+    id: number;
+    name: string;
+    name_roman?: string;
+}
+
+export interface PaginatedPoetResponse {
+    items: PoetOut[];
+    total: number;
+    page: number;
+    page_size: number;
+    total_pages: number;
+    available_letters: string[];
 }
 
 export interface PoemOut {
