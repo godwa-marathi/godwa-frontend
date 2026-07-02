@@ -45,7 +45,7 @@ function buildHash(params: Record<string, string | number | null | undefined>): 
     return parts.length ? `#${parts.join("&")}` : "";
 }
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 5;
 
 // ---------------------------------------------------------------------------
 // Page component
@@ -197,8 +197,8 @@ export default function PoetsPage() {
                                             ? "A → Z"
                                             : "Z → A"
                                         : sortOrder === "asc"
-                                        ? "अ → ज्ञ"
-                                        : "ज्ञ → अ"}
+                                            ? "अ → ज्ञ"
+                                            : "ज्ञ → अ"}
                                 </span>
                             </button>
 
@@ -208,22 +208,20 @@ export default function PoetsPage() {
                             <div className="inline-flex p-0.5 bg-white rounded-full border border-gold/15 shadow-sm">
                                 <button
                                     onClick={() => handleViewModeChange("grid")}
-                                    className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium tracking-wide transition-all duration-200 cursor-pointer ${
-                                        viewMode === "grid"
+                                    className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium tracking-wide transition-all duration-200 cursor-pointer ${viewMode === "grid"
                                             ? "bg-maroon text-white shadow-sm font-semibold"
                                             : "text-foreground/60 hover:text-foreground hover:bg-gold/5"
-                                    }`}
+                                        }`}
                                     title="Grid View"
                                 >
                                     <LayoutGrid className="w-3.5 h-3.5" />
                                 </button>
                                 <button
                                     onClick={() => handleViewModeChange("list")}
-                                    className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium tracking-wide transition-all duration-200 cursor-pointer ${
-                                        viewMode === "list"
+                                    className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium tracking-wide transition-all duration-200 cursor-pointer ${viewMode === "list"
                                             ? "bg-maroon text-white shadow-sm font-semibold"
                                             : "text-foreground/60 hover:text-foreground hover:bg-gold/5"
-                                    }`}
+                                        }`}
                                     title="List View"
                                 >
                                     <List className="w-3.5 h-3.5" />
