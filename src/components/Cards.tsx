@@ -5,18 +5,9 @@ import Link from "next/link";
 import { PoemOut, PoetOut } from "@/lib/types";
 import { Calendar, User } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
-import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
 
 export const PoemCard = ({ poem }: { poem: PoemOut }) => {
     const { language } = useLanguage();
-    const { data: poets } = useQuery({
-        queryKey: ["poets"],
-        queryFn: () => api.get<PoetOut[]>("/api/poets/"),
-    });
-
-    const fullPoet = poets?.find(p => p.id === poem.poet_id);
-
     const displayTitle = language === 'roman' ? (poem.title_roman || poem.title) : poem.title;
     const displayBody = language === 'roman' ? (poem.body_roman || poem.body_marathi) : poem.body_marathi;
     const displayPoetName = language === 'roman' ? (poem.poet?.name_roman || poem.poet?.name) : poem.poet?.name;
@@ -58,8 +49,8 @@ export const PoemCard = ({ poem }: { poem: PoemOut }) => {
 
                     <div className="mt-auto flex items-center gap-3 pt-4 border-t border-gold/10">
                         <div className="w-8 h-8 rounded-full bg-maroon/5 flex items-center justify-center text-maroon overflow-hidden">
-                            {fullPoet?.image_url ? (
-                                <img src={fullPoet.image_url} alt={displayPoetName || ''} className="w-full h-full object-cover" />
+                            {poem.poet?.image_url ? (
+                                <img src={poem.poet.image_url} alt={displayPoetName || ''} className="w-full h-full object-cover" />
                             ) : (
                                 <User className="w-4 h-4" />
                             )}
@@ -95,63 +86,45 @@ export const PoetCard = ({ poet, viewMode = 'grid' }: { poet: PoetOut; viewMode?
     if (viewMode === 'list') {
         return (
             <Link href={`/poets/${poet.id}`} className="group block">
-                <div className="flex items-center gap-6 p-4 md:p-6 bg-white rounded-2xl border border-gold/10 shadow-sm transition-all duration-300 hover:shadow-md hover:border-maroon/20 hover:-translate-y-0.5">
-                    {/* Image */}
-                    <div className="relative flex-shrink-0">
-                        <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border-2 border-gold/20 p-1 group-hover:border-maroon transition-colors">
-                            <div className="w-full h-full rounded-full overflow-hidden bg-gold/10 flex items-center justify-center">
-                                {poet.image_url ? (
-                                    <img src={poet.image_url} alt={poet.name} className="w-full h-full object-cover" />
-                                ) : (
-                                    <User className="w-8 h-8 text-gold/40" />
-                                )}
-                            </div>
-                        </div>
+                <div className="flex items-center gap-3 px-4 py-3 bg-white border-b border-gold/10 transition-all duration-200 hover:bg-maroon/[0.03] hover:border-maroon/20">
+                    {/* Small Avatar */}
+                    <div className="flex-shrink-0 w-9 h-9 rounded-full border border-gold/20 overflow-hidden bg-gold/10 flex items-center justify-center group-hover:border-maroon/40 transition-colors">
+                        {poet.image_url ? (
+                            <img src={poet.image_url} alt={poet.name} className="w-full h-full object-cover" />
+                        ) : (
+                            <User className="w-4 h-4 text-gold/40" />
+                        )}
                     </div>
 
-                    {/* Content */}
-                    <div className="flex-1 min-w-0">
-                        <div className="flex flex-col md:flex-row md:items-baseline gap-x-3 mb-1">
-                            <h3 className={`text-xl font-bold text-foreground group-hover:text-maroon transition-colors truncate ${language === 'roman' ? 'font-english' : 'font-marathi'}`}>
-                                {language === 'roman' ? (
-                                    <>{poet.name_roman || poet.name}</>
-                                ) : (
-                                    <>{poet.name}</>
-                                )}
-                            </h3>
-                            {/* Devanagari or Romanized name beside */}
+                    {/* Main content */}
+                    <div className="flex-1 min-w-0 flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-3">
+                        {/* Primary name */}
+                        <div className="flex items-baseline gap-2 min-w-0">
+                            <span className={`text-sm font-bold text-foreground group-hover:text-maroon transition-colors truncate ${language === 'roman' ? 'font-english' : 'font-marathi'}`}>
+                                {language === 'roman' ? (poet.name_roman || poet.name) : poet.name}
+                            </span>
+                            {/* Secondary name */}
                             {language === 'roman' && poet.name_roman && poet.name ? (
-                                <span className="font-marathi text-sm text-foreground/50 truncate">
-                                    {poet.name}
-                                </span>
+                                <span className="font-marathi text-xs text-foreground/40 truncate hidden sm:inline">{poet.name}</span>
                             ) : language === 'devanagari' && poet.name_roman ? (
-                                <span className="font-english text-xs text-foreground/50 font-serif truncate">
-                                    {poet.name_roman}
-                                </span>
+                                <span className="font-english text-xs text-foreground/40 font-serif truncate hidden sm:inline">{poet.name_roman}</span>
                             ) : null}
                         </div>
 
-                        {/* Lifespan & Count */}
-                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-gold text-[10px] font-bold uppercase tracking-widest mb-3">
-                            <div className="flex items-center gap-1.5">
-                                <Calendar className="w-3 h-3" />
-                                {poet.life_span || "Timeless Poet"}
-                            </div>
-                            {poet.poem_count && (
-                                <>
-                                    <span className="text-gold/30 font-sans">•</span>
-                                    <span className="text-maroon/90 bg-maroon/5 px-2.5 py-0.5 rounded-full normal-case tracking-wider font-sans font-bold">
-                                        {poet.poem_count} Poems
-                                    </span>
-                                </>
+                        {/* Meta: lifespan + poem count */}
+                        <div className="flex items-center gap-2 flex-shrink-0 sm:ml-auto">
+                            {(poet.life_span) && (
+                                <span className="flex items-center gap-1 text-[10px] text-foreground/40 font-english">
+                                    <Calendar className="w-2.5 h-2.5" />
+                                    {poet.life_span}
+                                </span>
+                            )}
+                            {poet.poem_count != null && poet.poem_count > 0 && (
+                                <span className="text-[10px] font-bold text-maroon bg-maroon/8 px-2 py-0.5 rounded-full">
+                                    {poet.poem_count}
+                                </span>
                             )}
                         </div>
-
-                        {poet.bio && (
-                            <p className="text-sm text-foreground/60 font-english line-clamp-1 md:line-clamp-2 italic">
-                                {poet.bio}
-                            </p>
-                        )}
                     </div>
                 </div>
             </Link>

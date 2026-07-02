@@ -16,13 +16,12 @@ export default function PoetProfilePage() {
     const { id } = useParams();
     const { t, language } = useLanguage();
 
-    // Fetch all poets to find this one (since there's no single poet API)
-    const { data: poets, isLoading: loadingPoets } = useQuery({
-        queryKey: ["poets"],
-        queryFn: () => api.get<PoetOut[]>("/api/poets/"),
+    // Fetch poet by id
+    const { data: poet, isLoading: loadingPoet } = useQuery({
+        queryKey: ["poet", id],
+        queryFn: () => api.get<PoetOut>(`/api/poets/${id}`),
+        enabled: !!id,
     });
-
-    const poet = poets?.find(p => p.id === Number(id));
 
     // Fetch poems by this poet
     const { data: poems, isLoading: loadingPoems } = useQuery({
@@ -31,7 +30,7 @@ export default function PoetProfilePage() {
         enabled: !!id,
     });
 
-    if (loadingPoets && !poet) {
+    if (loadingPoet && !poet) {
         return (
             <div className="min-h-screen flex flex-col bg-background">
                 <Navbar />
