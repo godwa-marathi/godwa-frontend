@@ -6,7 +6,7 @@ import { Footer } from "@/components/Footer";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useLanguage } from "@/lib/LanguageContext";
-import { PoemOut, PoetOut } from "@/lib/types";
+import { PoemOut, PoetOut, PoetMiniOut } from "@/lib/types";
 import { Check, X, Loader2, AlertCircle, Clock, BookOpen } from "lucide-react";
 import Link from "next/link";
 
@@ -39,7 +39,7 @@ export default function AdminDashboard() {
     // Fetch reference data for lookups
     const { data: poets } = useQuery({
         queryKey: ["poets"],
-        queryFn: () => api.get<PoetOut[]>("/api/poets/"),
+        queryFn: () => api.get<PoetMiniOut[]>("/api/poets/all"),
     });
 
     // Fetch chhandas (simulated or real endpoint if available, assuming /api/chhandas/ exists or we use ID)

@@ -64,7 +64,7 @@ export default function SubmissionDetailPage({ params }: Props) {
     // Fetch poets for lookup
     const { data: poets } = useQuery({
         queryKey: ["poets"],
-        queryFn: () => api.get<any[]>("/api/poets/"),
+        queryFn: () => api.get<any[]>("/api/poets/all"),
     });
 
     // Fetch chhandas
