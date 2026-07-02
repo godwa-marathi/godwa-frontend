@@ -9,7 +9,7 @@ import { Footer } from "@/components/Footer";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { PoemOut, PoetOut } from "@/lib/types";
+import { PoemOut, PoetOut, PaginatedPoetResponse } from "@/lib/types";
 import { Loader2 } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 
@@ -21,17 +21,13 @@ export default function Home() {
     queryFn: () => api.get<PoemOut[]>("/api/poems/"),
   });
 
-  // Fetch celebrated poets
-  const { data: poets, isLoading: loadingPoets } = useQuery({
+  // Fetch celebrated poets (paginated endpoint now)
+  const { data: poetsRes, isLoading: loadingPoets } = useQuery({
     queryKey: ["poets", "celebrated"],
-    queryFn: () => api.get<PoetOut[]>("/api/poets/"),
+    queryFn: () => api.get<PaginatedPoetResponse>("/api/poets/?page=1&page_size=4"),
   });
-
-  // Fetch dashboard stats
-  const { data: stats } = useQuery({
-    queryKey: ["home", "stats"],
-    queryFn: () => api.get<any>("/api/home"),
-  });
+  
+  const poets = poetsRes?.items;
 
   // Use the first approved poem for the demo if available, otherwise fallback
   const demoPoem = poems?.find(p => p.status === "approved" && p.words?.length > 0) || poems?.[0];
