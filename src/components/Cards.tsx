@@ -2,22 +2,12 @@
 
 import React from "react";
 import Link from "next/link";
-import { PoemOut, PoetOut, PoetMiniOut } from "@/lib/types";
+import { PoemOut, PoetOut } from "@/lib/types";
 import { Calendar, User } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
-import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
 
 export const PoemCard = ({ poem }: { poem: PoemOut }) => {
     const { language } = useLanguage();
-    // Use the lightweight /all endpoint — avoids triggering paginated fetch
-    const { data: poets } = useQuery({
-        queryKey: ["poets-mini"],
-        queryFn: () => api.get<PoetMiniOut[]>("/api/poets/all"),
-    });
-
-    const fullPoet = poets?.find(p => p.id === poem.poet_id);
-
     const displayTitle = language === 'roman' ? (poem.title_roman || poem.title) : poem.title;
     const displayBody = language === 'roman' ? (poem.body_roman || poem.body_marathi) : poem.body_marathi;
     const displayPoetName = language === 'roman' ? (poem.poet?.name_roman || poem.poet?.name) : poem.poet?.name;
@@ -59,8 +49,8 @@ export const PoemCard = ({ poem }: { poem: PoemOut }) => {
 
                     <div className="mt-auto flex items-center gap-3 pt-4 border-t border-gold/10">
                         <div className="w-8 h-8 rounded-full bg-maroon/5 flex items-center justify-center text-maroon overflow-hidden">
-                            {fullPoet?.image_url ? (
-                                <img src={fullPoet.image_url} alt={displayPoetName || ''} className="w-full h-full object-cover" />
+                            {poem.poet?.image_url ? (
+                                <img src={poem.poet.image_url} alt={displayPoetName || ''} className="w-full h-full object-cover" />
                             ) : (
                                 <User className="w-4 h-4" />
                             )}
