@@ -59,7 +59,7 @@ export const Navbar = () => {
                         <Link href="/poets" className="text-sm font-english font-medium text-foreground/80 hover:text-maroon transition-colors uppercase tracking-widest">
                             {t.nav_poets}
                         </Link>
-                        <Link href="/submit" className="text-sm font-english font-medium text-foreground/80 hover:text-maroon transition-colors uppercase tracking-widest">
+                        <Link href="/submit" className="tour-step-submit text-sm font-english font-medium text-foreground/80 hover:text-maroon transition-colors uppercase tracking-widest">
                             {t.nav_submit}
                         </Link>
                         {token && (
@@ -75,7 +75,7 @@ export const Navbar = () => {
                         <div className="relative group/lang" ref={langDropdownRef}>
                             <button
                                 onClick={() => setIsLangOpen(!isLangOpen)}
-                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gold/20 hover:border-maroon/20 hover:bg-gold/5 transition-all focus:outline-none"
+                                className="tour-step-lang flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gold/20 hover:border-maroon/20 hover:bg-gold/5 transition-all focus:outline-none"
                             >
                                 <span className="font-english font-bold text-xs uppercase tracking-widest text-maroon">
                                     {language === "devanagari" ? "MAR" : "ENG"}
