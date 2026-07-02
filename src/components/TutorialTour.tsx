@@ -11,37 +11,36 @@ export const TutorialTour = () => {
     const buildSteps = useCallback(() => {
         const allSteps: Step[] = [];
 
-        // Step 1: Word Meaning
         const wordEl = document.querySelector(".tour-step-word");
         allSteps.push({
             target: wordEl ? ".tour-step-word" : "body",
-            content: "Click on any Marathi word to see its meaning and pronunciation. Try it!",
+            content:
+                "Click on any Marathi word to see its meaning and pronunciation. Try it!",
             placement: wordEl ? "top" : "center",
         });
 
-        // Step 2: Language Script
         allSteps.push({
             target: ".tour-step-lang",
-            content: "You can choose to read poems in Devanagari or English (Roman) script here.",
+            content:
+                "You can choose to read poems in Devanagari or English (Roman) script here.",
             placement: "bottom",
         });
 
-        // Step 3: Alignment
         allSteps.push({
             target: ".tour-step-align",
-            content: "Change the text alignment — left, center, or justified — to suit your reading preference.",
+            content:
+                "Change the text alignment — left, center, or justified — to suit your reading preference.",
             placement: "bottom",
         });
 
-        // Step 4: English Translation
         const translateEl = document.querySelector(".tour-step-translate");
         allSteps.push({
             target: translateEl ? ".tour-step-translate" : "body",
-            content: "Toggle between Poem only, Bilingual, or Meaning only modes to see line-by-line English translations (when available).",
+            content:
+                "Toggle between Poem only, Bilingual, or Meaning only modes to see line-by-line English translations (when available).",
             placement: translateEl ? "bottom" : "center",
         });
 
-        // Step 5: Submit Poems
         allSteps.push({
             target: ".tour-step-submit",
             content: "Want to contribute? You can submit your own poems here!",
@@ -55,23 +54,20 @@ export const TutorialTour = () => {
         const hasSeenTutorial = localStorage.getItem("hasSeenTutorial");
         if (hasSeenTutorial) return;
 
-        // Poll until the essential navbar elements are rendered, then start the tour.
-        // We wait for .tour-step-lang (always present in navbar) and .tour-step-word (needs poem data).
         let attempts = 0;
-        const maxAttempts = 30; // 30 * 500ms = 15 seconds max wait
+        const maxAttempts = 30;
 
         const interval = setInterval(() => {
             attempts++;
+
             const langEl = document.querySelector(".tour-step-lang");
             const alignEl = document.querySelector(".tour-step-align");
 
-            // Start tour once at least the navbar and reader toolbar are rendered
             if (langEl && alignEl) {
                 clearInterval(interval);
                 setSteps(buildSteps());
                 setRun(true);
             } else if (attempts >= maxAttempts) {
-                // Fallback: start anyway even if some elements didn't load
                 clearInterval(interval);
                 setSteps(buildSteps());
                 setRun(true);
@@ -83,7 +79,7 @@ export const TutorialTour = () => {
 
     const handleJoyrideCallback = (data: EventData) => {
         const { status } = data;
-        const finishedStatuses: string[] = [STATUS.FINISHED, STATUS.SKIPPED];
+        const finishedStatuses = [STATUS.FINISHED, STATUS.SKIPPED];
 
         if (finishedStatuses.includes(status)) {
             localStorage.setItem("hasSeenTutorial", "true");
@@ -104,12 +100,9 @@ export const TutorialTour = () => {
             showSkipButton
             steps={steps}
             styles={{
-                options: {
-                    arrowColor: "#fff",
+                tooltip: {
                     backgroundColor: "#fff",
-                    primaryColor: "#800000",
-                    textColor: "#333",
-                    zIndex: 1000,
+                    color: "#333",
                 },
                 buttonNext: {
                     backgroundColor: "#800000",
@@ -129,7 +122,10 @@ export const TutorialTour = () => {
                 },
                 tooltipContent: {
                     fontFamily: "var(--font-english)",
-                }
+                },
+                overlay: {
+                    zIndex: 1000,
+                },
             }}
         />
     );
