@@ -16,9 +16,7 @@ export const TutorialTour = () => {
         allSteps.push({
             target: wordEl ? ".tour-step-word" : "body",
             content: "Click on any Marathi word to see its meaning and pronunciation. Try it!",
-            disableBeacon: true,
             placement: wordEl ? "top" : "center",
-            ...(wordEl ? {} : { isFixed: true }),
         });
 
         // Step 2: Language Script
@@ -41,7 +39,6 @@ export const TutorialTour = () => {
             target: translateEl ? ".tour-step-translate" : "body",
             content: "Toggle between Poem only, Bilingual, or Meaning only modes to see line-by-line English translations (when available).",
             placement: translateEl ? "bottom" : "center",
-            ...(translateEl ? {} : { isFixed: true }),
         });
 
         // Step 5: Submit Poems
