@@ -38,7 +38,6 @@ export interface PaginatedPoetResponse {
     page: number;
     page_size: number;
     total_pages: number;
-    available_letters: string[];
 }
 
 export interface PoemOut {

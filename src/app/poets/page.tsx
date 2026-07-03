@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useLanguage } from "@/lib/LanguageContext";
 import { PaginatedPoetResponse } from "@/lib/types";
+import { getAlphabet } from "@/lib/varnamala";
 import {
     Loader2,
     Search,
@@ -19,6 +20,28 @@ import {
     ArrowUpDown,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+
+/**
+ * Poets directory page.
+ *
+ * Design review Q&A (frontend concerns; the API-side answers live in
+ * godwa-backend/app/routers/poets.py):
+ *
+ * Q3. Page size — default 20, driven by the API request, not hardcoded.
+ *     There is no PAGE_SIZE constant and we don't send `page_size`. The backend
+ *     owns the default (20) via its query param; the effective size comes back
+ *     on the response as `page_size`. It stays overridable per-request should a
+ *     page-size selector ever be added.
+ *
+ * Q4. Clicking a letter loads the right poets, and sort works in both
+ *     languages — wired here (letter/sort/language -> query params) and covered
+ *     by PoetsPage.test.tsx.
+ *
+ * Q5. Show the FULL varnamala, always. Rather than asking the backend which
+ *     letters exist (a full-table scan), the strip renders a static alphabet
+ *     from lib/varnamala.ts; a letter with no poets shows a "no poets under X"
+ *     empty state instead of being hidden.
+ */
 
 // ---------------------------------------------------------------------------
 // URL hash state helpers
@@ -44,8 +67,6 @@ function buildHash(params: Record<string, string | number | null | undefined>): 
     }
     return parts.length ? `#${parts.join("&")}` : "";
 }
-
-const PAGE_SIZE = 5;
 
 // ---------------------------------------------------------------------------
 // Page component
@@ -93,10 +114,12 @@ export default function PoetsPage() {
     }, [page, activeLetter, sortOrder, viewMode, hashReady]);
 
     // ---- Build query params ----
+    // Note: page_size is intentionally NOT sent — the backend owns the default
+    // (20). It stays a server-side API concern rather than a hardcoded frontend
+    // constant. The effective size comes back on the response as `page_size`.
     const queryParams = React.useMemo(() => {
         const p = new URLSearchParams({
             page: String(page),
-            page_size: String(PAGE_SIZE),
             sort: sortOrder,
             language,
         });
@@ -145,7 +168,9 @@ export default function PoetsPage() {
         setPage(1);
     };
 
-    const availableLetters = data?.available_letters ?? [];
+    // Full, static varnamala for the current language. The strip always shows
+    // every letter; clicking one with no poets falls through to the empty state.
+    const alphabet = getAlphabet(language);
 
     return (
         <main className="min-h-screen flex flex-col bg-background">
@@ -234,33 +259,29 @@ export default function PoetsPage() {
                     <div className="flex gap-6 lg:gap-8">
 
                         {/* Alphabet Strip — vertical on desktop, hidden on mobile (shown above on mobile) */}
-                        {availableLetters.length > 0 && (
-                            <aside className="hidden lg:flex flex-col w-10 flex-shrink-0 pt-1">
-                                <AlphabetStrip
-                                    letters={availableLetters}
-                                    activeLetter={activeLetter}
-                                    onLetterClick={handleLetterClick}
-                                    allLabel={t.poets_all_letters}
-                                    language={language}
-                                />
-                            </aside>
-                        )}
+                        <aside className="hidden lg:flex flex-col w-10 flex-shrink-0 pt-1">
+                            <AlphabetStrip
+                                letters={alphabet}
+                                activeLetter={activeLetter}
+                                onLetterClick={handleLetterClick}
+                                allLabel={t.poets_all_letters}
+                                language={language}
+                            />
+                        </aside>
 
                         {/* Main content */}
                         <div className="flex-1 min-w-0">
 
                             {/* Alphabet Strip — horizontal on mobile */}
-                            {availableLetters.length > 0 && (
-                                <div className="lg:hidden mb-5 overflow-x-auto pb-2">
-                                    <AlphabetStrip
-                                        letters={availableLetters}
-                                        activeLetter={activeLetter}
-                                        onLetterClick={handleLetterClick}
-                                        allLabel={t.poets_all_letters}
-                                        language={language}
-                                    />
-                                </div>
-                            )}
+                            <div className="lg:hidden mb-5 overflow-x-auto pb-2">
+                                <AlphabetStrip
+                                    letters={alphabet}
+                                    activeLetter={activeLetter}
+                                    onLetterClick={handleLetterClick}
+                                    allLabel={t.poets_all_letters}
+                                    language={language}
+                                />
+                            </div>
 
                             {/* Result meta bar */}
                             {data && (
@@ -315,7 +336,9 @@ export default function PoetsPage() {
                             ) : (
                                 <div className="text-center py-24 bg-white rounded-3xl border border-dashed border-gold/30">
                                     <p className="text-foreground/40 font-english italic">
-                                        {t.poets_no_results}
+                                        {activeLetter
+                                            ? t.poets_no_results_letter.replace("{letter}", activeLetter)
+                                            : t.poets_no_results}
                                     </p>
                                     {activeLetter && (
                                         <button
