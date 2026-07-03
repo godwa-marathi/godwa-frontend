@@ -3,17 +3,63 @@
 import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { AnimatePresence, motion } from "framer-motion";
-import { LogOut, Menu, Search, User, X } from "lucide-react";
+import { LogOut, Menu, Search, User, X, FileText, Heart, ChevronDown } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import React from "react";
 
+// Preset avatar emoji map
+const PRESET_EMOJI: Record<string, string> = {
+    lotus: "🪷", quill: "🪶", book: "📖", lamp: "🪔",
+    peacock: "🦚", moon: "🌙", star: "⭐", ink: "🖋️",
+};
+
+function UserAvatar({ user, size = 32 }: { user: any; size?: number }) {
+    if (user?.avatar_type === "preset" && user?.avatar_preset) {
+        return (
+            <div
+                className="rounded-full bg-gradient-to-br from-gold/20 to-maroon/10 flex items-center justify-center border border-gold/20"
+                style={{ width: size, height: size }}
+            >
+                <span style={{ fontSize: size * 0.55 }}>
+                    {PRESET_EMOJI[user.avatar_preset] || "👤"}
+                </span>
+            </div>
+        );
+    }
+    if (user?.avatar) {
+        return (
+            <Image
+                src={user.avatar}
+                alt={user.display_name || user.name || "User"}
+                width={size}
+                height={size}
+                className="rounded-full border border-gold/20 object-cover"
+                referrerPolicy="no-referrer"
+            />
+        );
+    }
+    return (
+        <div
+            className="rounded-full bg-maroon/10 flex items-center justify-center border border-gold/20"
+            style={{ width: size, height: size }}
+        >
+            <User className="text-maroon" style={{ width: size * 0.55, height: size * 0.55 }} />
+        </div>
+    );
+}
+
+export { UserAvatar };
+
 export const Navbar = () => {
-    const { token, logout } = useAuth();
+    const { token, user, logout } = useAuth();
     const { language, setLanguage, t } = useLanguage();
     const [isOpen, setIsOpen] = React.useState(false);
     const [mounted, setMounted] = React.useState(false);
     const [isLangOpen, setIsLangOpen] = React.useState(false);
+    const [isProfileOpen, setIsProfileOpen] = React.useState(false);
     const langDropdownRef = React.useRef<HTMLDivElement>(null);
+    const profileDropdownRef = React.useRef<HTMLDivElement>(null);
 
     React.useEffect(() => {
         setMounted(true);
@@ -23,6 +69,9 @@ export const Navbar = () => {
         const handleClickOutside = (event: MouseEvent) => {
             if (langDropdownRef.current && !langDropdownRef.current.contains(event.target as Node)) {
                 setIsLangOpen(false);
+            }
+            if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target as Node)) {
+                setIsProfileOpen(false);
             }
         };
         document.addEventListener("mousedown", handleClickOutside);
@@ -62,7 +111,7 @@ export const Navbar = () => {
                         <Link href="/submit" className="text-sm font-english font-medium text-foreground/80 hover:text-maroon transition-colors uppercase tracking-widest">
                             {t.nav_submit}
                         </Link>
-                        {token && (
+                        {user?.is_admin && (
                             <Link href="/admin" className="text-sm font-english font-bold text-gold hover:text-maroon transition-colors uppercase tracking-widest">
                                 {t.nav_admin}
                             </Link>
@@ -111,14 +160,81 @@ export const Navbar = () => {
                             <Search className="w-5 h-5" />
                         </button>
 
-                        {token ? (
-                            <button
-                                onClick={logout}
-                                className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg border border-maroon/20 hover:bg-maroon/5 transition-all text-maroon text-sm font-medium font-english shrink-0"
-                            >
-                                <LogOut className="w-4 h-4" />
-                                {t.nav_signout}
-                            </button>
+                        {/* User Avatar / Auth */}
+                        {token && user ? (
+                            <div className="relative" ref={profileDropdownRef}>
+                                <button
+                                    onClick={() => setIsProfileOpen(!isProfileOpen)}
+                                    className="hidden sm:flex items-center gap-2 rounded-full hover:ring-2 hover:ring-maroon/20 transition-all focus:outline-none"
+                                >
+                                    <UserAvatar user={user} size={36} />
+                                </button>
+
+                                {/* Profile Dropdown */}
+                                <AnimatePresence>
+                                    {isProfileOpen && (
+                                        <motion.div
+                                            initial={{ opacity: 0, scale: 0.95, y: -4 }}
+                                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                                            exit={{ opacity: 0, scale: 0.95, y: -4 }}
+                                            transition={{ duration: 0.15 }}
+                                            className="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl border border-gold/10 shadow-xl shadow-gold/10 py-2 z-50"
+                                        >
+                                            {/* User info header */}
+                                            <div className="px-4 py-3 border-b border-gold/10">
+                                                <p className="text-sm font-bold text-foreground truncate">
+                                                    {user.display_name || user.name}
+                                                </p>
+                                                <p className="text-xs text-foreground/40 truncate font-english">
+                                                    {user.email}
+                                                </p>
+                                            </div>
+
+                                            {/* Menu items */}
+                                            <div className="py-1">
+                                                <Link
+                                                    href="/profile"
+                                                    onClick={() => setIsProfileOpen(false)}
+                                                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground/70 hover:text-maroon hover:bg-gold/5 transition-colors font-english"
+                                                >
+                                                    <User className="w-4 h-4" />
+                                                    {t.nav_profile}
+                                                </Link>
+                                                <Link
+                                                    href="/profile?tab=submissions"
+                                                    onClick={() => setIsProfileOpen(false)}
+                                                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground/70 hover:text-maroon hover:bg-gold/5 transition-colors font-english"
+                                                >
+                                                    <FileText className="w-4 h-4" />
+                                                    {t.nav_my_submissions}
+                                                </Link>
+                                                <Link
+                                                    href="/profile?tab=likes"
+                                                    onClick={() => setIsProfileOpen(false)}
+                                                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground/70 hover:text-maroon hover:bg-gold/5 transition-colors font-english"
+                                                >
+                                                    <Heart className="w-4 h-4" />
+                                                    {t.nav_my_likes}
+                                                </Link>
+                                            </div>
+
+                                            {/* Sign out */}
+                                            <div className="border-t border-gold/10 pt-1">
+                                                <button
+                                                    onClick={() => {
+                                                        setIsProfileOpen(false);
+                                                        logout();
+                                                    }}
+                                                    className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-500/80 hover:text-red-600 hover:bg-red-50/50 transition-colors font-english"
+                                                >
+                                                    <LogOut className="w-4 h-4" />
+                                                    {t.nav_signout}
+                                                </button>
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
                         ) : (
                             <Link
                                 href="/auth/login"
@@ -149,6 +265,21 @@ export const Navbar = () => {
                         className="md:hidden border-t border-gold/10 bg-white overflow-hidden"
                     >
                         <div className="px-4 py-6 space-y-4">
+                            {/* Mobile: User info at top when logged in */}
+                            {token && user && (
+                                <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-gold/5 border border-gold/10 mb-2">
+                                    <UserAvatar user={user} size={40} />
+                                    <div className="min-w-0">
+                                        <p className="text-sm font-bold text-foreground truncate">
+                                            {user.display_name || user.name}
+                                        </p>
+                                        <p className="text-xs text-foreground/40 truncate font-english">
+                                            {user.email}
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
+
                             <Link
                                 href="/explore"
                                 onClick={() => setIsOpen(false)}
@@ -170,7 +301,35 @@ export const Navbar = () => {
                             >
                                 Submit
                             </Link>
-                            {token && (
+
+                            {/* Mobile: Profile links */}
+                            {token && user && (
+                                <>
+                                    <Link
+                                        href="/profile"
+                                        onClick={() => setIsOpen(false)}
+                                        className="block text-lg font-english font-medium text-foreground/80 hover:text-maroon py-2 px-4 rounded-xl hover:bg-gold/5 transition-all"
+                                    >
+                                        {t.nav_profile}
+                                    </Link>
+                                    <Link
+                                        href="/profile?tab=submissions"
+                                        onClick={() => setIsOpen(false)}
+                                        className="block text-lg font-english font-medium text-foreground/80 hover:text-maroon py-2 px-4 rounded-xl hover:bg-gold/5 transition-all"
+                                    >
+                                        {t.nav_my_submissions}
+                                    </Link>
+                                    <Link
+                                        href="/profile?tab=likes"
+                                        onClick={() => setIsOpen(false)}
+                                        className="block text-lg font-english font-medium text-foreground/80 hover:text-maroon py-2 px-4 rounded-xl hover:bg-gold/5 transition-all"
+                                    >
+                                        {t.nav_my_likes}
+                                    </Link>
+                                </>
+                            )}
+
+                            {user?.is_admin && (
                                 <Link
                                     href="/admin"
                                     onClick={() => setIsOpen(false)}

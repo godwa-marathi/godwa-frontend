@@ -14,6 +14,64 @@ export interface WordOut {
     metadata_json?: any;
 }
 
+export interface UserProfile {
+    id: number;
+    email: string;
+    name: string;
+    display_name?: string;
+    username?: string;
+    avatar?: string;
+    avatar_type: 'google' | 'preset';
+    avatar_preset?: string;
+    bio?: string;
+    is_admin: boolean;
+    created_at?: string;
+    submission_count: number;
+    approved_count: number;
+}
+
+export interface UserPublic {
+    id: number;
+    display_name?: string;
+    name: string;
+    avatar?: string;
+    avatar_type: 'google' | 'preset';
+    avatar_preset?: string;
+    username?: string;
+}
+
+export interface PresetAvatar {
+    id: string;
+    label: string;
+    emoji: string;
+}
+
+export interface LikeResponse {
+    liked: boolean;
+    like_count: number;
+}
+
+export interface UserSubmission {
+    id: number;
+    title: string;
+    title_roman?: string;
+    poet_name?: string;
+    poet_name_roman?: string;
+    status: string;
+    url_slug?: string;
+    has_pending_submission: boolean;
+}
+
+export interface LikedPoemSummary {
+    id: number;
+    title: string;
+    title_roman?: string;
+    poet_name?: string;
+    poet_name_roman?: string;
+    url_slug?: string;
+    liked_at?: string;
+}
+
 export interface PoetOut {
     id: number;
     name: string;
@@ -43,6 +101,9 @@ export interface PoemOut {
     url_slug?: string;
     status: 'draft' | 'pending' | 'approved';
     words: WordOut[];
+    contributed_by?: UserPublic;
+    like_count: number;
+    is_liked?: boolean;
 }
 
 export interface PoetSearchResponse {
@@ -52,6 +113,7 @@ export interface PoetSearchResponse {
 export interface AuthResponse {
     access_token: string;
     token_type: string;
+    user?: UserProfile;
 }
 
 export interface ScannerResponse {

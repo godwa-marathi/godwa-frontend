@@ -7,6 +7,7 @@ import { Calendar, User } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { LikeButton } from "@/components/LikeButton";
 
 export const PoemCard = ({ poem }: { poem: PoemOut }) => {
     const { language } = useLanguage();
@@ -30,8 +31,11 @@ export const PoemCard = ({ poem }: { poem: PoemOut }) => {
                 <div className="absolute top-0 right-0 w-[12px] h-[12px] bg-gold/20 -translate-x-[12px] translate-y-[12px] rotate-180" />
 
                 <div className="flex flex-col h-full">
-                    <div className="inline-block px-2 py-0.5 rounded bg-maroon/5 text-maroon text-[10px] font-bold uppercase tracking-widest mb-4 w-fit">
-                        {poem.genre || "Collection"}
+                    <div className="flex justify-between items-start mb-4">
+                        <div className="inline-block px-2 py-0.5 rounded bg-maroon/5 text-maroon text-[10px] font-bold uppercase tracking-widest w-fit">
+                            {poem.genre || "Collection"}
+                        </div>
+                        <LikeButton poemId={poem.id} initialLikeCount={poem.like_count} initialIsLiked={poem.is_liked} size="sm" />
                     </div>
 
                     <h3 className={`text-2xl font-bold text-foreground mb-3 group-hover:text-maroon transition-colors ${language === 'roman' ? 'font-english' : 'font-marathi'}`}>
