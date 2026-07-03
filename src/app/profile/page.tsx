@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { UserAvatar } from "@/components/Navbar";
@@ -29,7 +29,7 @@ const STATUS_BADGES: Record<string, { label: string; color: string; bg: string }
     draft: { label: "Draft", color: "text-gray-600", bg: "bg-gray-50 border-gray-200" },
 };
 
-export default function ProfilePage() {
+function ProfileContent() {
     const { user, token, isLoading, refreshUser } = useAuth();
     const { t } = useLanguage();
     const router = useRouter();
@@ -569,5 +569,13 @@ export default function ProfilePage() {
 
             <Footer />
         </main>
+    );
+}
+
+export default function ProfilePage() {
+    return (
+        <Suspense fallback={null}>
+            <ProfileContent />
+        </Suspense>
     );
 }
