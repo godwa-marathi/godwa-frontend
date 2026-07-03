@@ -9,6 +9,9 @@ export interface TranslationDictionary {
     nav_signin: string;
     nav_signout: string;
     nav_search_placeholder: string;
+    nav_profile: string;
+    nav_my_submissions: string;
+    nav_my_likes: string;
 
     // Home
     home_hero_tag: string;
@@ -131,6 +134,9 @@ export const translations: Record<Language, TranslationDictionary> = {
         nav_signin: "Sign In",
         nav_signout: "Sign Out",
         nav_search_placeholder: "Search...",
+        nav_profile: "Profile",
+        nav_my_submissions: "My Submissions",
+        nav_my_likes: "Liked Poems",
 
         home_hero_tag: "Premium Poetry Experience",
         home_hero_title_prefix: "Experience the Soul of",
@@ -244,6 +250,9 @@ export const translations: Record<Language, TranslationDictionary> = {
         nav_signin: "लॉग इन",
         nav_signout: "बाहेर पडा",
         nav_search_placeholder: "शोधा...",
+        nav_profile: "प्रोफाइल",
+        nav_my_submissions: "माझी सादरीकरणे",
+        nav_my_likes: "आवडलेल्या कविता",
 
         home_hero_tag: "प्रीमियम काव्य अनुभव",
         home_hero_title_prefix: "अनुभवा",
