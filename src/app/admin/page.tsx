@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Navbar } from "@/components/Navbar";
+import { Navbar, UserAvatar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
@@ -18,7 +18,7 @@ export default function AdminDashboard() {
     // Fetch pending submissions (review queue)
     const { data: submissions, isLoading: loadingSubs } = useQuery({
         queryKey: ["admin", "submissions"],
-        queryFn: () => api.get<PoemOut[]>("/api/poems/?status=pending"),
+        queryFn: () => api.get<any[]>("/api/admin/poems/submissions"),
         enabled: activeTab === "review",
     });
 
@@ -129,7 +129,7 @@ export default function AdminDashboard() {
                                                         ? (poem.title || poem.title_roman)
                                                         : (poem.title_roman || poem.title)}
                                                 </h3>
-                                                <div className="text-xs font-english text-foreground/40 flex items-center gap-2 mt-0.5">
+                                                <div className="text-xs font-english text-foreground/40 flex flex-wrap items-center gap-2 mt-0.5">
                                                     <span className="font-bold text-gold uppercase tracking-wider">by {poetName}</span>
                                                     <span>•</span>
                                                     <span className="px-2 py-0.5 rounded-full bg-gold/5 text-gold text-[9px] font-bold uppercase tracking-wider border border-gold/10">
@@ -139,6 +139,18 @@ export default function AdminDashboard() {
                                                         <>
                                                             <span>•</span>
                                                             <span>Chhanda ID: {poem.chhanda_id}</span>
+                                                        </>
+                                                    )}
+                                                    {item.submitted_by && (
+                                                        <>
+                                                            <span>•</span>
+                                                            <span className="flex items-center gap-1">
+                                                                <span>Submitted by</span>
+                                                                <span className="font-semibold text-foreground/75 flex items-center gap-1 bg-gold/5 px-2 py-0.5 rounded-full border border-gold/10">
+                                                                    <UserAvatar user={item.submitted_by} size={14} />
+                                                                    {item.submitted_by.display_name || item.submitted_by.name}
+                                                                </span>
+                                                            </span>
                                                         </>
                                                     )}
                                                 </div>

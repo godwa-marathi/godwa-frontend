@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Navbar } from "@/components/Navbar";
+import { Navbar, UserAvatar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
@@ -280,9 +280,23 @@ export default function SubmissionDetailPage({ params }: Props) {
                             <h1 className="text-3xl md:text-4xl font-serif font-bold text-foreground">
                                 {language === "devanagari" ? (poem.title || poem.title_roman) : (poem.title_roman || poem.title)}
                             </h1>
-                            <div className="flex items-center gap-2 mt-2 text-foreground/60 font-english">
-                                <User className="w-4 h-4" />
-                                <span>{language === "devanagari" ? (poet?.name || "Unknown") : (poet?.name_roman || poet?.name || "Unknown")}</span>
+                            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-2 text-foreground/60 font-english">
+                                <div className="flex items-center gap-2">
+                                    <User className="w-4 h-4" />
+                                    <span>{language === "devanagari" ? (poet?.name || "Unknown") : (poet?.name_roman || poet?.name || "Unknown")}</span>
+                                </div>
+                                {poem.contributed_by && (
+                                    <>
+                                        <div className="w-1.5 h-1.5 rounded-full bg-gold/30 hidden sm:block" />
+                                        <div className="flex items-center gap-1.5">
+                                            <span className="text-foreground/45 text-xs">Submitted by:</span>
+                                            <span className="flex items-center gap-1 bg-gold/5 px-2 py-0.5 rounded-full border border-gold/10 text-xs font-semibold">
+                                                <UserAvatar user={poem.contributed_by} size={16} />
+                                                {poem.contributed_by.display_name || poem.contributed_by.name}
+                                            </span>
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         </div>
 

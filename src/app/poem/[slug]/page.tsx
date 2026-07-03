@@ -5,9 +5,10 @@ import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { PoemOut, PoetOut } from "@/lib/types";
-import { Navbar } from "@/components/Navbar";
+import { Navbar, UserAvatar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { RekhtaReader } from "@/components/RekhtaReader";
+import { LikeButton } from "@/components/LikeButton";
 import { Loader2, AlertCircle, ArrowLeft, User } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/lib/LanguageContext";
@@ -116,40 +117,57 @@ export default function PoemPage() {
                                 )}
                             </h1>
                             {/* Byline - Restore Link functionality */}
-                            <div className="flex items-center gap-2 text-lg text-maroon/80 font-medium">
-                                <span className="text-foreground/40 text-base font-english italic font-normal">{t.poem_by}</span>
-                                <Link
-                                    href={`/poets/${poem.poet_id}`}
-                                    className={`inline-flex items-center gap-2 hover:text-maroon hover:underline decoration-maroon/30 underline-offset-4 transition-all ${language === 'roman' ? 'font-english' : 'font-marathi'}`}
-                                >
-                                    {fullPoet?.image_url && (
-                                        <span className="relative flex h-6 w-6 shrink-0 overflow-hidden rounded-full border border-maroon/10 shadow-sm">
-                                            <img
-                                                src={fullPoet.image_url}
-                                                alt={displayPoetName}
-                                                className="aspect-square h-full w-full object-cover"
-                                            />
-                                        </span>
-                                    )}
-                                    <span>
-                                        {language === 'roman' ? (
-                                            <>
-                                                {poem.poet?.name_roman || poem.poet?.name || t.poem_traditional}
-                                                {poem.poet?.name_roman && poem.poet?.name && (
-                                                    <span className="text-xs font-normal text-foreground/40 font-marathi ml-1.5 font-sans">({poem.poet.name})</span>
-                                                )}
-                                            </>
-                                        ) : (
-                                            <>
-                                                {poem.poet?.name || t.poem_traditional}
-                                                {poem.poet?.name_roman && (
-                                                    <span className="text-xs font-normal text-foreground/45 font-english ml-1.5 font-serif">({poem.poet.name_roman})</span>
-                                                )}
-                                            </>
+                            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 mt-2 w-full">
+                                <div className="flex items-center gap-2 text-lg text-maroon/80 font-medium">
+                                    <span className="text-foreground/40 text-base font-english italic font-normal">{t.poem_by}</span>
+                                    <Link
+                                        href={`/poets/${poem.poet_id}`}
+                                        className={`inline-flex items-center gap-2 hover:text-maroon hover:underline decoration-maroon/30 underline-offset-4 transition-all ${language === 'roman' ? 'font-english' : 'font-marathi'}`}
+                                    >
+                                        {fullPoet?.image_url && (
+                                            <span className="relative flex h-6 w-6 shrink-0 overflow-hidden rounded-full border border-maroon/10 shadow-sm">
+                                                <img
+                                                    src={fullPoet.image_url}
+                                                    alt={displayPoetName}
+                                                    className="aspect-square h-full w-full object-cover"
+                                                />
+                                            </span>
                                         )}
-                                    </span>
-                                </Link>
+                                        <span>
+                                            {language === 'roman' ? (
+                                                <>
+                                                    {poem.poet?.name_roman || poem.poet?.name || t.poem_traditional}
+                                                    {poem.poet?.name_roman && poem.poet?.name && (
+                                                        <span className="text-xs font-normal text-foreground/40 font-marathi ml-1.5 font-sans">({poem.poet.name})</span>
+                                                    )}
+                                                </>
+                                            ) : (
+                                                <>
+                                                    {poem.poet?.name || t.poem_traditional}
+                                                    {poem.poet?.name_roman && (
+                                                        <span className="text-xs font-normal text-foreground/45 font-english ml-1.5 font-serif">({poem.poet.name_roman})</span>
+                                                    )}
+                                                </>
+                                            )}
+                                        </span>
+                                    </Link>
+                                </div>
+                                <div className="h-4 w-px bg-gold/25 hidden lg:block" />
+                                <LikeButton poemId={poem.id} initialLikeCount={poem.like_count} initialIsLiked={poem.is_liked} size="md" />
                             </div>
+
+                            {/* Contributor Section */}
+                            {poem.status === 'approved' && poem.contributed_by && (
+                                <div className="mt-3 flex items-center gap-2 text-xs text-foreground/50 font-english justify-center lg:justify-start">
+                                    <span>Contributed by</span>
+                                    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-gold/5 border border-gold/10">
+                                        <UserAvatar user={poem.contributed_by} size={18} />
+                                        <span className="font-semibold text-foreground/70">
+                                            {poem.contributed_by.display_name || poem.contributed_by.name}
+                                        </span>
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* Poem Reader */}
