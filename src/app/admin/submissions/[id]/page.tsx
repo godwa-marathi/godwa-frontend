@@ -7,7 +7,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useLanguage } from "@/lib/LanguageContext";
 import { PoemOut } from "@/lib/types";
-import { Loader2, ArrowLeft, Check, X, User, Edit3, Link2, Unlink, Plus, Sparkles } from "lucide-react";
+import { Loader2, ArrowLeft, Check, X, User, Edit3, Link2, Unlink, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Sanscript from "@indic-transliteration/sanscript";
@@ -44,7 +44,7 @@ export default function SubmissionDetailPage({ params }: Props) {
     const [isSearchingChhanda, setIsSearchingChhanda] = React.useState(false);
 
     const [editedMetadata, setEditedMetadata] = React.useState("");
-    const [editedPoetImageUrl, setEditedPoetImageUrl] = React.useState("");
+    const [editedSearchSlug, setEditedSearchSlug] = React.useState("");
     const [poetSuggestions, setPoetSuggestions] = React.useState<any[]>([]);
     const [isSearchingPoets, setIsSearchingPoets] = React.useState(false);
     // Genre state
@@ -127,7 +127,7 @@ export default function SubmissionDetailPage({ params }: Props) {
             setEditedChandaId(poem.chhanda_id || null);
             // Assuming metadata is stored as JSON
             setEditedMetadata(poem.metadata_json ? JSON.stringify(poem.metadata_json, null, 2) : "");
-            setEditedPoetImageUrl(poem.poet?.image_url || "");
+            setEditedSearchSlug(poem.search_slug || "");
 
             // Set poet name from poet object if available
             if (poem.poet) {
@@ -190,7 +190,7 @@ export default function SubmissionDetailPage({ params }: Props) {
 
     // Mutation: Save edited content
     const saveMutation = useMutation({
-        mutationFn: async (data: {
+        mutationFn: (data: {
             title: string;
             title_roman?: string;
             body_marathi: string;
@@ -202,19 +202,11 @@ export default function SubmissionDetailPage({ params }: Props) {
             chhanda_id?: number | null;
             chhanda_name?: string;
             metadata_json?: any;
-            poet_image_url?: string;
+            search_slug?: string;
             body_meaning?: string;
         }) => {
-            // poet_image_url is a POET-level field, not a poem field — save it separately.
-            const { poet_image_url, ...poemData } = data;
-            console.log('Saving poem with data:', poemData);
-            const poemRes = await api.patch(`/api/admin/poems/${id}`, poemData);
-
-            const poetId = data.poet_id ?? poem?.poet_id ?? null;
-            if (poetId != null && typeof poet_image_url !== "undefined") {
-                await api.patch(`/api/admin/poets/${poetId}`, { image_url: poet_image_url });
-            }
-            return poemRes;
+            console.log('Saving poem with data:', data);
+            return api.patch(`/api/admin/poems/${id}`, data);
         },
         onSuccess: (data) => {
             console.log('Save successful:', data);
@@ -226,23 +218,6 @@ export default function SubmissionDetailPage({ params }: Props) {
         onError: (error: any) => {
             console.error('Save failed:', error);
             alert(`Failed to save: ${error.message}`);
-        },
-    });
-
-    // Mutation: Generate line-by-line English meaning via AI (overwrites body_meaning)
-    const generateMeaningMutation = useMutation({
-        mutationFn: () => api.post<PoemOut>(`/api/admin/poems/${id}/generate-meaning`, {}),
-        onSuccess: (data) => {
-            queryClient.invalidateQueries({ queryKey: ["poem", id] });
-            queryClient.invalidateQueries({ queryKey: ["admin", "submissions"] });
-            // Keep the edit buffer in sync if the admin is mid-edit
-            if (data && typeof data.body_meaning !== "undefined") {
-                setEditedMeaning(data.body_meaning || "");
-            }
-        },
-        onError: (error: any) => {
-            console.error('Meaning generation failed:', error);
-            alert(`Failed to generate meaning: ${error.message}`);
         },
     });
 
@@ -343,7 +318,7 @@ export default function SubmissionDetailPage({ params }: Props) {
                                             setEditedChandaId(poem.chhanda_id || null);
                                             setEditedChandaName(poem.chhanda_name || (poem.chhanda_id && chhandas?.find((c: any) => c.id == poem.chhanda_id)?.name) || String(poem.chhanda_id || ""));
                                             setEditedMetadata(poem.metadata_json ? JSON.stringify(poem.metadata_json, null, 2) : "");
-                                            setEditedPoetImageUrl(poem.poet?.image_url || "");
+                                            setEditedSearchSlug(poem.search_slug || "");
                                             setPoetSuggestions([]); // Clear suggestions
                                             setChhandaSuggestions([]);
                                         }}
@@ -377,7 +352,7 @@ export default function SubmissionDetailPage({ params }: Props) {
                                                 chhanda_id: editedChandaId,
                                                 chhanda_name: editedChandaName,
                                                 metadata_json: metadataJson,
-                                                poet_image_url: editedPoetImageUrl,
+                                                search_slug: editedSearchSlug,
                                             });
                                         }}
                                         disabled={saveMutation.isPending}
@@ -399,7 +374,7 @@ export default function SubmissionDetailPage({ params }: Props) {
                                                 editedGenre,
                                                 editedDescription,
                                                 editedChandaId,
-                                                editedPoetImageUrl
+                                                editedSearchSlug
                                             });
                                             setIsEditing(true);
                                         }}
@@ -407,16 +382,6 @@ export default function SubmissionDetailPage({ params }: Props) {
                                     >
                                         <Edit3 className="w-4 h-4" />
                                         Edit Content
-                                    </button>
-
-                                    <button
-                                        onClick={() => generateMeaningMutation.mutate()}
-                                        disabled={generateMeaningMutation.isPending}
-                                        title="Use AI to generate a line-by-line English meaning (overwrites the current meaning)"
-                                        className="px-6 py-3 rounded-xl border border-emerald-500/30 text-emerald-700 font-english font-bold text-sm uppercase tracking-widest hover:bg-emerald-50 transition-all flex items-center gap-2 disabled:opacity-50"
-                                    >
-                                        {generateMeaningMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                                        Generate Linewise Meaning
                                     </button>
 
                                     <button
@@ -495,27 +460,14 @@ export default function SubmissionDetailPage({ params }: Props) {
                                 </p>
                             </div>
 
-                            {/* Poet Image URL */}
+                            {/* Search Slug */}
                             <div className="md:col-span-2">
                                 <label className="block text-xs font-bold text-gold uppercase tracking-widest mb-2">
-                                    Poet Image URL
+                                    Search Slug
                                 </label>
-                                <div className="flex items-center gap-4">
-                                    {poem.poet?.image_url ? (
-                                        <img
-                                            src={poem.poet.image_url}
-                                            alt={poem.poet?.name || "Poet"}
-                                            className="w-14 h-14 rounded-full object-cover border border-gold/20"
-                                        />
-                                    ) : (
-                                        <div className="w-14 h-14 rounded-full bg-gold/5 border border-gold/20 flex items-center justify-center">
-                                            <User className="w-5 h-5 text-gold/40" />
-                                        </div>
-                                    )}
-                                    <p className="text-foreground/80 font-english text-sm break-all">
-                                        {poem.poet?.image_url || "—"}
-                                    </p>
-                                </div>
+                                <p className="text-foreground/80 font-english text-lg">
+                                    {poem.search_slug || "—"}
+                                </p>
                             </div>
 
                             {/* Description */}
@@ -775,34 +727,18 @@ export default function SubmissionDetailPage({ params }: Props) {
                                 )}
                             </div>
 
-                            {/* Poet Image URL */}
+                            {/* Search Slug */}
                             <div className="md:col-span-2">
                                 <label className="block text-sm font-bold text-gold uppercase tracking-widest mb-2">
-                                    Poet Image URL
+                                    Search Slug
                                 </label>
-                                <div className="flex items-center gap-4">
-                                    {editedPoetImageUrl ? (
-                                        <img
-                                            src={editedPoetImageUrl}
-                                            alt={editedPoetName || "Poet"}
-                                            className="w-14 h-14 rounded-full object-cover border border-gold/20 shrink-0"
-                                        />
-                                    ) : (
-                                        <div className="w-14 h-14 rounded-full bg-gold/5 border border-gold/20 flex items-center justify-center shrink-0">
-                                            <User className="w-5 h-5 text-gold/40" />
-                                        </div>
-                                    )}
-                                    <input
-                                        type="url"
-                                        value={editedPoetImageUrl}
-                                        onChange={(e) => setEditedPoetImageUrl(e.target.value)}
-                                        className="w-full px-4 py-3 bg-white border border-gold/20 rounded-xl focus:ring-2 focus:ring-gold/40 focus:border-gold outline-none transition-all font-english text-lg"
-                                        placeholder="https://example.com/poet-photo.jpg"
-                                    />
-                                </div>
-                                <p className="mt-1 text-xs text-foreground/40 font-english italic">
-                                    Saved to the poet — appears on the poet's page everywhere.
-                                </p>
+                                <input
+                                    type="text"
+                                    value={editedSearchSlug}
+                                    onChange={(e) => setEditedSearchSlug(e.target.value)}
+                                    className="w-full px-4 py-3 bg-white border border-gold/20 rounded-xl focus:ring-2 focus:ring-gold/40 focus:border-gold outline-none transition-all font-english text-lg"
+                                    placeholder="search-friendly-slug"
+                                />
                             </div>
 
                             {/* Description */}
