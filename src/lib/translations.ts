@@ -32,6 +32,11 @@ export interface TranslationDictionary {
     home_view_all: string;
     home_poets_title: string;
     home_poets_subtitle: string;
+    home_popular_tag: string;
+    home_popular_title: string;
+    home_popular_subtitle: string;
+    home_read_poem: string;
+    home_disclaimer: string;
 
     // Footer
     footer_brand_desc: string;
@@ -163,6 +168,11 @@ export const translations: Record<Language, TranslationDictionary> = {
         home_view_all: "View All",
         home_poets_title: "Celebrated Poets",
         home_poets_subtitle: "The architects of Marathi literature",
+        home_popular_tag: "Popular Verses",
+        home_popular_title: "Verses Worth Savouring",
+        home_popular_subtitle: "A rotating selection of poems from our collection",
+        home_read_poem: "Read Poem",
+        home_disclaimer: "Godwa is a non-commercial platform solely dedicated to spreading the sweetness of the Marathi language. Copyright of all content on this website belongs to the respective owners; credits are given to poets wherever possible. In case you want to remove your poem, please email us and we will remove it.",
 
         footer_brand_desc: "Godwa is a digital sanctuary for Marathi literature. Our mission is to preserve the rich heritage of Marathi poetry and make its profound linguistic beauty accessible through technology.",
         footer_nav_title: "Navigation",
@@ -286,6 +296,11 @@ export const translations: Record<Language, TranslationDictionary> = {
         home_view_all: "सर्व पहा",
         home_poets_title: "प्रख्यात कवी",
         home_poets_subtitle: "मराठी साहित्याचे शिल्पकार",
+        home_popular_tag: "लोकप्रिय कविता",
+        home_popular_title: "मनाला भिडणाऱ्या ओळी",
+        home_popular_subtitle: "आमच्या संग्रहातील निवडक कवितांची झलक",
+        home_read_poem: "कविता वाचा",
+        home_disclaimer: "गोडवा हे एक अव्यावसायिक व्यासपीठ आहे, जे केवळ मराठी भाषेचा गोडवा पसरवण्यासाठी समर्पित आहे. या संकेतस्थळावरील सर्व मजकुराचे हक्क संबंधित मालकांचे आहेत; शक्य असेल तिथे कवींना श्रेय दिले जाते. जर तुम्हाला तुमची कविता काढून टाकायची असेल, तर कृपया आम्हाला ईमेल करा आणि आम्ही ती काढून टाकू.",
 
         footer_brand_desc: "गोडवा हे मराठी साहित्याचे डिजिटल माहेरघर आहे. मराठी कवितेचा समृद्ध वारसा जपणे आणि तंत्रज्ञाच्या माध्यमातून तिचे सौंदर्य सर्वांपर्यंत पोहोचवणे हे आमचे ध्येय आहे.",
         footer_nav_title: "नेव्हिगेशन",

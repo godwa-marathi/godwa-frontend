@@ -4,9 +4,9 @@ import React from "react";
 import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
 import { PoemCard, PoetCard } from "@/components/Cards";
+import { PopularPoemsSlider } from "@/components/PopularPoemsSlider";
 import { RekhtaReader } from "@/components/RekhtaReader";
 import { Footer } from "@/components/Footer";
-import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { PoemOut, PaginatedPoetResponse } from "@/lib/types";
@@ -27,8 +27,15 @@ export default function Home() {
     queryKey: ["poets", "celebrated"],
     queryFn: () => api.get<PaginatedPoetResponse>("/api/poets/?page=1&page_size=4"),
   });
-  
+
   const poets = poetsRes?.items;
+
+  // Dashboard stats (poem/word/poet counts) are hidden on the landing page for
+  // now — no point fetching them until we surface those numbers again.
+  // const { data: stats } = useQuery({
+  //   queryKey: ["home", "stats"],
+  //   queryFn: () => api.get<any>("/api/home"),
+  // });
 
   // Use the first approved poem for the demo if available, otherwise fallback
   const demoPoem = poems?.find(p => p.status === "approved" && p.words?.length > 0) || poems?.[0];
@@ -39,6 +46,11 @@ export default function Home() {
       <Navbar />
 
       <Hero />
+
+      {/* Popular poems slider — a rotating, randomised selection */}
+      {!loadingPoems && poems && poems.length > 0 && (
+        <PopularPoemsSlider poems={poems} />
+      )}
 
       {/* Interactive Demo Section */}
       <section className="py-24 bg-gold/5 border-y border-gold/10">
@@ -123,6 +135,17 @@ export default function Home() {
               ))}
             </div>
           )}
+        </div>
+      </section>
+
+      {/* Non-commercial / copyright notice */}
+      <section className="pb-24 bg-white">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="rounded-3xl border border-gold/15 bg-gold/[0.04] px-8 py-10 text-center">
+            <p className="text-sm md:text-base text-foreground/60 font-english leading-relaxed">
+              {t.home_disclaimer}
+            </p>
+          </div>
         </div>
       </section>
 
