@@ -2,7 +2,8 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Book, Users, PenTool } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+// Book, Users, PenTool — re-add when the stats block below is restored.
 import { useLanguage } from "@/lib/LanguageContext";
 
 export const Hero = () => {
@@ -36,7 +37,7 @@ export const Hero = () => {
                         {t.home_hero_desc}
                     </p>
 
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20">
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                         <button className="w-full sm:w-auto px-8 py-4 bg-maroon text-white rounded-full font-english font-semibold flex items-center justify-center gap-2 transition-transform hover:scale-105 active:scale-95 shadow-lg shadow-maroon/20 group">
                             {t.home_hero_btn_start}
                             <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
@@ -46,8 +47,9 @@ export const Hero = () => {
                         </button>
                     </div>
 
-                    {/* Stats */}
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-8 max-w-3xl mx-auto pt-10 border-t border-gold/10">
+                    {/* Stats — hidden until we have a good number of poems/poets/words.
+                        Uncomment (and wire to real counts) once the archive is sizeable.
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-8 max-w-3xl mx-auto pt-10 mt-20 border-t border-gold/10">
                         <div className="flex flex-col items-center gap-1">
                             <div className="p-3 rounded-2xl bg-gold/10 text-gold mb-2">
                                 <Book className="w-6 h-6" />
@@ -70,6 +72,7 @@ export const Hero = () => {
                             <span className="text-[10px] font-english text-gold font-bold uppercase tracking-widest">{t.home_stat_words}</span>
                         </div>
                     </div>
+                    */}
                 </motion.div>
             </div>
         </section>
