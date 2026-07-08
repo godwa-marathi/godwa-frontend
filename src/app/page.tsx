@@ -9,7 +9,7 @@ import { Footer } from "@/components/Footer";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { PoemOut, PoetOut } from "@/lib/types";
+import { PoemOut, PaginatedPoetResponse } from "@/lib/types";
 import { Loader2 } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { TutorialTour } from "@/components/TutorialTour";
@@ -22,11 +22,13 @@ export default function Home() {
     queryFn: () => api.get<PoemOut[]>("/api/poems/"),
   });
 
-  // Fetch celebrated poets
-  const { data: poets, isLoading: loadingPoets } = useQuery({
+  // Fetch celebrated poets. GET /api/poets/ returns a paginated envelope
+  // ({ items, total, ... }), so read the poets off `.items`.
+  const { data: poetsData, isLoading: loadingPoets } = useQuery({
     queryKey: ["poets", "celebrated"],
-    queryFn: () => api.get<PoetOut[]>("/api/poets/"),
+    queryFn: () => api.get<PaginatedPoetResponse>("/api/poets/"),
   });
+  const poets = poetsData?.items;
 
   // Fetch dashboard stats
   const { data: stats } = useQuery({

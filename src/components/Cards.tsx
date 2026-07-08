@@ -5,18 +5,13 @@ import Link from "next/link";
 import { PoemOut, PoetOut } from "@/lib/types";
 import { Calendar, User } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
-import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
 import { LikeButton } from "@/components/LikeButton";
 
 export const PoemCard = ({ poem }: { poem: PoemOut }) => {
     const { language } = useLanguage();
-    const { data: poets } = useQuery({
-        queryKey: ["poets"],
-        queryFn: () => api.get<PoetOut[]>("/api/poets/"),
-    });
-
-    const fullPoet = poets?.find(p => p.id === poem.poet_id);
+    // The poem already carries its poet (incl. image_url) as a nested object,
+    // so use that directly instead of refetching the whole poets list.
+    const fullPoet = poem.poet;
 
     const displayTitle = language === 'roman' ? (poem.title_roman || poem.title) : poem.title;
     const displayBody = language === 'roman' ? (poem.body_roman || poem.body_marathi) : poem.body_marathi;

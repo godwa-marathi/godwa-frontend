@@ -7,16 +7,19 @@ import { PoetCard } from "@/components/Cards";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useLanguage } from "@/lib/LanguageContext";
-import { PoetOut } from "@/lib/types";
+import { PaginatedPoetResponse } from "@/lib/types";
 import { Loader2, Search, Users, LayoutGrid, List, ArrowUpDown } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function PoetsPage() {
     const { t, language } = useLanguage();
-    const { data: poets, isLoading } = useQuery({
+    // GET /api/poets/ returns a paginated envelope ({ items, total, ... }),
+    // so read the poets off `.items`.
+    const { data: poetsData, isLoading } = useQuery({
         queryKey: ["poets"],
-        queryFn: () => api.get<PoetOut[]>("/api/poets/"),
+        queryFn: () => api.get<PaginatedPoetResponse>("/api/poets/"),
     });
+    const poets = poetsData?.items;
 
     const [viewMode, setViewMode] = React.useState<'grid' | 'list'>('grid');
     const [searchQuery, setSearchQuery] = React.useState("");
