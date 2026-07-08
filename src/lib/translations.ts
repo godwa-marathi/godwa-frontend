@@ -89,6 +89,13 @@ export interface TranslationDictionary {
     poets_subtitle: string;
     poets_loading: string;
     poets_no_results: string;
+    poets_no_results_letter: string; // contains a {letter} placeholder
+    poets_prev: string;
+    poets_next: string;
+    poets_page_of: string;
+    poets_showing: string;
+    poets_all_letters: string;
+    poets_results: string;
 
     // Submit Page
     submit_title: string;
@@ -213,6 +220,13 @@ export const translations: Record<Language, TranslationDictionary> = {
         poets_subtitle: "Explore the lives and legacies of the master weavers of Marathi verse.",
         poets_loading: "Loading Literary Legends...",
         poets_no_results: "No poets found in our archives yet.",
+        poets_no_results_letter: "No poets under “{letter}” yet.",
+        poets_prev: "Prev",
+        poets_next: "Next",
+        poets_page_of: "of",
+        poets_showing: "Showing",
+        poets_all_letters: "All",
+        poets_results: "poets",
 
         submit_title: "Contribute Poetry",
         submit_subtitle: "Share the beauty of Marathi verses with the world.",
@@ -334,6 +348,13 @@ export const translations: Record<Language, TranslationDictionary> = {
         poets_subtitle: "मराठी कवितेच्या महान शिल्पकारांचे जीवन आणि वारसा जाणून घ्या.",
         poets_loading: "साहित्यिक दिग्गजांना लोड करत आहे...",
         poets_no_results: "आमच्या संग्रहात अद्याप कोणतेही कवी आढळले नाहीत.",
+        poets_no_results_letter: "“{letter}” अक्षराखाली अद्याप कोणतेही कवी नाहीत.",
+        poets_prev: "मागे",
+        poets_next: "पुढे",
+        poets_page_of: "पैकी",
+        poets_showing: "दाखवत आहे",
+        poets_all_letters: "सर्व",
+        poets_results: "कवी",
 
         submit_title: "साहित्य पाठवा",
         submit_subtitle: "मराठी कवितांचे सौंदर्य जगासोबत शेअर करा.",

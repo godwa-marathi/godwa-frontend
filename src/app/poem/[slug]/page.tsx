@@ -28,12 +28,11 @@ export default function PoemPage() {
         enabled: !!slug && slug !== "0", // 0 is for demo
     });
 
-    const { data: poets } = useQuery({
-        queryKey: ["poets"],
-        queryFn: () => api.get<PoetOut[]>("/api/poets/"),
+    const { data: fullPoet } = useQuery({
+        queryKey: ["poet", poem?.poet_id],
+        queryFn: () => api.get<PoetOut>(`/api/poets/${poem?.poet_id}`),
+        enabled: !!poem?.poet_id,
     });
-
-    const fullPoet = poets?.find(p => p.id === poem?.poet_id);
 
     if (isLoading) {
         return (

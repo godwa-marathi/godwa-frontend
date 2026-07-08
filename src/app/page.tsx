@@ -22,13 +22,13 @@ export default function Home() {
     queryFn: () => api.get<PoemOut[]>("/api/poems/"),
   });
 
-  // Fetch celebrated poets. GET /api/poets/ returns a paginated envelope
-  // ({ items, total, ... }), so read the poets off `.items`.
-  const { data: poetsData, isLoading: loadingPoets } = useQuery({
+  // Fetch celebrated poets (paginated endpoint now)
+  const { data: poetsRes, isLoading: loadingPoets } = useQuery({
     queryKey: ["poets", "celebrated"],
-    queryFn: () => api.get<PaginatedPoetResponse>("/api/poets/"),
+    queryFn: () => api.get<PaginatedPoetResponse>("/api/poets/?page=1&page_size=4"),
   });
-  const poets = poetsData?.items;
+
+  const poets = poetsRes?.items;
 
   // Dashboard stats (poem/word/poet counts) are hidden on the landing page for
   // now — no point fetching them until we surface those numbers again.
