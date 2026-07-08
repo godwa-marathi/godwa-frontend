@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Book, Users, PenTool } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
@@ -37,13 +38,13 @@ export const Hero = () => {
                     </p>
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20">
-                        <button className="w-full sm:w-auto px-8 py-4 bg-maroon text-white rounded-full font-english font-semibold flex items-center justify-center gap-2 transition-transform hover:scale-105 active:scale-95 shadow-lg shadow-maroon/20 group">
+                        <Link href="/explore" className="w-full sm:w-auto px-8 py-4 bg-maroon text-white rounded-full font-english font-semibold flex items-center justify-center gap-2 transition-transform hover:scale-105 active:scale-95 shadow-lg shadow-maroon/20 group">
                             {t.home_hero_btn_start}
                             <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                        </button>
-                        <button className="w-full sm:w-auto px-8 py-4 bg-transparent text-maroon border-2 border-maroon rounded-full font-english font-semibold transition-all hover:bg-maroon/5 active:scale-95">
+                        </Link>
+                        <Link href="/submit" className="w-full sm:w-auto px-8 py-4 bg-transparent text-maroon border-2 border-maroon rounded-full font-english font-semibold text-center transition-all hover:bg-maroon/5 active:scale-95">
                             {t.home_hero_btn_contribute}
-                        </button>
+                        </Link>
                     </div>
 
                     {/* Stats */}
