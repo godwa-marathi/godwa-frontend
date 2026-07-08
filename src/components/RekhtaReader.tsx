@@ -87,7 +87,7 @@ export const RekhtaReader: React.FC<RekhtaReaderProps> = ({ poem }) => {
                 {/* Minimal Reader Toolbar */}
                 <div className="flex items-center justify-between gap-3 mb-4 pb-3 border-b border-gold/10">
                     {/* Left: Alignment Toggle */}
-                    <div className="flex items-center bg-foreground/5 p-0.5 rounded-md border border-gold/5 animate-in fade-in duration-300">
+                    <div className="tour-step-align flex items-center bg-foreground/5 p-0.5 rounded-md border border-gold/5 animate-in fade-in duration-300">
                         <button
                             onClick={() => setAlignment("left")}
                             className={`p-1.5 rounded-md transition-all ${
@@ -125,7 +125,7 @@ export const RekhtaReader: React.FC<RekhtaReaderProps> = ({ poem }) => {
 
                     {/* Right: Meaning Mode Toggle (Only if hasMeaning) */}
                     {hasMeaning && (
-                        <div className="flex items-center bg-foreground/5 p-0.5 rounded-md border border-gold/5 text-xs font-english animate-in fade-in duration-300">
+                        <div className="tour-step-translate flex items-center bg-foreground/5 p-0.5 rounded-md border border-gold/5 text-xs font-english animate-in fade-in duration-300">
                             <button
                                 onClick={() => setViewMode("poem")}
                                 className={`px-2.5 py-1.5 rounded-md transition-all flex items-center ${
@@ -220,6 +220,7 @@ export const RekhtaReader: React.FC<RekhtaReaderProps> = ({ poem }) => {
                                                                 word={word}
                                                                 isOpen={activeWordId === wordId}
                                                                 onOpenChange={(open) => setActiveWordId(open ? wordId : null)}
+                                                                className={idx === 0 && wordIdx === 0 ? "tour-step-word" : ""}
                                                             />
                                                             {wordIdx < splitMarathiText(row.marathiLine).length - 1 && " "}
                                                         </React.Fragment>
