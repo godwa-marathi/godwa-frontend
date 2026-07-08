@@ -126,6 +126,16 @@ export interface PoetSearchResponse {
     results: PoetOut[];
 }
 
+// Matches the backend's PaginatedPoetResponse (app/schemas/poet.py).
+// GET /api/poets/ returns this envelope, not a bare PoetOut[].
+export interface PaginatedPoetResponse {
+    items: PoetOut[];
+    total: number;
+    page: number;
+    page_size: number;
+    total_pages: number;
+}
+
 export interface AuthResponse {
     access_token: string;
     token_type: string;

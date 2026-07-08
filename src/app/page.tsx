@@ -9,9 +9,10 @@ import { Footer } from "@/components/Footer";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { PoemOut, PoetOut, PaginatedPoetResponse } from "@/lib/types";
+import { PoemOut, PaginatedPoetResponse } from "@/lib/types";
 import { Loader2 } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
+import { TutorialTour } from "@/components/TutorialTour";
 
 export default function Home() {
   const { t } = useLanguage();
@@ -34,6 +35,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen flex flex-col">
+      <TutorialTour />
       <Navbar />
 
       <Hero />

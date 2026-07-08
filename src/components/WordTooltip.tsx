@@ -15,6 +15,7 @@ interface WordTooltipProps {
     isRoman?: boolean;
     isOpen: boolean;
     onOpenChange: (open: boolean) => void;
+    className?: string;
 }
 
 export const WordTooltip: React.FC<WordTooltipProps> = ({ 
@@ -22,7 +23,8 @@ export const WordTooltip: React.FC<WordTooltipProps> = ({
     data, 
     isRoman = false,
     isOpen,
-    onOpenChange 
+    onOpenChange,
+    className
 }) => {
     const [showNotFound, setShowNotFound] = React.useState(false);
 
@@ -88,7 +90,7 @@ export const WordTooltip: React.FC<WordTooltipProps> = ({
                             // Prevent hover leave from closing tooltip
                             e.preventDefault();
                         }}
-                        className="cursor-pointer hover:text-maroon transition-colors decoration-gold/30 hover:underline underline-offset-4 decoration-2 inline-block mx-0.5"
+                        className={`cursor-pointer hover:text-maroon transition-colors decoration-gold/30 hover:underline underline-offset-4 decoration-2 inline-block mx-0.5 ${className || ''}`}
                     >
                         {word}
                     </span>

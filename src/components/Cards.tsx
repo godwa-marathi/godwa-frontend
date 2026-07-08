@@ -5,8 +5,6 @@ import Link from "next/link";
 import { PoemOut, PoetOut } from "@/lib/types";
 import { Calendar, User } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
-import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
 import { LikeButton } from "@/components/LikeButton";
 
 export const PoemCard = ({ poem }: { poem: PoemOut }) => {
