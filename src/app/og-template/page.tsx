@@ -16,25 +16,25 @@ async function getPoem(id: string): Promise<PoemOut | null> {
 }
 
 export default async function OGTemplatePage({
-  searchParams,
+    searchParams,
 }: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
     const searchParamsResolved = await searchParams;
     const id = searchParamsResolved.id as string;
-    
+
     // Default Fallbacks
     let title = 'Godwa';
     let poet = 'अज्ञात कवी';
     let snippet = 'गोडवा - मराठी साहित्याचा वारसा';
     let poetImageUrl = null;
-    
+
     if (id) {
         const poem = await getPoem(id);
         if (poem) {
             title = poem.title || 'Godwa';
             poet = poem.poet?.name || 'अज्ञात कवी';
-            
+
             if (poem.poet_id) {
                 try {
                     const poetRes = await fetch(`${BASE_URL}/api/poets/${poem.poet_id}`, { next: { revalidate: 3600 } });
@@ -46,12 +46,13 @@ export default async function OGTemplatePage({
                     console.error("Failed to fetch poet image", e);
                 }
             }
-            
+
             if (poem.body_marathi) {
-                // Get the first line that is not empty
+                // Get the first two lines that are not empty
                 const lines = poem.body_marathi.split('\n').map((l: string) => l.trim()).filter((l: string) => l !== '');
                 if (lines.length > 0) {
-                    snippet = lines[0].length > 50 ? lines[0].substring(0, 50).trim() + '...' : lines[0] + '...';
+                    const selectedLines = lines.slice(0, 2);
+                    snippet = selectedLines.join('\n') + '...';
                 }
             }
         }
@@ -83,8 +84,8 @@ export default async function OGTemplatePage({
                                     <span className="text-6xl text-[#84232C] font-bold font-marathi">{poet}</span>
                                 </div>
                             </div>
-                            <div className="flex flex-col items-end max-w-[45%] border-r-4 border-[#c5a059] pr-6 py-2 bg-gradient-to-l from-[#c5a059]/10 to-transparent">
-                                <span className="text-3xl text-gray-700 text-right font-marathi leading-relaxed font-medium italic">
+                            <div className="flex flex-col items-end max-w-[50%] border-r-4 border-[#c5a059] pr-6 py-4 bg-gradient-to-l from-[#c5a059]/10 to-transparent overflow-hidden">
+                                <span className="text-3xl text-gray-700 text-right font-marathi leading-relaxed font-medium italic whitespace-pre-wrap break-words line-clamp-3">
                                     "{snippet}"
                                 </span>
                             </div>
