@@ -44,10 +44,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             : (poem.description || "Read this beautiful Marathi poem on Godwa.");
         
         // OG images must be absolute URLs — relative paths won't load in WhatsApp/Twitter previews
-        const SITE_URL = process.env.SITE_URL || 'https://godwa.iampratham29.com';
-        const fallbackImage = `${SITE_URL}/icon-512.png`;
-        // Use poet's image if available, otherwise fallback to Godwa logo
-        const ogImage = poem.poet?.image_url || fallbackImage;
+        const SITE_URL = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://godwa.iampratham29.com';
+        // Use the new dynamic Serverless Chromium OG image route
+        const ogImage = `${SITE_URL}/api/og/${poem.id || slug}`;
 
         return {
             title: displayTitle,
@@ -58,8 +57,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
                 type: 'article',
                 images: [{ 
                     url: ogImage,
-                    width: 512, 
-                    height: 512,
+                    width: 1200, 
+                    height: 630,
                     alt: `${authorText} - Godwa Marathi Poetry`,
                 }],
                 siteName: 'Godwa Marathi Poem Platform',
