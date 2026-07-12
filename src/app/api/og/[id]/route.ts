@@ -12,14 +12,13 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 
     try {
         // Vercel Serverless Function requirements
-        chromium.setHeadlessMode = true;
         chromium.setGraphicsMode = false;
 
         browser = await puppeteer.launch({
             args: chromium.args,
-            defaultViewport: chromium.defaultViewport,
+            defaultViewport: { width: 1200, height: 630, deviceScaleFactor: 1 },
             executablePath: await chromium.executablePath(),
-            headless: chromium.headless,
+            headless: 'shell',
         });
 
         const page = await browser.newPage();
@@ -37,8 +36,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
             throw new Error(`Failed to load template for ID: ${id}`);
         }
 
-        // Take the screenshot
-        const screenshot = await page.screenshot({ type: 'png' });
+        // Take the screenshot (copy into a plain ArrayBuffer-backed array for the response body)
+        const screenshot = new Uint8Array(await page.screenshot({ type: 'png' }));
 
         return new NextResponse(screenshot, {
             headers: {
