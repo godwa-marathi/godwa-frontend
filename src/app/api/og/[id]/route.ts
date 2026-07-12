@@ -16,13 +16,12 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 
         browser = await puppeteer.launch({
             args: chromium.args,
-            defaultViewport: chromium.defaultViewport,
+            defaultViewport: { width: 1200, height: 630, deviceScaleFactor: 1 },
             executablePath: await chromium.executablePath(),
             headless: true,
         });
 
         const page = await browser.newPage();
-        await page.setViewport({ width: 1200, height: 630, deviceScaleFactor: 1 });
 
         // Build the correct URL dynamically based on the current host
         const host = request.headers.get('host') || 'localhost:3000';
