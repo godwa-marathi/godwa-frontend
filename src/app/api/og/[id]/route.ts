@@ -38,7 +38,9 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
         // Take the screenshot
         const screenshot = await page.screenshot({ type: 'png' });
 
-        return new NextResponse(screenshot, {
+        // Re-wrap in a Uint8Array backed by a plain ArrayBuffer so the type
+        // satisfies BodyInit (Uint8Array<ArrayBufferLike> is not assignable).
+        return new NextResponse(new Uint8Array(screenshot), {
             headers: {
                 'Content-Type': 'image/png',
                 'Cache-Control': 'public, max-age=86400, stale-while-revalidate=43200',
