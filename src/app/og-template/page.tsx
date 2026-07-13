@@ -49,7 +49,13 @@ export default async function OGTemplatePage({
 
             if (poem.body_marathi) {
                 // Get the first two lines that are not empty
-                const lines = poem.body_marathi.split('\n').map((l: string) => l.trim()).filter((l: string) => l !== '');
+                const normalizedBody = poem.body_marathi
+                    .replace(/\\r\\n/g, "\n")
+                    .replace(/\\n/g, "\n")
+                    .replace(/\\r/g, "\n")
+                    .replace(/\r\n/g, "\n")
+                    .replace(/\r/g, "\n");
+                const lines = normalizedBody.split('\n').map((l: string) => l.trim()).filter((l: string) => l !== '');
                 if (lines.length > 0) {
                     const selectedLines = lines.slice(0, 2);
                     snippet = selectedLines.join('\n') + '...';

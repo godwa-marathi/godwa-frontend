@@ -59,12 +59,20 @@ export const PopularPoemsSlider = ({ poems }: { poems: PoemOut[] }) => {
 
     const poem = slides[index];
     const displayTitle = language === "roman" ? poem.title_roman || poem.title : poem.title;
-    const displayBody = language === "roman" ? poem.body_roman || poem.body_marathi : poem.body_marathi;
+    const rawBody = language === "roman" ? poem.body_roman || poem.body_marathi : poem.body_marathi;
+    const displayBody = rawBody
+        ? rawBody
+              .replace(/\\r\\n/g, "\n")
+              .replace(/\\n/g, "\n")
+              .replace(/\\r/g, "\n")
+              .replace(/\r\n/g, "\n")
+              .replace(/\r/g, "\n")
+        : "";
     const displayPoetName =
         language === "roman"
             ? poem.poet?.name_roman || poem.poet?.name || t.poem_traditional
             : poem.poet?.name || t.poem_traditional;
-    const bodyLines = displayBody.split("\n").filter((l) => l.trim()).slice(0, 4);
+    const bodyLines = displayBody.split("\n").map(l => l.trim()).filter((l) => l !== "").slice(0, 4);
 
     return (
         <section
