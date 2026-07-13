@@ -34,7 +34,7 @@ async function getExecutablePath() {
         }
         throw new Error('Chrome or Edge executable not found for local Puppeteer run.');
     }
-    const chromium = require('@sparticuz/chromium');
+    const { default: chromium } = await import('@sparticuz/chromium');
     return await chromium.executablePath();
 }
 
@@ -89,7 +89,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 
         let launchArgs = [];
         if (!isLocal) {
-            const chromium = require('@sparticuz/chromium');
+            const { default: chromium } = await import('@sparticuz/chromium');
             launchArgs = chromium.args;
         } else {
             launchArgs = ['--no-sandbox', '--disable-setuid-sandbox'];
