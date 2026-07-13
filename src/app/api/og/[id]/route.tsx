@@ -300,7 +300,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
         </html>
         `;
 
-        await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+        await page.setContent(htmlContent, { waitUntil: 'load' });
 
         // Wait for all web fonts to be fully loaded and ready
         await page.evaluateHandle(() => document.fonts.ready);
