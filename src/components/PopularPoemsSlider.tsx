@@ -106,7 +106,7 @@ export const PopularPoemsSlider = ({ poems }: { poems: PoemOut[] }) => {
                                     {poem.genre || "Collection"}
                                 </div>
 
-                                <Link href={`/poem/${poem.url_slug || poem.id}`} className="group">
+                                <Link href={`/poem/${poem.url_slug || poem.id}`} prefetch={false} className="group">
                                     <h3
                                         className={`text-2xl md:text-3xl font-bold text-foreground mb-6 group-hover:text-maroon transition-colors ${
                                             language === "roman" ? "font-english" : "font-marathi"
@@ -147,6 +147,7 @@ export const PopularPoemsSlider = ({ poems }: { poems: PoemOut[] }) => {
 
                                     <Link
                                         href={`/poem/${poem.url_slug || poem.id}`}
+                                        prefetch={false}
                                         className="flex-shrink-0 inline-flex items-center gap-1.5 text-maroon font-english font-bold text-xs uppercase tracking-widest hover:gap-2.5 transition-all"
                                     >
                                         {t.home_read_poem}
