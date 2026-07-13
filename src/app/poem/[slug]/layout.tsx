@@ -44,9 +44,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             : (poem.description || "Read this beautiful Marathi poem on Godwa.");
         
         // OG images must be absolute URLs — relative paths won't load in WhatsApp/Twitter previews
-        const SITE_URL = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://godwa.iampratham29.com';
+        const SITE_URL = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://godwa.space';
         // Use the new dynamic Serverless Chromium OG image route
-        const ogImage = `${SITE_URL}/api/og/${poem.id || slug}`;
+        const ogImage = `${SITE_URL}/api/og/${slug}`;
 
         return {
             title: displayTitle,
