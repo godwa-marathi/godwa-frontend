@@ -16,10 +16,16 @@ import { TutorialTour } from "@/components/TutorialTour";
 
 export default function Home() {
   const { t } = useLanguage();
-  // Fetch featured poems
+  // Fetch featured poems (lightweight list limited to 6 for the landing page grid)
   const { data: poems, isLoading: loadingPoems } = useQuery({
     queryKey: ["poems", "featured"],
-    queryFn: () => api.get<PoemOut[]>("/api/poems/"),
+    queryFn: () => api.get<PoemOut[]>("/api/poems/?limit=6"),
+  });
+
+  // Fetch a specific poem with words for the interactive RekhtaReader demo
+  const { data: demoPoem, isLoading: loadingDemo } = useQuery({
+    queryKey: ["poems", "demo"],
+    queryFn: () => api.get<PoemOut>("/api/poems/slug/kanaa-by-kusumaagraj"),
   });
 
   // Fetch celebrated poets (paginated endpoint now)
@@ -29,16 +35,6 @@ export default function Home() {
   });
 
   const poets = poetsRes?.items;
-
-  // Dashboard stats (poem/word/poet counts) are hidden on the landing page for
-  // now — no point fetching them until we surface those numbers again.
-  // const { data: stats } = useQuery({
-  //   queryKey: ["home", "stats"],
-  //   queryFn: () => api.get<any>("/api/home"),
-  // });
-
-  // Use the first approved poem for the demo if available, otherwise fallback
-  const demoPoem = poems?.find(p => p.status === "approved" && p.words?.length > 0) || poems?.[0];
 
   return (
     <main className="min-h-screen flex flex-col">
@@ -66,7 +62,7 @@ export default function Home() {
           </p>
         </div>
 
-        {loadingPoems ? (
+        {loadingDemo ? (
           <div className="flex justify-center py-20">
             <Loader2 className="w-8 h-8 text-maroon animate-spin" />
           </div>
