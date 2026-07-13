@@ -14,7 +14,7 @@ export const PoemCard = ({ poem }: { poem: PoemOut }) => {
     const displayPoetName = language === 'roman' ? (poem.poet?.name_roman || poem.poet?.name) : poem.poet?.name;
 
     return (
-        <Link href={`/poem/${poem.url_slug || poem.id}`} className="group relative block">
+        <Link href={`/poem/${poem.url_slug || poem.id}`} prefetch={false} className="group relative block">
             <div className="h-full bg-white p-8 rounded-2xl border border-gold/10 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1 overflow-hidden">
                 {/* Paper fold effect */}
                 <div className="absolute top-0 right-0 w-12 h-12 bg-gold/5 transition-colors group-hover:bg-gold/10" />
@@ -89,7 +89,7 @@ export const PoetCard = ({ poet, viewMode = 'grid' }: { poet: PoetOut; viewMode?
 
     if (viewMode === 'list') {
         return (
-            <Link href={`/poets/${poet.id}`} className="group block">
+            <Link href={`/poets/${poet.id}`} prefetch={false} className="group block">
                 <div className="flex items-center gap-3 px-4 py-3 bg-white border-b border-gold/10 transition-all duration-200 hover:bg-maroon/[0.03] hover:border-maroon/20">
                     {/* Small Avatar */}
                     <div className="flex-shrink-0 w-9 h-9 rounded-full border border-gold/20 overflow-hidden bg-gold/10 flex items-center justify-center group-hover:border-maroon/40 transition-colors">
@@ -136,7 +136,7 @@ export const PoetCard = ({ poet, viewMode = 'grid' }: { poet: PoetOut; viewMode?
     }
 
     return (
-        <Link href={`/poets/${poet.id}`} className="group block">
+        <Link href={`/poets/${poet.id}`} prefetch={false} className="group block">
             <div className="flex flex-col items-center p-6 text-center transition-transform hover:-translate-y-2">
                 <div className="relative mb-6">
                     <div className="w-32 h-32 rounded-full border-2 border-gold/30 p-1 group-hover:border-maroon transition-colors">

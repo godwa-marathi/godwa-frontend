@@ -122,6 +122,7 @@ export default function PoemPage() {
                                     <span className="text-foreground/40 text-base font-english italic font-normal">{t.poem_by}</span>
                                     <Link
                                         href={`/poets/${poem.poet_id}`}
+                                        prefetch={false}
                                         className={`inline-flex items-center gap-2 hover:text-maroon hover:underline decoration-maroon/30 underline-offset-4 transition-all ${language === 'roman' ? 'font-english' : 'font-marathi'}`}
                                     >
                                         {fullPoet?.image_url && (
@@ -211,6 +212,7 @@ export default function PoemPage() {
                                 {poem.poet && (
                                     <Link
                                         href={`/poets/${poem.poet.id}`}
+                                        prefetch={false}
                                         className="text-[10px] uppercase tracking-widest font-bold text-gold hover:text-maroon transition-colors mt-2 border-b border-transparent hover:border-maroon"
                                     >
                                         {t.poem_view_poet_profile}
