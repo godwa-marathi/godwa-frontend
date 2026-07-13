@@ -29,9 +29,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         const displayTitle = `${titleText} by ${authorText} | Godwa`;
         
         // Clean description or use default
-        const firstLineMarathi = poem.body_marathi?.split('\n')[0]?.replace(/[\\r\\n]/g, "")?.trim() || "";
-        const firstLineRoman = poem.body_roman?.split('\n')[0]?.replace(/[\\r\\n]/g, "")?.trim() || "";
-        const firstLineMeaning = poem.body_meaning?.split('\n')[0]?.replace(/[\\r\\n]/g, "")?.trim() || "";
+        const normalize = (t: string) => t.replace(/\\r\\n/g, "\n").replace(/\\n/g, "\n").replace(/\\r/g, "\n").replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+        const firstLineMarathi = poem.body_marathi ? normalize(poem.body_marathi).split('\n')[0]?.trim() : "";
+        const firstLineRoman = poem.body_roman ? normalize(poem.body_roman).split('\n')[0]?.trim() : "";
+        const firstLineMeaning = poem.body_meaning ? normalize(poem.body_meaning).split('\n')[0]?.trim() : "";
         
         const descriptionParts = [
             firstLineMarathi && `"${firstLineMarathi}"`,
