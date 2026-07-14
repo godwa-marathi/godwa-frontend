@@ -118,6 +118,10 @@ export interface TranslationDictionary {
     submit_btn_prev: string;
     submit_btn_next: string;
     submit_btn_submit: string;
+    submit_success_title: string;
+    submit_success_desc: string;
+    submit_success_view_btn: string;
+    submit_success_another_btn: string;
     poem_back: string;
     poem_focus_mode: string;
     poem_exit_focus: string;
@@ -248,6 +252,10 @@ export const translations: Record<Language, TranslationDictionary> = {
         submit_btn_prev: "Previous",
         submit_btn_next: "Next Step",
         submit_btn_submit: "Submit for Review",
+        submit_success_title: "Poem Submitted!",
+        submit_success_desc: "Thank you for your contribution. Your poem is now pending community review and will appear in your submissions.",
+        submit_success_view_btn: "View My Submissions",
+        submit_success_another_btn: "Submit Another",
         poem_back: "Back",
         poem_focus_mode: "Focus Mode",
         poem_exit_focus: "Exit Focus",
@@ -376,6 +384,10 @@ export const translations: Record<Language, TranslationDictionary> = {
         submit_btn_prev: "मागे",
         submit_btn_next: "पुढील पायरी",
         submit_btn_submit: "पुनरावलोकनासाठी पाठवा",
+        submit_success_title: "कविता सादर झाली!",
+        submit_success_desc: "आपल्या योगदानाबद्दल धन्यवाद. आपली कविता आता समुदाय पुनरावलोकनासाठी प्रलंबित आहे आणि आपल्या सबमिशनमध्ये दिसेल.",
+        submit_success_view_btn: "माझी सबमिशन पहा",
+        submit_success_another_btn: "आणखी एक पाठवा",
         poem_back: "मागे",
         poem_focus_mode: "फोकस मोड",
         poem_exit_focus: "फोकस मोड बाहेर पडा",
