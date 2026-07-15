@@ -156,25 +156,25 @@ export default function PoemPage() {
                                 <div className="h-4 w-px bg-gold/25 hidden lg:block" />
                                 <LikeButton poemId={poem.id} initialLikeCount={poem.like_count} initialIsLiked={poem.is_liked} size="md" />
                             </div>
-
-                            {/* Contributor Section */}
-                            {poem.status === 'approved' && poem.contributed_by && (
-                                <div className="mt-3 flex items-center gap-2 text-xs text-foreground/50 font-english justify-center lg:justify-start">
-                                    <span>Contributed by</span>
-                                    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-gold/5 border border-gold/10">
-                                        <UserAvatar user={poem.contributed_by} size={18} />
-                                        <span className="font-semibold text-foreground/70">
-                                            {poem.contributed_by.display_name || poem.contributed_by.name}
-                                        </span>
-                                    </div>
-                                </div>
-                            )}
                         </div>
 
                         {/* Poem Reader */}
                         <div className="relative w-full">
                             <RekhtaReader poem={poem} />
                         </div>
+
+                        {/* Contributor Section - shown at the end of the poem */}
+                        {poem.status === 'approved' && poem.contributed_by && (
+                            <div className={`mt-10 pt-6 border-t border-maroon/10 flex flex-col items-center gap-2 text-xs text-foreground/50 font-english ${isFocused ? 'items-center' : 'items-center lg:items-start'}`}>
+                                <span className="uppercase tracking-widest text-[10px] font-bold text-foreground/30">Contributed by</span>
+                                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-gold/5 border border-gold/10">
+                                    <UserAvatar user={poem.contributed_by} size={18} />
+                                    <span className="font-semibold text-foreground/70">
+                                        {poem.contributed_by.display_name || poem.contributed_by.name}
+                                    </span>
+                                </div>
+                            </div>
+                        )}
                     </article>
 
                     {/* Right Column: Sidebar (Hidden in Focus Mode) */}
