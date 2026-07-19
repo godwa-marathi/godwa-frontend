@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { motion, AnimatePresence } from "framer-motion";
-import { PenTool, Search, Plus, Send, ChevronRight, ChevronLeft, Image as ImageIcon, Loader2, Languages } from "lucide-react";
+import { PenTool, Search, Plus, Send, ChevronRight, ChevronLeft, Image as ImageIcon, Loader2, Languages, CheckCircle2, FileText } from "lucide-react";
 import { api } from "@/lib/api";
 import { PoetOut } from "@/lib/types";
 import { useRouter } from "next/navigation";
@@ -28,6 +28,7 @@ export default function SubmitPoemPage() {
     const [poetSuggestions, setPoetSuggestions] = useState<PoetOut[]>([]);
     const [isSearchingPoets, setIsSearchingPoets] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
     const router = useRouter();
     const { token, isLoading: authLoading } = useAuth();
 
@@ -37,6 +38,15 @@ export default function SubmitPoemPage() {
             router.push("/auth/login?redirect=/submit");
         }
     }, [token, authLoading, router]);
+
+    // Auto-redirect to submitted poems shortly after success
+    React.useEffect(() => {
+        if (!showSuccess) return;
+        const timer = setTimeout(() => {
+            router.push("/profile?tab=submissions");
+        }, 3500);
+        return () => clearTimeout(timer);
+    }, [showSuccess, router]);
 
     if (authLoading) {
         return (
@@ -68,7 +78,7 @@ export default function SubmitPoemPage() {
         setIsSubmitting(true);
         try {
             await api.post("/api/poems/submit", formData);
-            router.push("/explore");
+            setShowSuccess(true);
         } catch (error: any) {
             console.error("Submission failed", error);
             if (error.message?.includes("authenticated")) {
@@ -315,6 +325,70 @@ export default function SubmitPoemPage() {
                     </div>
                 </div>
             </section>
+
+            {/* Success Modal */}
+            <AnimatePresence>
+                {showSuccess && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] flex items-center justify-center bg-foreground/40 backdrop-blur-sm p-4"
+                        onClick={() => router.push("/profile?tab=submissions")}
+                    >
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                            onClick={(e) => e.stopPropagation()}
+                            className="bg-white rounded-3xl border border-gold/10 shadow-2xl p-8 md:p-10 max-w-md w-full text-center"
+                        >
+                            <motion.div
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                transition={{ delay: 0.15, type: "spring", stiffness: 260, damping: 18 }}
+                                className="inline-flex p-5 rounded-full bg-green-50 text-green-500 border border-green-100 mb-6"
+                            >
+                                <CheckCircle2 className="w-12 h-12" />
+                            </motion.div>
+                            <h3 className="text-2xl font-serif font-bold text-foreground mb-3">
+                                {t.submit_success_title}
+                            </h3>
+                            <p className="text-foreground/60 font-english text-sm leading-relaxed mb-8">
+                                {t.submit_success_desc}
+                            </p>
+                            <div className="flex flex-col gap-3">
+                                <button
+                                    onClick={() => router.push("/profile?tab=submissions")}
+                                    className="flex items-center justify-center gap-2 w-full px-6 py-3 bg-maroon text-white rounded-xl font-english font-bold text-sm uppercase tracking-widest transition-all hover:shadow-lg hover:shadow-maroon/20"
+                                >
+                                    <FileText className="w-4 h-4" />
+                                    {t.submit_success_view_btn}
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setShowSuccess(false);
+                                        setFormData({
+                                            title: "",
+                                            body_marathi: "",
+                                            body_roman: "",
+                                            genre: "",
+                                            poet_name: "",
+                                            poet_id: null,
+                                        });
+                                        setStep(1);
+                                    }}
+                                    className="flex items-center justify-center gap-2 w-full px-6 py-3 rounded-xl font-english font-bold text-sm uppercase tracking-widest text-foreground/50 hover:bg-gold/5 transition-all border border-gold/10"
+                                >
+                                    <Plus className="w-4 h-4" />
+                                    {t.submit_success_another_btn}
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             <Footer />
         </main>
