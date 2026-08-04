@@ -183,12 +183,12 @@ export const RekhtaReader: React.FC<RekhtaReaderProps> = ({ poem }) => {
 
                         // Empty line = stanza break spacer
                         if (isEmptyLine && (!showRoman || isRomanEmpty) && (viewMode !== "meaning" || isMeaningEmpty)) {
-                            return <div key={idx} className="h-4 md:h-5" />;
+                            return <div key={idx} className="h-5 md:h-7" />;
                         }
 
                         // Special case: meaning only empty line
                         if (viewMode === "meaning" && isMeaningEmpty) {
-                            return <div key={idx} className="h-4 md:h-5" />;
+                            return <div key={idx} className="h-5 md:h-7" />;
                         }
 
                         const alignmentClass = alignment === "center" ? "justify-center text-center" : "justify-start text-left";
@@ -196,7 +196,7 @@ export const RekhtaReader: React.FC<RekhtaReaderProps> = ({ poem }) => {
                         return (
                             <div 
                                 key={idx} 
-                                className={`w-full mb-3 flex flex-col ${
+                                className={`w-full mb-0.5 flex flex-col ${
                                     alignment === "center" 
                                         ? "items-center" 
                                         : (alignment === "justify" ? "items-stretch" : "items-start px-2 sm:px-4")
@@ -207,10 +207,10 @@ export const RekhtaReader: React.FC<RekhtaReaderProps> = ({ poem }) => {
                                     <>
                                         {/* Devanagari Line */}
                                         <div className={`${showRoman ? "hidden" : "block"} w-full`}>
-                                            <div className={`text-[13px] min-[360px]:text-[14px] min-[400px]:text-base sm:text-lg md:text-xl lg:text-[1.5rem] font-marathi leading-[1.5] text-foreground/90 py-0.5 ${
+                                            <div className={`text-[13px] min-[360px]:text-[14px] min-[400px]:text-[15px] sm:text-lg md:text-xl lg:text-[1.4rem] font-marathi leading-[1.7] text-foreground/90 py-0 ${
                                                 alignment === "justify" 
                                                     ? "text-justify [text-align-last:justify] w-full max-w-[90%] mx-auto block" 
-                                                    : `flex flex-wrap ${alignmentClass} gap-x-1 md:gap-x-1.5`
+                                                    : `flex flex-wrap ${alignmentClass} gap-x-0.5 md:gap-x-1`
                                             }`}>
                                                 {splitMarathiText(row.marathiLine).map((word, wordIdx) => {
                                                     const wordId = `mr-${idx}-${wordIdx}`;
@@ -231,10 +231,10 @@ export const RekhtaReader: React.FC<RekhtaReaderProps> = ({ poem }) => {
 
                                         {/* Roman Transliteration */}
                                         {romanLine && (
-                                            <div className={`${showRoman ? "block" : "hidden"} text-[17px] min-[360px]:text-[18px] sm:text-[19px] md:text-[21px] lg:text-[22px] font-lora italic font-medium text-foreground/90 leading-[1.85] py-0.5 tracking-[0.015em] max-w-[55ch] mx-auto ${
+                                            <div className={`${showRoman ? "block" : "hidden"} text-[12px] min-[360px]:text-[13px] min-[400px]:text-[13.5px] sm:text-base md:text-[18px] lg:text-[19px] font-lora italic font-medium text-foreground/90 leading-[1.7] py-0 tracking-[0.01em] max-w-[55ch] mx-auto ${
                                                 alignment === "justify" 
                                                     ? "text-justify [text-align-last:justify] w-full block" 
-                                                    : `flex flex-wrap ${alignmentClass} gap-x-1 md:gap-x-1.5`
+                                                    : `flex flex-wrap ${alignmentClass} gap-x-0.5 md:gap-x-1`
                                             }`}>
                                                 {romanLine.split(" ").map((word, wordIdx) => {
                                                     const wordId = `rom-${idx}-${wordIdx}`;
@@ -258,10 +258,10 @@ export const RekhtaReader: React.FC<RekhtaReaderProps> = ({ poem }) => {
                                 {/* Meaning Line (only if in with_meaning or meaning_only mode) */}
                                 {!isMeaningEmpty && (
                                     <div 
-                                        className={`${viewMode !== "poem" ? "block" : "hidden"} w-full font-english text-foreground/60 leading-relaxed ${
+                                        className={`${viewMode !== "poem" ? "block" : "hidden"} w-full font-english text-foreground/55 leading-snug ${
                                             viewMode === "meaning" 
-                                                ? "text-sm sm:text-base md:text-lg py-1" 
-                                                : "text-[11px] min-[360px]:text-[12px] min-[400px]:text-xs sm:text-sm md:text-base italic mt-1 mb-1 py-0.5 border-l-2 border-gold/20 pl-3 ml-1 sm:ml-2"
+                                                ? "text-sm sm:text-[15px] md:text-base py-0.5" 
+                                                : "text-[10px] min-[360px]:text-[11px] min-[400px]:text-[12px] sm:text-xs md:text-sm italic mt-0.5 mb-0 py-0 border-l-2 border-gold/20 pl-2.5 ml-1"
                                         } ${
                                             alignment === "center" 
                                                 ? "text-center border-l-0 pl-0 ml-0" 
