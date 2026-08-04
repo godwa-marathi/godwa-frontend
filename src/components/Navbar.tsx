@@ -111,6 +111,9 @@ export const Navbar = () => {
                         <Link href="/submit" className="tour-step-submit text-sm font-english font-medium text-foreground/80 hover:text-maroon transition-colors uppercase tracking-widest">
                             {t.nav_submit}
                         </Link>
+                        <Link href="/about-us" className="text-sm font-english font-medium text-foreground/80 hover:text-maroon transition-colors uppercase tracking-widest">
+                            About
+                        </Link>
                         {user?.is_admin && (
                             <Link href="/admin" className="text-sm font-english font-bold text-gold hover:text-maroon transition-colors uppercase tracking-widest">
                                 {t.nav_admin}
@@ -300,6 +303,13 @@ export const Navbar = () => {
                                 className="block text-lg font-english font-medium text-foreground/80 hover:text-maroon py-2 px-4 rounded-xl hover:bg-gold/5 transition-all"
                             >
                                 Submit
+                            </Link>
+                            <Link
+                                href="/about-us"
+                                onClick={() => setIsOpen(false)}
+                                className="block text-lg font-english font-medium text-foreground/80 hover:text-maroon py-2 px-4 rounded-xl hover:bg-gold/5 transition-all"
+                            >
+                                About
                             </Link>
 
                             {/* Mobile: Profile links */}
