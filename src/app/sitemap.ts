@@ -5,7 +5,7 @@ const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || "https://iampratham29-g
 
 interface PoemSlim {
     id: number;
-    slug?: string;
+    url_slug?: string;
     updated_at?: string;
 }
 
@@ -78,7 +78,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Dynamic Poem Routes
     const poems = await fetchPoems();
     const poemRoutes: MetadataRoute.Sitemap = poems.map((poem) => {
-        const identifier = poem.slug || poem.id;
+        const identifier = poem.url_slug || poem.id;
         return {
             url: `${BASE_URL}/poem/${identifier}`,
             lastModified: poem.updated_at ? new Date(poem.updated_at) : now,
