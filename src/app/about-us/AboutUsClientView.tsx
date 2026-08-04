@@ -4,49 +4,57 @@ import React from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import Link from "next/link";
+import { useLanguage } from "@/lib/LanguageContext";
 
-const features = [
+// Vocab entries are bilingual: Marathi word stays, meaning switches by language
+const vocabEntries = [
     {
-        icon: "🔤",
-        title: "Read in Devanagari or Roman",
-        desc: "Every poem is available in Marathi (Devanagari) and Roman Marathi transliteration. Switch between them instantly—no script barrier.",
+        word: "गोडवा",
+        roman: "Godwaa",
+        meaningEn: "Sweetness; the quality of being pleasant or melodious",
+        meaningMr: "गोडपणा; आनंददायी किंवा सुरेल असण्याचा गुण",
     },
     {
-        icon: "🔍",
-        title: "Word-by-Word Meanings",
-        desc: "Tap any word to instantly see its meaning. No dictionary needed—the context is right inside the poem.",
+        word: "दर्दी",
+        roman: "Dardi",
+        meaningEn: "A connoisseur; one who truly feels and understands art",
+        meaningMr: "रसिक; जो कलेला मनापासून अनुभवतो आणि समजतो",
     },
     {
-        icon: "📖",
-        title: "Contextual Interpretation",
-        desc: "Instead of dictionary definitions, Godwa explains words as they are actually used in the poem—what the poet intended to express.",
+        word: "हुरहुर",
+        roman: "Hurhur",
+        meaningEn: "A restless longing; bittersweet anticipation for something far away",
+        meaningMr: "व्याकूळ ओढ; दूर असलेल्या गोष्टीची मधुर-कडू प्रतीक्षा",
     },
     {
-        icon: "🗣️",
-        title: "Boli Bhasha Coverage",
-        desc: "Classical Marathi, Sanskrit vocabulary, regional dialects, historical expressions—Godwa covers them all so no word is left unexplained.",
+        word: "ओढ",
+        roman: "Odh",
+        meaningEn: "A pull; a deep yearning or attachment toward someone or something",
+        meaningMr: "खेचणे; कोणाशी किंवा कशाशी तरी असलेली खोल आसक्ती",
     },
     {
-        icon: "🎭",
-        title: "Poet Profiles",
-        desc: "Learn about the poets—their lives, their eras, and their literary contributions—alongside their work.",
-    },
-    {
-        icon: "🎶",
-        title: "Chhanda (Metre) Information",
-        desc: "Understand the poetic metre of each poem. Explore poems by genre, mood, and Chhanda.",
+        word: "वाट",
+        roman: "Vaat",
+        meaningEn: "A path, a way; also used poetically to mean waiting",
+        meaningMr: "मार्ग, रस्ता; काव्यात 'प्रतीक्षा' या अर्थानेही वापरला जातो",
     },
 ];
 
-const vocab = [
-    { word: "गोडवा", roman: "Godwaa", meaning: "Sweetness; the quality of being pleasant or melodious" },
-    { word: "दर्दी", roman: "Dardi", meaning: "A connoisseur; one who truly feels and understands art" },
-    { word: "हुरहुर", roman: "Hurhur", meaning: "A restless longing; bittersweet anticipation for something far away" },
-    { word: "ओढ", roman: "Odh", meaning: "A pull; a deep yearning or attachment toward someone or something" },
-    { word: "वाट", roman: "Vaat", meaning: "A path, a way; also used poetically to mean waiting" },
-];
+const FEATURE_ICONS = ["🔤", "🔍", "📖", "🗣️", "🎭", "🎶"];
 
 export function AboutUsClientView() {
+    const { t, language } = useLanguage();
+    const isMarathi = language === "devanagari";
+
+    const features = [
+        { icon: FEATURE_ICONS[0], title: t.about_feat_1_title, desc: t.about_feat_1_desc },
+        { icon: FEATURE_ICONS[1], title: t.about_feat_2_title, desc: t.about_feat_2_desc },
+        { icon: FEATURE_ICONS[2], title: t.about_feat_3_title, desc: t.about_feat_3_desc },
+        { icon: FEATURE_ICONS[3], title: t.about_feat_4_title, desc: t.about_feat_4_desc },
+        { icon: FEATURE_ICONS[4], title: t.about_feat_5_title, desc: t.about_feat_5_desc },
+        { icon: FEATURE_ICONS[5], title: t.about_feat_6_title, desc: t.about_feat_6_desc },
+    ];
+
     return (
         <main className="min-h-screen flex flex-col bg-[#F9F7F5]">
             <Navbar />
@@ -59,40 +67,42 @@ export function AboutUsClientView() {
                 <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <nav aria-label="breadcrumb" className="flex justify-center mb-8">
                         <ol className="flex items-center gap-2 text-[11px] font-english text-foreground/40 uppercase tracking-widest">
-                            <li><Link href="/" className="hover:text-maroon transition-colors">Godwa</Link></li>
+                            <li><Link href="/" className="hover:text-maroon transition-colors">Godwa Space</Link></li>
                             <li>/</li>
-                            <li className="text-maroon font-bold">About</li>
+                            <li className={`text-maroon font-bold ${isMarathi ? "font-marathi" : "font-english"}`}>
+                                {isMarathi ? "आमच्या बद्दल" : "About"}
+                            </li>
                         </ol>
                     </nav>
 
-                    <h1 className="text-5xl md:text-6xl font-serif font-bold text-foreground mb-3 leading-tight">
-                        About Godwa
+                    <h1 className={`text-5xl md:text-6xl font-bold text-foreground mb-3 leading-tight ${isMarathi ? "font-marathi" : "font-serif"}`}>
+                        {t.about_title}
                     </h1>
-                    <p className="font-marathi text-2xl text-gold font-semibold mb-8 tracking-wide">
-                        गोडवा — मराठी कवितेचे डिजिटल घर
+                    <p className={`text-2xl text-gold font-semibold mb-8 tracking-wide ${isMarathi ? "font-marathi" : "font-english italic"}`}>
+                        {t.about_subtitle}
                     </p>
-                    <p className="text-lg md:text-xl text-foreground/65 font-english leading-relaxed max-w-2xl mx-auto mb-3">
-                        <strong>Godwa</strong> is a digital home for Marathi poetry.
+                    <p className={`text-lg md:text-xl text-foreground/65 leading-relaxed max-w-2xl mx-auto mb-4 ${isMarathi ? "font-marathi" : "font-english"}`}>
+                        {t.about_hero_desc_1}
                     </p>
-                    <p className="text-base text-foreground/55 font-english leading-relaxed max-w-2xl mx-auto mb-10">
-                        Our mission is to preserve, organize, and make Marathi poetry
-                        accessible to everyone — whether you are a lifelong Marathi reader,
-                        someone learning the language, or simply curious about Maharashtra's
-                        rich literary heritage.
+                    <p className={`text-base text-foreground/55 leading-relaxed max-w-2xl mx-auto mb-4 ${isMarathi ? "font-marathi" : "font-english"}`}>
+                        {t.about_hero_desc_2}
+                    </p>
+                    <p className={`text-base text-foreground/50 leading-relaxed max-w-xl mx-auto mb-10 ${isMarathi ? "font-marathi" : "font-english"}`}>
+                        {t.about_hero_desc_3}
                     </p>
 
                     <div className="flex flex-wrap justify-center gap-4">
                         <Link
                             href="/explore"
-                            className="px-8 py-3 rounded-full bg-maroon text-white font-english font-bold text-sm uppercase tracking-widest hover:bg-maroon/90 transition-all shadow-lg shadow-maroon/20"
+                            className={`px-8 py-3 rounded-full bg-maroon text-white font-bold text-sm uppercase tracking-widest hover:bg-maroon/90 transition-all shadow-lg shadow-maroon/20 ${isMarathi ? "font-marathi" : "font-english"}`}
                         >
-                            Explore Poems
+                            {t.about_btn_explore}
                         </Link>
                         <Link
                             href="/poets"
-                            className="px-8 py-3 rounded-full bg-white text-maroon border border-maroon/20 font-english font-bold text-sm uppercase tracking-widest hover:bg-maroon/5 transition-all"
+                            className={`px-8 py-3 rounded-full bg-white text-maroon border border-maroon/20 font-bold text-sm uppercase tracking-widest hover:bg-maroon/5 transition-all ${isMarathi ? "font-marathi" : "font-english"}`}
                         >
-                            Poets Directory
+                            {t.about_btn_poets}
                         </Link>
                     </div>
                 </div>
@@ -104,23 +114,29 @@ export function AboutUsClientView() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
                         <div className="bg-white p-8 rounded-3xl border border-maroon/10 shadow-sm">
                             <div className="text-4xl mb-4">📜</div>
-                            <h3 className="font-serif font-bold text-xl text-foreground mb-2">Preserve</h3>
-                            <p className="text-sm text-foreground/60 font-english leading-relaxed">
-                                Documenting classic and contemporary Marathi poems, regional dialects, and rare literary works before they are lost to time.
+                            <h3 className={`font-bold text-xl text-foreground mb-2 ${isMarathi ? "font-marathi" : "font-serif"}`}>
+                                {t.about_vision_preserve_title}
+                            </h3>
+                            <p className={`text-sm text-foreground/60 leading-relaxed ${isMarathi ? "font-marathi" : "font-english"}`}>
+                                {t.about_vision_preserve_desc}
                             </p>
                         </div>
                         <div className="bg-white p-8 rounded-3xl border border-maroon/10 shadow-sm">
                             <div className="text-4xl mb-4">💡</div>
-                            <h3 className="font-serif font-bold text-xl text-foreground mb-2">Understand</h3>
-                            <p className="text-sm text-foreground/60 font-english leading-relaxed">
-                                Providing word-by-word meanings, contextual interpretations, and Boli Bhasha explanations directly within the text.
+                            <h3 className={`font-bold text-xl text-foreground mb-2 ${isMarathi ? "font-marathi" : "font-serif"}`}>
+                                {t.about_vision_understand_title}
+                            </h3>
+                            <p className={`text-sm text-foreground/60 leading-relaxed ${isMarathi ? "font-marathi" : "font-english"}`}>
+                                {t.about_vision_understand_desc}
                             </p>
                         </div>
                         <div className="bg-white p-8 rounded-3xl border border-maroon/10 shadow-sm">
                             <div className="text-4xl mb-4">🌍</div>
-                            <h3 className="font-serif font-bold text-xl text-foreground mb-2">Connect</h3>
-                            <p className="text-sm text-foreground/60 font-english leading-relaxed">
-                                Enabling readers worldwide—regardless of script fluency—to read Marathi poetry in Devanagari or Roman transliteration.
+                            <h3 className={`font-bold text-xl text-foreground mb-2 ${isMarathi ? "font-marathi" : "font-serif"}`}>
+                                {t.about_vision_connect_title}
+                            </h3>
+                            <p className={`text-sm text-foreground/60 leading-relaxed ${isMarathi ? "font-marathi" : "font-english"}`}>
+                                {t.about_vision_connect_desc}
                             </p>
                         </div>
                     </div>
@@ -131,11 +147,11 @@ export function AboutUsClientView() {
             <section className="py-24 bg-white border-b border-gold/10">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center max-w-2xl mx-auto mb-16">
-                        <span className="text-xs font-bold uppercase tracking-widest text-maroon mb-2 block">
-                            Features
+                        <span className={`text-xs font-bold uppercase tracking-widest text-maroon mb-2 block ${isMarathi ? "font-marathi" : "font-english"}`}>
+                            {t.about_unique_tag}
                         </span>
-                        <h2 className="text-3xl md:text-4xl font-serif font-bold text-foreground">
-                            What Makes Godwa Unique?
+                        <h2 className={`text-3xl md:text-4xl font-bold text-foreground ${isMarathi ? "font-marathi" : "font-serif"}`}>
+                            {t.about_unique_title}
                         </h2>
                     </div>
 
@@ -143,8 +159,12 @@ export function AboutUsClientView() {
                         {features.map((item, idx) => (
                             <div key={idx} className="p-6 rounded-2xl bg-[#F9F7F5] border border-maroon/5 space-y-3">
                                 <div className="text-3xl">{item.icon}</div>
-                                <h3 className="font-serif font-bold text-lg text-foreground">{item.title}</h3>
-                                <p className="text-sm text-foreground/65 font-english leading-relaxed">{item.desc}</p>
+                                <h3 className={`font-bold text-lg text-foreground ${isMarathi ? "font-marathi" : "font-serif"}`}>
+                                    {item.title}
+                                </h3>
+                                <p className={`text-sm text-foreground/65 leading-relaxed ${isMarathi ? "font-marathi" : "font-english"}`}>
+                                    {item.desc}
+                                </p>
                             </div>
                         ))}
                     </div>
@@ -154,24 +174,26 @@ export function AboutUsClientView() {
             {/* ── Mini Dictionary Section ───────────────────────────────────── */}
             <section className="py-20 bg-[#F9F7F5] border-b border-gold/10">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <span className="text-xs font-bold uppercase tracking-widest text-gold mb-2 block">
-                        Literary Vocabulary
+                    <span className={`text-xs font-bold uppercase tracking-widest text-gold mb-2 block ${isMarathi ? "font-marathi" : "font-english"}`}>
+                        {t.about_vocab_tag}
                     </span>
-                    <h2 className="text-3xl font-serif font-bold text-foreground mb-4">
-                        The Words Behind Godwa
+                    <h2 className={`text-3xl font-bold text-foreground mb-4 ${isMarathi ? "font-marathi" : "font-serif"}`}>
+                        {t.about_vocab_title}
                     </h2>
-                    <p className="text-foreground/60 font-english text-sm max-w-xl mx-auto mb-12">
-                        Marathi literature is rich with expressive words that carry deep emotional and cultural nuance. Here are a few examples:
+                    <p className={`text-foreground/60 text-sm max-w-xl mx-auto mb-12 ${isMarathi ? "font-marathi" : "font-english"}`}>
+                        {t.about_vocab_desc}
                     </p>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
-                        {vocab.map((v, i) => (
+                        {vocabEntries.map((v, i) => (
                             <div key={i} className="bg-white p-5 rounded-2xl border border-maroon/10 shadow-sm">
                                 <div className="flex items-baseline justify-between mb-1">
                                     <span className="font-marathi font-bold text-xl text-maroon">{v.word}</span>
                                     <span className="font-english text-xs text-foreground/40 italic">{v.roman}</span>
                                 </div>
-                                <p className="text-xs text-foreground/70 font-english leading-relaxed">{v.meaning}</p>
+                                <p className={`text-xs text-foreground/70 leading-relaxed ${isMarathi ? "font-marathi" : "font-english"}`}>
+                                    {isMarathi ? v.meaningMr : v.meaningEn}
+                                </p>
                             </div>
                         ))}
                     </div>

@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { AboutUsClientView } from "./AboutUsClientView";
 
 export const metadata: Metadata = {
-    title: "Godwa – Marathi Poetry, Meanings, Roman Transliteration & Literary Dictionary",
+    title: "Amchya Baddal (About Us) | Godwa Space – Marathi Poetry Platform",
     description:
-        "Godwa is an AI-assisted Marathi poetry platform where readers can explore poems with word-by-word meanings, contextual explanations, Roman transliteration, poet profiles, and Chhanda information. Discover, understand, and preserve Marathi literature.",
+        "Godwa Space (गोडवा स्पेस) is an AI-assisted Marathi poetry platform. Explore poems with word-by-word meanings, Roman transliteration, Boli Bhasha vocabulary, poet profiles, and Chhanda information. Discover and preserve Marathi literature.",
     keywords: [
         "Marathi poetry",
         "Marathi poems",
@@ -23,17 +23,22 @@ export const metadata: Metadata = {
         "Marathi Chhanda",
         "Marathi metre",
         "Godwa",
+        "Godwa Space",
         "गोडवा",
+        "गोडवा स्पेस",
+        "Amchya Baddal",
+        "आमच्या बद्दल",
+        "About Godwa Space",
     ],
     alternates: {
         canonical: "https://godwa.space/about-us",
     },
     openGraph: {
-        title: "Godwa – Marathi Poetry, Meanings, Roman Transliteration & Literary Dictionary",
+        title: "Amchya Baddal – About Godwa Space | Marathi Poetry Platform",
         description:
-            "Godwa is an AI-assisted Marathi poetry platform where readers can explore poems with word-by-word meanings, contextual explanations, Roman transliteration, poet profiles, and Chhanda information.",
+            "Godwa Space (गोडवा स्पेस) is an AI-assisted Marathi poetry platform. Explore word-by-word poem meanings, Roman Marathi transliteration, Boli Bhasha vocabulary, poet profiles, and Chhanda.",
         url: "https://godwa.space/about-us",
-        siteName: "Godwa",
+        siteName: "Godwa Space",
         locale: "mr_IN",
         type: "website",
         images: [
@@ -47,9 +52,9 @@ export const metadata: Metadata = {
     },
     twitter: {
         card: "summary_large_image",
-        title: "Godwa – Marathi Poetry for Everyone",
+        title: "Amchya Baddal – Godwa Space | Marathi Poetry for Everyone",
         description:
-            "Godwa is an AI-assisted Marathi poetry platform where readers can explore poems with word-by-word meanings, contextual explanations, Roman transliteration, and Chhanda information.",
+            "Godwa Space is an AI-assisted Marathi poetry platform. Read poems with word-by-word meanings, Roman Marathi transliteration, Boli Bhasha vocabulary, and Chhanda info.",
         images: ["https://godwa.space/icon-512.png"],
     },
 };

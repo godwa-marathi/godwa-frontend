@@ -139,6 +139,38 @@ export interface TranslationDictionary {
     poet_no_poems: string;
     poet_not_found: string;
     poet_not_found_desc: string;
+
+    // About Us Page
+    about_title: string;
+    about_subtitle: string;
+    about_hero_desc_1: string;
+    about_hero_desc_2: string;
+    about_hero_desc_3: string;
+    about_btn_explore: string;
+    about_btn_poets: string;
+    about_vision_preserve_title: string;
+    about_vision_preserve_desc: string;
+    about_vision_understand_title: string;
+    about_vision_understand_desc: string;
+    about_vision_connect_title: string;
+    about_vision_connect_desc: string;
+    about_unique_tag: string;
+    about_unique_title: string;
+    about_feat_1_title: string;
+    about_feat_1_desc: string;
+    about_feat_2_title: string;
+    about_feat_2_desc: string;
+    about_feat_3_title: string;
+    about_feat_3_desc: string;
+    about_feat_4_title: string;
+    about_feat_4_desc: string;
+    about_feat_5_title: string;
+    about_feat_5_desc: string;
+    about_feat_6_title: string;
+    about_feat_6_desc: string;
+    about_vocab_tag: string;
+    about_vocab_title: string;
+    about_vocab_desc: string;
 }
 
 export const translations: Record<Language, TranslationDictionary> = {
@@ -154,10 +186,10 @@ export const translations: Record<Language, TranslationDictionary> = {
         nav_my_submissions: "My Submissions",
         nav_my_likes: "Liked Poems",
 
-        home_hero_tag: "Premium Poetry Experience",
+        home_hero_tag: "Godwa Space — Premium Poetry Experience",
         home_hero_title_prefix: "Experience the Soul of",
-        home_hero_title_suffix: "Marathi Poetry",
-        home_hero_desc: "Discover timeless verses, explore linguistic depths with our interactive reader, and join a community dedicated to the sweet essence of Marathi literature.",
+        home_hero_title_suffix: "Marathi Poetry on Godwa Space",
+        home_hero_desc: "Discover timeless verses, explore linguistic depths with our interactive reader, and join Godwa Space—a community dedicated to the sweet essence of Marathi literature.",
         home_hero_btn_start: "Start Exploring",
         home_hero_btn_contribute: "Contribute Poetry",
         home_stat_poems: "Poems Archive",
@@ -174,20 +206,20 @@ export const translations: Record<Language, TranslationDictionary> = {
         home_poets_subtitle: "The architects of Marathi literature",
         home_popular_tag: "Popular Verses",
         home_popular_title: "Verses Worth Savouring",
-        home_popular_subtitle: "A rotating selection of poems from our collection",
+        home_popular_subtitle: "A rotating selection of poems from Godwa Space",
         home_read_poem: "Read Poem",
-        home_disclaimer: "Godwa is a non-commercial platform solely dedicated to spreading the sweetness of the Marathi language. Copyright of all content on this website belongs to the respective owners; credits are given to poets wherever possible. In case you want to remove your poem, please email us and we will remove it.",
+        home_disclaimer: "Godwa Space is a non-commercial platform solely dedicated to spreading the sweetness of the Marathi language. Copyright of all content on this website belongs to the respective owners; credits are given to poets wherever possible. In case you want to remove your poem, please email us and we will remove it.",
 
-        footer_brand_desc: "Godwa is a digital sanctuary for Marathi literature. Our mission is to preserve the rich heritage of Marathi poetry and make its profound linguistic beauty accessible through technology.",
+        footer_brand_desc: "Godwa Space is a digital sanctuary for Marathi literature. Our mission is to preserve the rich heritage of Marathi poetry and make its profound linguistic beauty accessible through technology.",
         footer_nav_title: "Navigation",
         footer_foundation_title: "Foundation",
-        footer_rights: "Godwa Marathi Poetry Platform. All rights reserved.",
+        footer_rights: "Godwa Space — Marathi Poetry Platform. All rights reserved.",
         footer_made_with: "Made with",
         footer_links_explore: "Explore",
         footer_links_poets: "Poets",
         footer_links_collections: "Collections",
         footer_links_submit: "Submit",
-        footer_links_about: "About Us",
+        footer_links_about: "Amchya Baddal (About Us)",
         footer_links_contact: "Contact",
         footer_links_privacy: "Privacy Policy",
         footer_links_terms: "Terms of Service",
@@ -202,7 +234,7 @@ export const translations: Record<Language, TranslationDictionary> = {
         admin_word_hint: "Lacks definition and linguistic metadata. Click the wand to auto-populate using LLM service.",
 
         explore_title: "Explore Poetry",
-        explore_subtitle: "Discover the vast landscape of Marathi verse",
+        explore_subtitle: "Discover the vast landscape of Marathi verse on Godwa Space",
         explore_search_placeholder: "Search by title or poet...",
         explore_results_found: "Results Found",
         explore_filter_btn: "Filter",
@@ -233,8 +265,8 @@ export const translations: Record<Language, TranslationDictionary> = {
         poets_results: "poets",
 
         submit_title: "Contribute Poetry",
-        submit_subtitle: "Share the beauty of Marathi verses with the world.",
-        submit_step_1: "Details", // implied step name if not explicit in UI, numbers used in code
+        submit_subtitle: "Share the beauty of Marathi verses with Godwa Space.",
+        submit_step_1: "Details",
         submit_step_2: "Content",
         submit_step_3: "Review",
         submit_label_poet_name: "Poet Name",
@@ -247,7 +279,7 @@ export const translations: Record<Language, TranslationDictionary> = {
         submit_btn_scan: "Scan Manuscript",
         submit_ph_body: "Paste or type poem in Devanagari...",
         submit_review_title: "Ready to Review",
-        submit_review_desc: "Your poem will be submitted for community review and AI word enrichment before being published.",
+        submit_review_desc: "Your poem will be submitted for community review and AI word enrichment before being published on Godwa Space.",
         submit_review_preview: "Submission Preview",
         submit_btn_prev: "Previous",
         submit_btn_next: "Next Step",
@@ -273,9 +305,40 @@ export const translations: Record<Language, TranslationDictionary> = {
         poet_no_poems: "No poems by this poet found in our archives yet.",
         poet_not_found: "Poet Not Found",
         poet_not_found_desc: "The person you are looking for has not yet reached our archives.",
+
+        about_title: "Amchya Baddal — Godwa Space",
+        about_subtitle: "Godwa Space — Marathi Kavitenche Digital Maherghar",
+        about_hero_desc_1: "Godwa Space is a digital sanctuary for Marathi poetry.",
+        about_hero_desc_2: "Amche dhyeya mhanje Marathi kavitensha samruddha warasa japane, shabdanshabda arthasaha ti pratyekaparyanta pohochawane—mag tumhi june dardi wachak asal, navin bhasha shikanaare asal kinwa Marathi sahityachi aavad aslele rasik asal.",
+        about_hero_desc_3: "Kathin shabdasangraha, boli bhasha kinwa lipichya adsaramule sundar kavita wachanyapasun wanchit rahu naye, yawar amcha vishwas aahe.",
+        about_btn_explore: "Kavita Explore Kara",
+        about_btn_poets: "Kavintchi Suchi",
+        about_vision_preserve_title: "Jatan (Preserve)",
+        about_vision_preserve_desc: "Abhijat aani aadhunik Marathi kavita, boli bhashatil shabda aani durmiya sahityik kalakruti surakshit japane.",
+        about_vision_understand_title: "Aakalan (Understand)",
+        about_vision_understand_desc: "Kavita wachatana pratyek shabdacha artha, sandarbhasahita spashtikaran aani boli bhashatil bhavartha uplabdh karun dene.",
+        about_vision_connect_title: "Jodane (Connect)",
+        about_vision_connect_desc: "Jagachya kontyahi konyatil wachankana Devanagari kinwa Roman Marathi lipimadhe sahajatene kavita wachanyachi suviddha dene.",
+        about_unique_tag: "Vaisishtye",
+        about_unique_title: "Godwa Space Che Veglepan Kay?",
+        about_feat_1_title: "Devanagari va Roman Lipit Vachan",
+        about_feat_1_desc: "Pratyek kavita Devanagari Marathi aani Roman Marathi lipyantaranat uplabdh aahe. Eka clickwar sahaj lipi badla.",
+        about_feat_2_title: "Shabdanshabda Artha (Rekhta Style)",
+        about_feat_2_desc: "Kontyahi shabdawar tap kara aani tyacha achuk artha lagech paha. Shabdakoshachi garaj nahi.",
+        about_feat_3_title: "Sandarbhasahita Arthanirvachan",
+        about_feat_3_desc: "Keval shabdakoshatil kordi vyakhya na deta kavitat kavila kay abhipreta aahe, te spashta kele jaate.",
+        about_feat_4_title: "Boli Bhasha va Durmiya Shabdasangraha",
+        about_feat_4_desc: "Abhijat Marathi, Sanskrit-prachur shabda aani vividh boli bhashanche shabdakosh samavishta.",
+        about_feat_5_title: "Kavi Parichay va Charitra",
+        about_feat_5_desc: "Kavinche jeevanprawas, tyancha kaal aani tyanchi sahitya sampada yanchi savistar mahiti.",
+        about_feat_6_title: "Chhanda aani Vruttachi Mahiti",
+        about_feat_6_desc: "Kavitache vrutta aani sangeetmay rachana samjun ghya. Shaili va rasanusar kavita shodha.",
+        about_vocab_tag: "Sahityik Shabdakosh",
+        about_vocab_title: "Godwa Space Madhil Khas Shabda",
+        about_vocab_desc: "Marathi sahityat bhavnik aani sanskrutik kholi aslele kahi atyanta dekhne shabda:",
     },
     devanagari: {
-        nav_explore: "एक्सप्लोर", // Transliterated "Explore" or proper Marathi "अन्वेषण", sticking to common UI terms
+        nav_explore: "एक्सप्लोर",
         nav_poets: "कवी",
         nav_submit: "साहित्य पाठवा",
         nav_admin: "प्रशासन",
@@ -286,10 +349,10 @@ export const translations: Record<Language, TranslationDictionary> = {
         nav_my_submissions: "माझी सादरीकरणे",
         nav_my_likes: "आवडलेल्या कविता",
 
-        home_hero_tag: "प्रीमियम काव्य अनुभव",
+        home_hero_tag: "Godwa Space — प्रीमियम काव्य अनुभव",
         home_hero_title_prefix: "अनुभवा",
-        home_hero_title_suffix: "मराठी कवितेचा आत्मा",
-        home_hero_desc: "अजरामर कविता शोधा, आमच्या इंटरॅक्टिव्ह रीडरसह भाषिक खोली एक्सप्लोर करा आणि मराठी साहित्याच्या गोडव्याला वाहिलेल्या समुदायात सामील व्हा.",
+        home_hero_title_suffix: "मराठी कवितेचा आत्मा — Godwa Space",
+        home_hero_desc: "अजरामर कविता शोधा, आमच्या इंटरॅक्टिव्ह रीडरसह भाषिक खोली एक्सप्लोर करा आणि Godwa Space मधील मराठी साहित्याच्या गोडव्याला वाहिलेल्या समुदायात सामील व्हा.",
         home_hero_btn_start: "एक्सप्लोर करा",
         home_hero_btn_contribute: "कविता योगदान द्या",
         home_stat_poems: "कविता संग्रह",
@@ -306,20 +369,20 @@ export const translations: Record<Language, TranslationDictionary> = {
         home_poets_subtitle: "मराठी साहित्याचे शिल्पकार",
         home_popular_tag: "लोकप्रिय कविता",
         home_popular_title: "मनाला भिडणाऱ्या ओळी",
-        home_popular_subtitle: "आमच्या संग्रहातील निवडक कवितांची झलक",
+        home_popular_subtitle: "Godwa Space मधील निवडक कवितांची झलक",
         home_read_poem: "कविता वाचा",
-        home_disclaimer: "गोडवा हे एक अव्यावसायिक व्यासपीठ आहे, जे केवळ मराठी भाषेचा गोडवा पसरवण्यासाठी समर्पित आहे. या संकेतस्थळावरील सर्व मजकुराचे हक्क संबंधित मालकांचे आहेत; शक्य असेल तिथे कवींना श्रेय दिले जाते. जर तुम्हाला तुमची कविता काढून टाकायची असेल, तर कृपया आम्हाला ईमेल करा आणि आम्ही ती काढून टाकू.",
+        home_disclaimer: "Godwa Space हे एक अव्यावसायिक व्यासपीठ आहे, जे केवळ मराठी भाषेचा गोडवा पसरवण्यासाठी समर्पित आहे. या संकेतस्थळावरील सर्व मजकुराचे हक्क संबंधित मालकांचे आहेत; शक्य असेल तिथे कवींना श्रेय दिले जाते. जर तुम्हाला तुमची कविता काढून टाकायची असेल, तर कृपया आम्हाला ईमेल करा आणि आम्ही ती काढून टाकू.",
 
-        footer_brand_desc: "गोडवा हे मराठी साहित्याचे डिजिटल माहेरघर आहे. मराठी कवितेचा समृद्ध वारसा जपणे आणि तंत्रज्ञाच्या माध्यमातून तिचे सौंदर्य सर्वांपर्यंत पोहोचवणे हे आमचे ध्येय आहे.",
+        footer_brand_desc: "Godwa Space हे मराठी साहित्याचे डिजिटल माहेरघर आहे. मराठी कवितेचा समृद्ध वारसा जपणे आणि तंत्रज्ञाच्या माध्यमातून तिचे सौंदर्य सर्वांपर्यंत पोहोचवणे हे आमचे ध्येय आहे.",
         footer_nav_title: "नेव्हिगेशन",
         footer_foundation_title: "फाउंडेशन",
-        footer_rights: "गोडवा मराठी कविता प्लॅटफॉर्म. सर्व हक्क राखीव.",
+        footer_rights: "Godwa Space — मराठी कविता प्लॅटफॉर्म. सर्व हक्क राखीव.",
         footer_made_with: "मराठी साहित्यासाठी प्रेमाने बनवले",
         footer_links_explore: "एक्सप्लोर",
         footer_links_poets: "कवी",
         footer_links_collections: "संग्रह",
         footer_links_submit: "साहित्य पाठवा",
-        footer_links_about: "आमच्याबद्दल",
+        footer_links_about: "आमच्या बद्दल",
         footer_links_contact: "संपर्क",
         footer_links_privacy: "गोपनीयता धोरण",
         footer_links_terms: "सेवा अटी",
@@ -334,7 +397,7 @@ export const translations: Record<Language, TranslationDictionary> = {
         admin_word_hint: "व्याख्या आणि भाषिक मेटाडेटा नाही. LLM वापरून माहिती भरण्यासाठी कांडीवर क्लिक करा.",
 
         explore_title: "कविता शोधा",
-        explore_subtitle: "मराठी कवितेचे विशाल विश्व धुंडाळा",
+        explore_subtitle: "Godwa Space वर मराठी कवितेचे विशाल विश्व धुंडाळा",
         explore_search_placeholder: "शीर्षक किंवा कवीद्वारे शोधा...",
         explore_results_found: "निकाल सापडले",
         explore_filter_btn: "फिल्टर",
@@ -365,7 +428,7 @@ export const translations: Record<Language, TranslationDictionary> = {
         poets_results: "कवी",
 
         submit_title: "साहित्य पाठवा",
-        submit_subtitle: "मराठी कवितांचे सौंदर्य जगासोबत शेअर करा.",
+        submit_subtitle: "मराठी कवितांचे सौंदर्य Godwa Space सह जगासोबत शेअर करा.",
         submit_step_1: "तपशील",
         submit_step_2: "मजकूर",
         submit_step_3: "पुनरावलोकन",
@@ -405,5 +468,36 @@ export const translations: Record<Language, TranslationDictionary> = {
         poet_no_poems: "या कवीची एकही कविता अद्याप आमच्या संग्रहात आढळली नाही.",
         poet_not_found: "कवी आढळले नाहीत",
         poet_not_found_desc: "आपण शोधत असलेले कवी अद्याप आमच्या संग्रहात समाविष्ट केलेले नाहीत.",
+
+        about_title: "आमच्या बद्दल — Godwa Space",
+        about_subtitle: "गोडवा स्पेस — मराठी कवितेचे डिजिटल माहेरघर",
+        about_hero_desc_1: "Godwa Space (गोडवा स्पेस) हे मराठी साहित्याचे आणि कवितांचे समृद्ध डिजिटल माहेरघर आहे.",
+        about_hero_desc_2: "मराठी कवितेचा अद्वितीय वारसा जपणे, तिची रचना समजून घेणे आणि शब्दन् शब्द अर्थासह ती प्रत्येकापर्यंत पोहोचवणे हे आमचे ध्येय आहे—मग तुम्ही जुने दर्दी वाचक असाल, नवीन भाषा शिकणारे असाल किंवा मराठी साहित्याची आवड असलेले रसिक असाल.",
+        about_hero_desc_3: "कठिण शब्दसंग्रह, प्रादेशिक बोलीभाषा किंवा लिपीच्या अडसर मुळे सुंदर कविता वाचनापासून वंचित राहू नये, यावर आमचा विश्वास आहे.",
+        about_btn_explore: "कविता एक्सप्लोर करा",
+        about_btn_poets: "कवींची सूची",
+        about_vision_preserve_title: "जतन (Preserve)",
+        about_vision_preserve_desc: "अभिजात आणि आधुनिक मराठी कविता, बोलीभाषेतील शब्द आणि दुर्मिळ साहित्यिक कलाकृती सुरक्षित जपणे.",
+        about_vision_understand_title: "आकलन (Understand)",
+        about_vision_understand_desc: "कविता वाचताना प्रत्येक शब्दाचा अर्थ, संदर्भासहित स्पष्टीकरण आणि भावार्थ थेट कवितेच्या ओळींमध्ये उपलब्ध करून देणे.",
+        about_vision_connect_title: "जोडणे (Connect)",
+        about_vision_connect_desc: "जगाच्या कोणत्याही कोपऱ्यातील वाचकांना देवनागरी किंवा रोमन मराठी लिपीमध्ये सहजतेने कविता वाचण्याची सुविधा देणे.",
+        about_unique_tag: "वैशिष्ट्ये",
+        about_unique_title: "Godwa Space चे वेगळेपण काय?",
+        about_feat_1_title: "देवनागरी व रोमन लिपीत वाचन",
+        about_feat_1_desc: "प्रत्येक कविता देवनागरी मराठी आणि रोमन मराठी लिप्यंतरणात उपलब्ध आहे. एका क्लिकवर सहज लिपी बदला.",
+        about_feat_2_title: "शब्दन् शब्द अर्थ (Rekhta Style)",
+        about_feat_2_desc: "कोणत्याही शब्दावर टॅप करा आणि त्याचा अचूक अर्थ लगेच पहा. शब्दकोशाची गरज नाही.",
+        about_feat_3_title: "संदर्भासहित अर्थनिर्वचन",
+        about_feat_3_desc: "केवळ शब्दकोशातील कोरडी व्याख्या न देता कवितेत कवीला काय अभिप्रेत आहे, ते स्पष्ट केले जाते.",
+        about_feat_4_title: "बोलीभाषा व दुर्मिळ शब्दसंग्रह",
+        about_feat_4_desc: "अभिजात मराठी, संस्कृतप्रचुर शब्द आणि विविध बोलीभाषांचे शब्दकोश समाविष्ट.",
+        about_feat_5_title: "कवी परिचय व चरित्र",
+        about_feat_5_desc: "कवींचे जीवनप्रवास, त्यांचा काळ आणि त्यांची साहित्य संपदा यांची सविस्तर माहिती.",
+        about_feat_6_title: "छंद आणि वृत्ताची माहिती",
+        about_feat_6_desc: "कवितेचे वृत्त आणि संगीतमय रचना समजून घ्या. शैली व रसानुसार कविता शोधा.",
+        about_vocab_tag: "साहित्यिक शब्दकोश",
+        about_vocab_title: "Godwa Space मधील खास शब्द",
+        about_vocab_desc: "मराठी साहित्यात भावनिक आणि सांस्कृतिक खोली असलेले काही अत्यंत देखणे शब्द:",
     }
 };
