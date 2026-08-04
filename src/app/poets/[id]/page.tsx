@@ -1,162 +1,108 @@
-"use client";
+import { Metadata } from "next";
+import { PoetOut } from "@/lib/types";
+import { PoetProfileClientView } from "./PoetProfileClientView";
 
-import React from "react";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
-import { PoemCard } from "@/components/Cards";
-import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
-import { PoetOut, PoemOut } from "@/lib/types";
-import { Loader2, User, BookOpen, Quote } from "lucide-react";
-import { motion } from "framer-motion";
-import { useParams } from "next/navigation";
-import { useLanguage } from "@/lib/LanguageContext";
+const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || "https://iampratham29-godwa-backend.hf.space").replace(/\/$/, "");
 
-export default function PoetProfilePage() {
-    const { id } = useParams();
-    const { t, language } = useLanguage();
-
-    // Fetch poet by id
-    const { data: poet, isLoading: loadingPoet } = useQuery({
-        queryKey: ["poet", id],
-        queryFn: () => api.get<PoetOut>(`/api/poets/${id}`),
-        enabled: !!id,
-    });
-
-    // Fetch poems by this poet
-    const { data: poems, isLoading: loadingPoems } = useQuery({
-        queryKey: ["poets", id, "poems"],
-        queryFn: () => api.get<PoemOut[]>(`/api/poems/?poet_id=${id}`),
-        enabled: !!id,
-    });
-
-    if (loadingPoet && !poet) {
-        return (
-            <div className="min-h-screen flex flex-col bg-background">
-                <Navbar />
-                <div className="flex-1 flex flex-col items-center justify-center py-24 gap-4">
-                    <Loader2 className="w-10 h-10 text-maroon animate-spin" />
-                </div>
-            </div>
-        );
+async function fetchPoetData(id: string): Promise<PoetOut | null> {
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/poets/${id}`, {
+            next: { revalidate: 3600 },
+        });
+        if (!res.ok) return null;
+        return res.json();
+    } catch {
+        return null;
     }
+}
+
+export async function generateMetadata({
+    params,
+}: {
+    params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+    const { id } = await params;
+    const poet = await fetchPoetData(id);
 
     if (!poet) {
-        return (
-            <div className="min-h-screen flex flex-col bg-background">
-                <Navbar />
-                <div className="flex-1 flex flex-col items-center justify-center py-24 bg-white m-8 rounded-3xl border border-dashed border-gold/30">
-                    <BookOpen className="w-12 h-12 text-gold/20 mb-4" />
-                    <h1 className="text-2xl font-serif font-bold text-foreground">{t.poet_not_found}</h1>
-                    <p className="text-foreground/40 font-english mt-2">{t.poet_not_found_desc}</p>
-                </div>
-                <Footer />
-            </div>
-        );
+        return {
+            title: "Poet Profile Not Found | Godwa",
+            description: "The requested poet profile could not be found on Godwa.",
+        };
     }
 
-    const displayPoetName = language === 'roman' ? (poet.name_roman || poet.name) : poet.name;
+    const poetName = poet.name_roman ? `${poet.name} (${poet.name_roman})` : poet.name;
+    const title = `${poetName} – Marathi Poet Profile & Works | Godwa`;
+    const description = poet.bio
+        ? poet.bio.slice(0, 160)
+        : `Explore the life, bio, and complete poetry collection of legendary Marathi poet ${poet.name} on Godwa.`;
+
+    const canonicalUrl = `https://godwa.space/poets/${id}`;
+
+    return {
+        title,
+        description,
+        keywords: [
+            poet.name,
+            poet.name_roman || "",
+            "Marathi poet",
+            "Marathi literature",
+            "Kavita",
+            "Godwa poets",
+        ].filter(Boolean),
+        alternates: {
+            canonical: canonicalUrl,
+        },
+        openGraph: {
+            type: "profile",
+            url: canonicalUrl,
+            siteName: "Godwa",
+            title,
+            description,
+            locale: "mr_IN",
+            images: poet.image_url
+                ? [{ url: poet.image_url, width: 400, height: 400, alt: poetName }]
+                : [{ url: "/icon-512.png", width: 512, height: 512, alt: poetName }],
+        },
+        twitter: {
+            card: "summary",
+            title,
+            description,
+            images: poet.image_url ? [poet.image_url] : ["/icon-512.png"],
+        },
+    };
+}
+
+export default async function Page({
+    params,
+}: {
+    params: Promise<{ id: string }>;
+}) {
+    const { id } = await params;
+    const poet = await fetchPoetData(id);
+
+    const jsonLd = poet
+        ? {
+            "@context": "https://schema.org",
+            "@type": "Person",
+            name: poet.name,
+            alternateName: poet.name_roman || undefined,
+            description: poet.bio || undefined,
+            image: poet.image_url || undefined,
+            jobTitle: "Poet",
+            url: `https://godwa.space/poets/${id}`,
+        }
+        : null;
 
     return (
-        <main className="min-h-screen flex flex-col bg-background">
-            <Navbar />
-
-            {/* Poet Header / Bio */}
-            <section className="relative py-24 overflow-hidden border-b border-gold/10">
-                <div className="absolute top-0 right-0 w-1/3 h-full bg-gold/5 -skew-x-12 translate-x-1/2 -z-10" />
-
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex flex-col md:flex-row items-center md:items-start gap-12">
-                        {/* Image */}
-                        <div className="relative">
-                            <div className="w-48 h-48 md:w-64 md:h-64 rounded-3xl border-2 border-gold/20 p-2 overflow-hidden bg-white shadow-xl">
-                                <div className="w-full h-full rounded-2xl overflow-hidden bg-gold/5 flex items-center justify-center">
-                                    {poet.image_url ? (
-                                        <img src={poet.image_url} alt={displayPoetName} className="w-full h-full object-cover" />
-                                    ) : (
-                                        <User className="w-20 h-20 text-gold/20" />
-                                    )}
-                                </div>
-                            </div>
-                            <div className="absolute -bottom-4 -right-4 bg-maroon text-white p-4 rounded-2xl shadow-xl flex flex-col items-center min-w-[76px]">
-                                <span className="text-2xl font-bold font-serif">{poems?.length || 0}</span>
-                                <span className="text-[10px] uppercase font-bold tracking-widest">{t.poet_works}</span>
-                            </div>
-                        </div>
-
-                        {/* Content */}
-                        <div className="flex-1 text-center md:text-left">
-                            <div className="inline-block px-3 py-1 rounded-full bg-maroon/5 text-maroon text-[10px] font-bold uppercase tracking-[0.2em] mb-4">
-                                {t.poet_grand_master}
-                            </div>
-                            <h1 className={`text-5xl md:text-6xl font-bold text-foreground mb-4 ${language === 'roman' ? 'font-english' : 'font-marathi'}`}>
-                                {language === 'roman' ? (
-                                    <>
-                                        {poet.name_roman || poet.name}
-                                        {poet.name_roman && poet.name && (
-                                            <span className="text-2xl font-normal text-foreground/40 font-marathi ml-4 font-sans">({poet.name})</span>
-                                        )}
-                                    </>
-                                ) : (
-                                    <>
-                                        {poet.name}
-                                        {poet.name_roman && (
-                                            <span className="text-2xl font-normal text-foreground/45 font-english ml-4 font-serif">({poet.name_roman})</span>
-                                        )}
-                                    </>
-                                )}
-                            </h1>
-                            {poet.life_span && (
-                                <p className="text-gold font-english font-bold text-sm tracking-[0.3em] uppercase mb-8">
-                                    — {poet.life_span} —
-                                </p>
-                            )}
-
-                            <div className="relative pt-4">
-                                <Quote className="absolute -top-4 -left-8 w-12 h-12 text-gold/10 -z-10" />
-                                <p className={`text-lg md:text-xl text-foreground/80 leading-relaxed italic max-w-2xl ${language === 'roman' ? 'font-english' : 'font-marathi'}`}>
-                                    {poet.bio || "His verses continue to echo in the heart of Marathi literature, bridging generations with timeless wisdom."}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* Poet's Works */}
-            <section className="flex-1 py-20 px-4 sm:px-6 lg:px-8">
-                <div className="max-w-7xl mx-auto">
-                    <div className="flex items-center gap-4 mb-12">
-                        <BookOpen className="w-6 h-6 text-maroon" />
-                        <h2 className="text-2xl font-serif font-bold text-foreground">{t.poet_authored_works}</h2>
-                        <div className="flex-1 h-px bg-gold/10" />
-                    </div>
-
-                    {loadingPoems ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {[1, 2, 3].map(i => (
-                                <div key={i} className="h-64 rounded-3xl bg-gold/5 animate-pulse" />
-                            ))}
-                        </div>
-                    ) : poems && poems.length > 0 ? (
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-                        >
-                            {poems.map((poem) => (
-                                <PoemCard key={poem.id} poem={poem} />
-                            ))}
-                        </motion.div>
-                    ) : (
-                        <div className="text-center py-20 bg-gold/5 rounded-3xl border border-gold/10">
-                            <p className="text-foreground/40 font-english italic">{t.poet_no_poems}</p>
-                        </div>
-                    )}
-                </div>
-            </section>
-
-            <Footer />
-        </main>
+        <>
+            {jsonLd && (
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+                />
+            )}
+            <PoetProfileClientView />
+        </>
     );
 }

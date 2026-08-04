@@ -103,6 +103,39 @@ export default function RootLayout({
           src="https://accounts.google.com/gsi/client"
           strategy="beforeInteractive"
         />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@graph": [
+                {
+                  "@type": "WebSite",
+                  "@id": "https://godwa.space/#website",
+                  "url": "https://godwa.space",
+                  "name": "Godwa",
+                  "description": "Premium Marathi Poetry Platform with Word-by-Word Meanings & Roman Transliteration",
+                  "inLanguage": "mr",
+                  "potentialAction": {
+                    "@type": "SearchAction",
+                    "target": "https://godwa.space/explore?q={search_term_string}",
+                    "query-input": "required name=search_term_string"
+                  }
+                },
+                {
+                  "@type": "Organization",
+                  "@id": "https://godwa.space/#organization",
+                  "name": "Godwa",
+                  "url": "https://godwa.space",
+                  "logo": {
+                    "@type": "ImageObject",
+                    "url": "https://godwa.space/icon-512.png"
+                  }
+                }
+              ]
+            })
+          }}
+        />
       </head>
       <body
         className={`${mukta.variable} ${inter.variable} ${playfair.variable} ${lora.variable} antialiased font-marathi selection:bg-gold/30`}      >
