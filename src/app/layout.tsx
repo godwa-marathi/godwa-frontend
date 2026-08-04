@@ -27,16 +27,67 @@ const lora = Lora({
 });
 
 export const metadata: Metadata = {
-  title: "Godwa | Premium Marathi Poetry Platform",
-  description: "Experience the beauty of Marathi literature with our interactive Rekhta-style reader.",
+  title: {
+    default: "Godwa – Marathi Poetry Platform",
+    template: "%s | Godwa",
+  },
+  description:
+    "Godwa is an AI-assisted Marathi poetry platform where readers can explore poems with word-by-word meanings, contextual explanations, Roman transliteration, poet profiles, and Chhanda information. Discover, understand, and preserve Marathi literature.",
+  keywords: [
+    "Marathi poetry",
+    "Marathi poems",
+    "Marathi kavita",
+    "Marathi literature",
+    "Marathi dictionary",
+    "Marathi word meanings",
+    "Roman Marathi",
+    "Marathi transliteration",
+    "Boli Bhasha",
+    "Godwa",
+    "गोडवा",
+    "Kusumagraj",
+    "Bahinabai",
+    "Marathi Chhanda",
+  ],
+  authors: [{ name: "Godwa", url: "https://godwa.space" }],
+  creator: "Godwa",
+  publisher: "Godwa",
+  metadataBase: new URL("https://godwa.space"),
+  alternates: {
+    canonical: "https://godwa.space",
+  },
   icons: {
-    icon: [{ url: '/icon-512.png', type: 'image/png' }],
-    apple: [{ url: '/icon-512.png', type: 'image/png' }],
-    shortcut: '/icon-512.png',
+    icon: [{ url: "/icon-512.png", type: "image/png" }],
+    apple: [{ url: "/icon-512.png", type: "image/png" }],
+    shortcut: "/icon-512.png",
   },
   openGraph: {
-    siteName: 'Godwa Marathi Poem Platform',
-    images: [{ url: '/icon-512.png', width: 512, height: 512 }],
+    type: "website",
+    locale: "mr_IN",
+    url: "https://godwa.space",
+    siteName: "Godwa",
+    title: "Godwa – Marathi Poetry Platform",
+    description:
+      "Explore Marathi poetry with word-by-word meanings, Roman transliteration, Boli Bhasha vocabulary, and poet profiles. Godwa makes Marathi literature accessible to everyone.",
+    images: [{ url: "/icon-512.png", width: 512, height: 512, alt: "Godwa – Marathi Poetry Platform" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Godwa – Marathi Poetry Platform",
+    description:
+      "Explore Marathi poetry with word-by-word meanings, Roman transliteration, and Boli Bhasha vocabulary.",
+    images: ["/icon-512.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
