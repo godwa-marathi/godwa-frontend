@@ -5,20 +5,28 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { PoemCard } from "@/components/Cards";
 import { Search, SlidersHorizontal } from "lucide-react";
-import { PoemOut } from "@/lib/types";
+import { PoemOut, TagWithCount } from "@/lib/types";
 import { useLanguage } from "@/lib/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 
-const CATEGORIES = [
-    "All", "Romantic", "Nature", "Patriotic", "Spiritual",
-    "Social", "Inspirational", "Folklore", "Classical", "Modern"
-];
-
 export function ExploreClientView() {
     const { t } = useLanguage();
-    const [selectedCategory, setSelectedCategory] = useState("All");
+    // "" = All. Otherwise a tag slug (categories are tags too), e.g. /explore?tag=nature
+    const [selectedTag, setSelectedTag] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
+
+    React.useEffect(() => {
+        const tag = new URLSearchParams(window.location.search).get("tag");
+        if (tag) setSelectedTag(tag.trim().toLocaleLowerCase());
+    }, []);
+
+    // Category chips are admin-managed (see /admin/tags).
+    const { data: categories } = useQuery({
+        queryKey: ["tags", "categories"],
+        queryFn: () => api.get<TagWithCount[]>("/api/tags?categories_only=true"),
+        staleTime: 60_000,
+    });
 
     // Fetch approved poems from database
     const { data: allPoems, isLoading, error } = useQuery({
@@ -30,12 +38,19 @@ export function ExploreClientView() {
     const filteredPoems = React.useMemo(() => {
         if (!allPoems) return [];
         return allPoems.filter(poem => {
-            const matchesCategory = selectedCategory === "All" || poem.genre === selectedCategory;
+            const matchesCategory = !selectedTag || (poem.tags ?? []).some(tag => tag.slug === selectedTag);
             const matchesSearch = poem.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 (poem.poet?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false);
             return matchesCategory && matchesSearch;
         });
-    }, [allPoems, selectedCategory, searchQuery]);
+    }, [allPoems, selectedTag, searchQuery]);
+
+    const chipClass = (active: boolean) =>
+        `flex-shrink-0 px-6 py-2.5 rounded-full text-sm font-english font-semibold transition-all shadow-sm ${active
+            ? "bg-maroon text-white shadow-maroon/20 scale-105"
+            : "bg-white text-foreground/60 border border-gold/10 hover:border-maroon/40 hover:text-maroon"
+        }`;
+    const isFreeTagSelected = !!selectedTag && !(categories ?? []).some(c => c.slug === selectedTag);
 
     return (
         <main className="min-h-screen flex flex-col bg-background">
@@ -63,18 +78,23 @@ export function ExploreClientView() {
                 {/* Category Scroller */}
                 <div className="relative mb-12">
                     <div className="flex items-center gap-2 overflow-x-auto pb-4 no-scrollbar -mx-4 px-4 scroll-smooth">
-                        {CATEGORIES.map((category) => (
+                        <button onClick={() => setSelectedTag("")} className={chipClass(!selectedTag)}>
+                            {t.cat_all}
+                        </button>
+                        {(categories ?? []).map((category) => (
                             <button
-                                key={category}
-                                onClick={() => setSelectedCategory(category)}
-                                className={`flex-shrink-0 px-6 py-2.5 rounded-full text-sm font-english font-semibold transition-all shadow-sm ${selectedCategory === category
-                                    ? "bg-maroon text-white shadow-maroon/20 scale-105"
-                                    : "bg-white text-foreground/60 border border-gold/10 hover:border-maroon/40 hover:text-maroon"
-                                    }`}
+                                key={category.id}
+                                onClick={() => setSelectedTag(category.slug)}
+                                className={chipClass(selectedTag === category.slug)}
                             >
-                                {(t as any)[`cat_${category.toLowerCase()}`] || category}
+                                {(t as any)[`cat_${category.slug}`] || category.name}
                             </button>
                         ))}
+                        {isFreeTagSelected && (
+                            <button onClick={() => setSelectedTag("")} className={chipClass(true)} aria-label="Clear tag filter">
+                                #{selectedTag} ✕
+                            </button>
+                        )}
                     </div>
                     {/* Subtle gradient indicators for scroll */}
                     <div className="absolute top-0 right-0 h-[calc(100%-1rem)] w-12 bg-gradient-to-l from-background to-transparent pointer-events-none md:hidden" />
@@ -107,7 +127,7 @@ export function ExploreClientView() {
                         <p className="text-foreground/60 font-english mt-1">Please try refreshing the page.</p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-20 animate-in fade-in slide-in-from-bottom-4 duration-500">
                         {filteredPoems.map((poem) => (
                             <PoemCard key={poem.id} poem={poem} />
                         ))}

@@ -12,6 +12,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Sanscript from "@indic-transliteration/sanscript";
 import { transliterateMarathi } from "@/lib/transliteration";
+import { AdminGuard } from "@/components/AdminGuard";
+import { QuickApproveButton } from "@/components/admin/QuickApproveButton";
 
 interface Props {
     params: Promise<{
@@ -19,7 +21,15 @@ interface Props {
     }>;
 }
 
-export default function SubmissionDetailPage({ params }: Props) {
+export default function SubmissionDetailPage(props: Props) {
+    return (
+        <AdminGuard>
+            <SubmissionDetail {...props} />
+        </AdminGuard>
+    );
+}
+
+function SubmissionDetail({ params }: Props) {
     // Next.js 15: params is now a Promise, must unwrap it
     const unwrappedParams = React.use(params);
     const { id } = unwrappedParams;
@@ -45,6 +55,9 @@ export default function SubmissionDetailPage({ params }: Props) {
 
     const [editedMetadata, setEditedMetadata] = React.useState("");
     const [editedPoetImageUrl, setEditedPoetImageUrl] = React.useState("");
+    // Image belonging to the poem's ORIGINAL poet, captured when the editor opens.
+    // Used so we only PATCH a poet's image when the admin actually changed it.
+    const initialPoetImageUrlRef = React.useRef("");
     const [poetSuggestions, setPoetSuggestions] = React.useState<any[]>([]);
     const [isSearchingPoets, setIsSearchingPoets] = React.useState(false);
     // Genre state
@@ -128,6 +141,7 @@ export default function SubmissionDetailPage({ params }: Props) {
             // Assuming metadata is stored as JSON
             setEditedMetadata(poem.metadata_json ? JSON.stringify(poem.metadata_json, null, 2) : "");
             setEditedPoetImageUrl(poem.poet?.image_url || "");
+            initialPoetImageUrlRef.current = poem.poet?.image_url || "";
 
             // Set poet name from poet object if available
             if (poem.poet) {
@@ -208,11 +222,18 @@ export default function SubmissionDetailPage({ params }: Props) {
             // poet_image_url is a POET-level field, not a poem field — save it separately.
             const { poet_image_url, ...poemData } = data;
             console.log('Saving poem with data:', poemData);
-            const poemRes = await api.patch(`/api/admin/poems/${id}`, poemData);
+            const poemRes = await api.patch<PoemOut>(`/api/admin/poems/${id}`, poemData);
 
-            const poetId = data.poet_id ?? poem?.poet_id ?? null;
-            if (poetId != null && typeof poet_image_url !== "undefined") {
-                await api.patch(`/api/admin/poets/${poetId}`, { image_url: poet_image_url });
+            // Only touch the poet's image when the admin actually changed it from the
+            // value shown when the editor opened / the poet was selected. This avoids
+            // blanking an existing poet's image, and avoids overwriting the image of a
+            // poet we just reassigned to. Target the poet the poem actually ended up on.
+            const imageChanged =
+                typeof poet_image_url !== "undefined" &&
+                (poet_image_url || "") !== initialPoetImageUrlRef.current;
+            const targetPoetId = poemRes?.poet_id ?? data.poet_id ?? poem?.poet_id ?? null;
+            if (imageChanged && targetPoetId != null) {
+                await api.patch(`/api/admin/poets/${targetPoetId}`, { image_url: poet_image_url });
             }
             return poemRes;
         },
@@ -344,6 +365,7 @@ export default function SubmissionDetailPage({ params }: Props) {
                                             setEditedChandaName(poem.chhanda_name || (poem.chhanda_id && chhandas?.find((c: any) => c.id == poem.chhanda_id)?.name) || String(poem.chhanda_id || ""));
                                             setEditedMetadata(poem.metadata_json ? JSON.stringify(poem.metadata_json, null, 2) : "");
                                             setEditedPoetImageUrl(poem.poet?.image_url || "");
+                                            initialPoetImageUrlRef.current = poem.poet?.image_url || "";
                                             setPoetSuggestions([]); // Clear suggestions
                                             setChhandaSuggestions([]);
                                         }}
@@ -427,6 +449,8 @@ export default function SubmissionDetailPage({ params }: Props) {
                                         {tokenizeMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
                                         Tokenize
                                     </button>
+
+                                    <QuickApproveButton poemId={Number(id)} />
                                 </>
                             )}
                         </div>
@@ -669,6 +693,10 @@ export default function SubmissionDetailPage({ params }: Props) {
                                     value={editedPoetName}
                                     onChange={(e) => {
                                         setEditedPoetName(e.target.value);
+                                        // Free-typing means "new/renamed poet": drop any id picked
+                                        // earlier so the backend treats this as a name, not a
+                                        // reassignment to a different poet.
+                                        setEditedPoetId(null);
                                         // Trigger search logic locally
                                         if (poets) {
                                             const query = e.target.value.toLowerCase();
@@ -694,9 +722,18 @@ export default function SubmissionDetailPage({ params }: Props) {
                                             <button
                                                 key={poet.id}
                                                 type="button"
-                                                onClick={() => {
+                                                // onMouseDown fires BEFORE the input's onBlur, so the
+                                                // selection registers instead of the blur closing the
+                                                // dropdown first (which left the field empty).
+                                                onMouseDown={(e) => {
+                                                    e.preventDefault();
                                                     setEditedPoetName(poet.name);
                                                     setEditedPoetId(poet.id);
+                                                    // Prepopulate the selected poet's image so the admin
+                                                    // sees it; make it the baseline so we don't re-PATCH
+                                                    // (and never blank) that poet's image unless changed.
+                                                    setEditedPoetImageUrl(poet.image_url || "");
+                                                    initialPoetImageUrlRef.current = poet.image_url || "";
                                                     setIsSearchingPoets(false);
                                                 }}
                                                 className="w-full text-left px-4 py-3 hover:bg-gold/5 flex items-center justify-between border-b border-gold/5 last:border-0 transition-colors"

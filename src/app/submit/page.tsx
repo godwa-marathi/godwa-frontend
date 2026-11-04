@@ -6,7 +6,9 @@ import { Footer } from "@/components/Footer";
 import { motion, AnimatePresence } from "framer-motion";
 import { PenTool, Search, Plus, Send, ChevronRight, ChevronLeft, Image as ImageIcon, Loader2, Languages, CheckCircle2, FileText } from "lucide-react";
 import { api } from "@/lib/api";
-import { PoetOut } from "@/lib/types";
+import { PoetOut, TagWithCount } from "@/lib/types";
+import { useQuery } from "@tanstack/react-query";
+import { TagInput } from "@/components/TagInput";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
@@ -21,7 +23,8 @@ export default function SubmitPoemPage() {
         title: "",
         body_marathi: "",
         body_roman: "",
-        genre: "",
+        category: "",
+        tags: [] as string[],
         poet_name: "",
         poet_id: null as number | null,
     });
@@ -31,6 +34,13 @@ export default function SubmitPoemPage() {
     const [showSuccess, setShowSuccess] = useState(false);
     const router = useRouter();
     const { token, isLoading: authLoading } = useAuth();
+
+    // Category dropdown options are managed by admins (each category is also a tag).
+    const { data: categories } = useQuery({
+        queryKey: ["tags", "categories"],
+        queryFn: () => api.get<TagWithCount[]>("/api/tags?categories_only=true"),
+        staleTime: 60_000,
+    });
 
     // Auth Guard
     React.useEffect(() => {
@@ -65,7 +75,7 @@ export default function SubmitPoemPage() {
 
         setIsSearchingPoets(true);
         try {
-            const results = await api.get<PoetOut[]>(`/api/poets/search?q=${query}`);
+            const results = await api.get<PoetOut[]>(`/api/poets/search?q=${encodeURIComponent(query)}`);
             setPoetSuggestions(results);
         } catch (error) {
             console.error("Poet search failed", error);
@@ -176,16 +186,26 @@ export default function SubmitPoemPage() {
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold">{t.submit_label_genre}</label>
                                     <select
-                                        value={formData.genre}
-                                        onChange={(e) => setFormData({ ...formData, genre: e.target.value })}
+                                        aria-label={t.submit_label_genre}
+                                        value={formData.category}
+                                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                                         className="w-full px-4 py-3 bg-white border border-gold/10 rounded-xl focus:ring-2 focus:ring-maroon/20 focus:border-maroon outline-none transition-all font-english"
                                     >
                                         <option value="">{t.submit_ph_genre}</option>
-                                        <option value="Romantic">{(t as any).cat_romantic}</option>
-                                        <option value="Nature">{(t as any).cat_nature}</option>
-                                        <option value="Spiritual">{(t as any).cat_spiritual}</option>
-                                        <option value="Patriotic">{(t as any).cat_patriotic}</option>
+                                        {(categories ?? []).map((c) => (
+                                            <option key={c.id} value={c.name}>{c.name}</option>
+                                        ))}
                                     </select>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold">{t.submit_label_tags}</label>
+                                    <TagInput
+                                        value={formData.tags}
+                                        onChange={(tags) => setFormData({ ...formData, tags })}
+                                        placeholder={t.submit_ph_tags}
+                                        label={t.submit_label_tags}
+                                    />
                                 </div>
                             </motion.div>
                         )}
@@ -373,7 +393,8 @@ export default function SubmitPoemPage() {
                                             title: "",
                                             body_marathi: "",
                                             body_roman: "",
-                                            genre: "",
+                                            category: "",
+                                            tags: [],
                                             poet_name: "",
                                             poet_id: null,
                                         });

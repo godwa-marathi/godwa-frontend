@@ -102,7 +102,7 @@ export default function Home() {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {poems?.slice(0, 6).map((poem) => (
               <PoemCard key={poem.id} poem={poem} />
             ))}
@@ -125,7 +125,7 @@ export default function Home() {
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
               {poets?.slice(0, 4).map((poet) => (
                 <PoetCard key={poet.id} poet={poet} />
               ))}
