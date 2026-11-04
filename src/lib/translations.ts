@@ -109,6 +109,10 @@ export interface TranslationDictionary {
     submit_ph_poem_title: string;
     submit_label_genre: string;
     submit_ph_genre: string;
+    submit_label_tags: string;
+    submit_ph_tags: string;
+    word_no_meaning_title: string;
+    word_no_meaning_body: string;
     submit_label_body: string;
     submit_btn_scan: string;
     submit_ph_body: string;
@@ -133,7 +137,6 @@ export interface TranslationDictionary {
     poem_explore_more: string;
     poem_view_poet_profile: string;
     poem_traditional: string;
-    poet_grand_master: string;
     poet_works: string;
     poet_authored_works: string;
     poet_no_poems: string;
@@ -275,6 +278,10 @@ export const translations: Record<Language, TranslationDictionary> = {
         submit_ph_poem_title: "Enter poem title...",
         submit_label_genre: "Genre / Tag",
         submit_ph_genre: "Select Genre",
+        submit_label_tags: "Tags",
+        submit_ph_tags: "Type a tag and press Enter (up to 10)",
+        word_no_meaning_title: "Meaning not available yet",
+        word_no_meaning_body: "We don't have a meaning for this word in our database yet.",
         submit_label_body: "Poem Body (Marathi)",
         submit_btn_scan: "Scan Manuscript",
         submit_ph_body: "Paste or type poem in Devanagari...",
@@ -299,7 +306,6 @@ export const translations: Record<Language, TranslationDictionary> = {
         poem_explore_more: "Explore More",
         poem_view_poet_profile: "View Poet Profile",
         poem_traditional: "Traditional",
-        poet_grand_master: "Grand Master",
         poet_works: "Works",
         poet_authored_works: "Authored Works",
         poet_no_poems: "No poems by this poet found in our archives yet.",
@@ -438,6 +444,10 @@ export const translations: Record<Language, TranslationDictionary> = {
         submit_ph_poem_title: "कवितेचे शीर्षक प्रविष्ट करा...",
         submit_label_genre: "शैली / टॅग",
         submit_ph_genre: "शैली निवडा",
+        submit_label_tags: "टॅग",
+        submit_ph_tags: "टॅग लिहा आणि Enter दाबा (जास्तीत जास्त १०)",
+        word_no_meaning_title: "अर्थ अद्याप उपलब्ध नाही",
+        word_no_meaning_body: "या शब्दाचा अर्थ आमच्या डेटाबेसमध्ये अद्याप उपलब्ध नाही.",
         submit_label_body: "कवितेचा मजकूर (मराठी)",
         submit_btn_scan: "हस्तलिखित स्कॅन करा",
         submit_ph_body: "देवनागरीमध्ये कविता पेस्ट किंवा टाइप करा...",
@@ -462,7 +472,6 @@ export const translations: Record<Language, TranslationDictionary> = {
         poem_explore_more: "अधिक शोधा",
         poem_view_poet_profile: "कवीचे प्रोफाइल पहा",
         poem_traditional: "पारंपारिक",
-        poet_grand_master: "महान कवी",
         poet_works: "कविता",
         poet_authored_works: "लिखित कविता संग्रह",
         poet_no_poems: "या कवीची एकही कविता अद्याप आमच्या संग्रहात आढळली नाही.",

@@ -72,7 +72,17 @@ export interface LikedPoemSummary {
     liked_at?: string;
 }
 
-export interface PoetOut {
+/** Optional contact/social links, editable by admin on both poets and poems. */
+export interface LinkFields {
+    instagram_url?: string | null;
+    youtube_url?: string | null;
+    contact_email?: string | null;
+    website_url?: string | null;
+}
+
+export interface PoetOut extends LinkFields {
+    date_of_birth?: string | null; // ISO date (YYYY-MM-DD)
+    date_of_death?: string | null;
     id: number;
     name: string;
     name_roman?: string;
@@ -88,6 +98,7 @@ export interface PoetMiniOut {
     id: number;
     name: string;
     name_roman?: string;
+    image_url?: string | null;
 }
 
 export interface PaginatedPoetResponse {
@@ -98,7 +109,7 @@ export interface PaginatedPoetResponse {
     total_pages: number;
 }
 
-export interface PoemOut {
+export interface PoemOut extends LinkFields {
     id: number;
     title: string;
     title_roman?: string;
@@ -115,11 +126,42 @@ export interface PoemOut {
     metadata_json?: any;
     search_slug?: string;
     url_slug?: string;
-    status: 'draft' | 'pending' | 'approved';
+    status: 'draft' | 'pending' | 'tokenized' | 'approved';
     words: WordOut[];
+    tags?: TagOut[];
     contributed_by?: UserPublic;
     like_count: number;
     is_liked?: boolean;
+}
+
+export interface TagOut {
+    id: number;
+    name: string;
+    slug: string;
+    is_category: boolean;
+}
+
+export interface TagWithCount extends TagOut {
+    poem_count: number;
+}
+
+/** Lightweight poem card from GET /api/poems/random */
+export interface PoemSuggestion {
+    id: number;
+    title: string;
+    title_roman?: string;
+    url_slug?: string;
+    poet?: PoetMiniOut;
+}
+
+/** A fuzzy poet match from GET /api/poets/suggest ("did you mean…"). */
+export interface PoetSuggestion {
+    id: number;
+    name: string;
+    name_roman?: string | null;
+    poem_count: number;
+    exact: boolean;
+    score: number;
 }
 
 export interface PoetSearchResponse {

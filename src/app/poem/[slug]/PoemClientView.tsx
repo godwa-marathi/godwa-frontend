@@ -8,6 +8,9 @@ import { PoemOut, PoetOut } from "@/lib/types";
 import { Navbar, UserAvatar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { RekhtaReader } from "@/components/RekhtaReader";
+import { PoemSuggestions } from "@/components/PoemSuggestions";
+import { PoemFooter } from "@/components/PoemFooter";
+import { AdminPoemTools } from "@/components/admin/AdminPoemTools";
 import { LikeButton } from "@/components/LikeButton";
 import { Loader2, AlertCircle, ArrowLeft, User } from "lucide-react";
 import Link from "next/link";
@@ -161,6 +164,8 @@ export function PoemClientView() {
                         {/* Poem Reader */}
                         <div className="relative w-full">
                             <RekhtaReader poem={poem} />
+                            <PoemFooter poem={poem} poet={fullPoet} />
+                            <AdminPoemTools poem={poem} poet={fullPoet} />
                         </div>
 
                         {/* Contributor Section - shown at the end of the poem */}
@@ -244,23 +249,8 @@ export function PoemClientView() {
                             </div>
                         </div>
 
-                        {/* 3. Suggestions */}
-                        <div className="space-y-3">
-                            <h3 className="text-xs font-bold uppercase tracking-widest text-foreground/30 pl-1">{t.poem_explore_more}</h3>
-                            <div className="space-y-2">
-                                {[1, 2, 3].map((i) => (
-                                    <Link key={i} href="/explore" className="flex items-center justify-between p-3 bg-white hover:bg-white/80 border border-transparent hover:border-maroon/10 rounded-xl transition-all group cursor-pointer">
-                                        <div>
-                                            <div className="font-marathi font-bold text-sm group-hover:text-maroon transition-colors">
-                                                रंग माझा वेगळा
-                                            </div>
-                                            <div className="text-[10px] text-foreground/40">Suresh Bhat</div>
-                                        </div>
-                                        <ArrowLeft className="w-3 h-3 rotate-180 text-foreground/20 group-hover:text-maroon transition-colors" />
-                                    </Link>
-                                ))}
-                            </div>
-                        </div>
+                        {/* 3. Suggestions: random approved poems */}
+                        <PoemSuggestions excludeId={poem.id} />
                     </aside>
                 </div>
             </div>

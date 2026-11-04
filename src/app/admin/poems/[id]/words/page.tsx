@@ -9,6 +9,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 import { Loader2, ArrowLeft, Sparkles, Check, X, Edit2, Book } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { AdminGuard } from "@/components/AdminGuard";
  
 interface Props {
     params: Promise<{
@@ -54,7 +55,15 @@ interface PoemWithWords {
     };
 }
 
-export default function WordEnrichmentPage({ params }: Props) {
+export default function WordEnrichmentPage(props: Props) {
+    return (
+        <AdminGuard>
+            <WordEnrichment {...props} />
+        </AdminGuard>
+    );
+}
+
+function WordEnrichment({ params }: Props) {
     const unwrappedParams = React.use(params);
     const { id } = unwrappedParams;
     const { t, language } = useLanguage();

@@ -11,6 +11,8 @@ import { Loader2, User, BookOpen, Quote } from "lucide-react";
 import { motion } from "framer-motion";
 import { useParams } from "next/navigation";
 import { useLanguage } from "@/lib/LanguageContext";
+import { LinkIcons } from "@/components/PoemFooter";
+import { AdminPoetTools } from "@/components/admin/AdminPoetTools";
 
 export function PoetProfileClientView() {
     const { id } = useParams();
@@ -86,9 +88,6 @@ export function PoetProfileClientView() {
 
                         {/* Content */}
                         <div className="flex-1 text-center md:text-left">
-                            <div className="inline-block px-3 py-1 rounded-full bg-maroon/5 text-maroon text-[10px] font-bold uppercase tracking-[0.2em] mb-4">
-                                {t.poet_grand_master}
-                            </div>
                             <h1 className={`text-5xl md:text-6xl font-bold text-foreground mb-4 ${language === 'roman' ? 'font-english' : 'font-marathi'}`}>
                                 {language === 'roman' ? (
                                     <>
@@ -111,6 +110,11 @@ export function PoetProfileClientView() {
                                     — {poet.life_span} —
                                 </p>
                             )}
+
+                            <div className="mb-6 flex flex-wrap items-center justify-center md:justify-start gap-4">
+                                <LinkIcons links={poet} owner={displayPoetName} />
+                            </div>
+                            <AdminPoetTools poet={poet} />
 
                             <div className="relative pt-4">
                                 <Quote className="absolute -top-4 -left-8 w-12 h-12 text-gold/10 -z-10" />

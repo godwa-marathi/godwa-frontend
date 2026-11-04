@@ -9,11 +9,22 @@ import { useLanguage } from "@/lib/LanguageContext";
 import { PoemOut, PoetOut, PoetMiniOut } from "@/lib/types";
 import { Check, X, Loader2, AlertCircle, Clock, BookOpen } from "lucide-react";
 import Link from "next/link";
+import { AdminGuard } from "@/components/AdminGuard";
+import { QuickApproveButton, QuickApproveResult } from "@/components/admin/QuickApproveButton";
 
 export default function AdminDashboard() {
+    return (
+        <AdminGuard>
+            <AdminDashboardInner />
+        </AdminGuard>
+    );
+}
+
+function AdminDashboardInner() {
     const queryClient = useQueryClient();
     const { language, t } = useLanguage();
     const [activeTab, setActiveTab] = useState<"review" | "tokenized" | "approved">("review");
+    const [quickResult, setQuickResult] = useState<{ title: string; result: QuickApproveResult } | null>(null);
 
     // Fetch pending submissions (review queue)
     const { data: submissions, isLoading: loadingSubs } = useQuery({
@@ -72,7 +83,33 @@ export default function AdminDashboard() {
                 <div className="mb-12">
                     <h1 className="text-4xl font-serif font-bold text-foreground">{t.admin_title}</h1>
                     <p className="text-foreground/60 font-english mt-1">{t.admin_subtitle}</p>
+                    <nav aria-label="Admin sections" className="flex flex-wrap gap-2 mt-4">
+                        {[
+                            { href: "/admin/words", label: "Words" },
+                            { href: "/admin/suggestions", label: "Suggestions" },
+                            { href: "/admin/tags", label: "Tags & Categories" },
+                        ].map((l) => (
+                            <Link key={l.href} href={l.href} className="px-4 py-1.5 rounded-full border border-gold/20 text-xs font-english font-bold uppercase tracking-wider text-maroon hover:bg-gold/10">
+                                {l.label}
+                            </Link>
+                        ))}
+                    </nav>
                 </div>
+
+                {quickResult && (
+                    <div role="status" className="mb-6 flex items-start justify-between gap-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm font-english text-green-800">
+                        <span>
+                            <strong>{quickResult.title}</strong>: {quickResult.result.newly_approved ? "published" : "already published"}.{" "}
+                            {quickResult.result.total_words} words ({quickResult.result.new_words} new).{" "}
+                            {quickResult.result.words_missing_meaning > 0
+                                ? `${quickResult.result.words_missing_meaning} words still have no meaning; find them in the word queue.`
+                                : "All words have a meaning."}
+                        </span>
+                        <button type="button" onClick={() => setQuickResult(null)} className="text-xs font-bold uppercase tracking-wider text-green-700 hover:underline">
+                            Dismiss
+                        </button>
+                    </div>
+                )}
 
                 {/* Tabs */}
                 <div className="flex bg-white rounded-2xl border border-gold/10 p-1 mb-8 w-fit shadow-sm">
@@ -163,6 +200,10 @@ export default function AdminDashboard() {
                                             >
                                                 Review & Edit
                                             </Link>
+                                            <QuickApproveButton
+                                                poemId={poemId}
+                                                onDone={(result) => setQuickResult({ title: poem.title || poem.title_roman || `#${poemId}`, result })}
+                                            />
                                         </div>
                                     </div>
                                 )

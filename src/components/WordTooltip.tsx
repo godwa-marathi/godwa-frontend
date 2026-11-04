@@ -7,6 +7,7 @@ import { WordOut } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { useLanguage } from "@/lib/LanguageContext";
 import { Loader2, AlertCircle, X } from "lucide-react";
 
 interface WordTooltipProps {
@@ -26,6 +27,7 @@ export const WordTooltip: React.FC<WordTooltipProps> = ({
     onOpenChange,
     className
 }) => {
+    const { t, language } = useLanguage();
     const [showNotFound, setShowNotFound] = React.useState(false);
 
     // Extract clean word based on script type
@@ -165,6 +167,11 @@ export const WordTooltip: React.FC<WordTooltipProps> = ({
 
                                         return (
                                             <div className="space-y-3">
+                                                {!marathiDefinition && !englishDefinition && (
+                                                    <p className={`text-sm text-foreground/60 leading-relaxed ${language === "devanagari" ? "font-marathi" : "font-english"}`}>
+                                                        {t.word_no_meaning_body}
+                                                    </p>
+                                                )}
                                                 {marathiDefinition && (
                                                     <div className="bg-gold/5 p-2 rounded-lg border border-gold/10">
                                                         <div className="text-[9px] uppercase tracking-wider text-gold font-bold mb-1">MARATHI</div>
@@ -223,9 +230,9 @@ export const WordTooltip: React.FC<WordTooltipProps> = ({
                                     <div className="w-10 h-10 bg-red-50 rounded-full flex items-center justify-center text-red-400 mb-3">
                                         <AlertCircle className="w-5 h-5" />
                                     </div>
-                                    <span className="text-sm font-medium text-foreground/80">Definition Not Found</span>
-                                    <span className="text-xs text-foreground/40 mt-1 max-w-[200px]">
-                                        We couldn't find a dictionary entry for "{cleanWord}".
+                                    <span className="text-sm font-medium text-foreground/80">{t.word_no_meaning_title}</span>
+                                    <span className="text-xs text-foreground/50 mt-1 max-w-[240px]">
+                                        {t.word_no_meaning_body}
                                     </span>
                                 </div>
                             )}
